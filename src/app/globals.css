@@ -1,0 +1,23 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-primary: #E63946; /* Premium Fiery Red */
+  --color-brand-secondary: #F4A261; /* Flame Orange */
+  --color-brand-dark: #121212; /* Sleek Black */
+  --color-brand-surface: #1E1E1E; /* Dark Grey Surface */
+  --color-brand-light: #F8F9FA; /* Premium Light Grey */
+  --color-brand-white: #FFFFFF;
+}
+
+body {
+  background-color: var(--color-brand-dark);
+  color: var(--color-brand-white);
+  -webkit-font-smoothing: antialiased;
+}
+
+@layer utilities {
+  .text-stroke-secondary {
+    -webkit-text-stroke: 1px var(--color-brand-secondary);
+    color: transparent;
+  }
+}
