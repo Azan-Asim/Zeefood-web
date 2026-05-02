@@ -86,17 +86,13 @@ export default function TopDeals() {
               {/* Image Area (Left on desktop, Top on mobile) */}
               <div className="relative w-full sm:w-[45%] h-[260px] flex items-center justify-center mb-8 sm:mb-0 shrink-0">
                 
-                {/* Floating Ring Decor */}
-                <div className="absolute inset-4 border-2 border-brand-primary/10 rounded-full scale-75 group-hover:scale-100 opacity-0 group-hover:opacity-100 transition-all duration-700 ease-out pointer-events-none" />
-                <div className="absolute inset-10 border border-brand-primary/20 rounded-full scale-50 group-hover:scale-90 opacity-0 group-hover:opacity-100 transition-all duration-1000 delay-100 ease-out pointer-events-none" />
-
-                {/* The Food Image */}
-                <div className="relative w-full h-full z-10 group-hover:-translate-y-4 group-hover:scale-[1.15] transition-all duration-700 ease-out flex justify-center items-center">
+                {/* The Food Image (Circular & Auto-Fitting) */}
+                <div className="relative w-52 h-52 z-10 group-hover:-translate-y-4 group-hover:scale-[1.1] transition-all duration-700 ease-out flex justify-center items-center rounded-full overflow-hidden bg-white shadow-[0_20px_40px_rgba(0,0,0,0.1)] border-[6px] border-white/80 group-hover:shadow-[0_20px_60px_rgba(230,57,70,0.25)]">
                   <Image 
                     src={deal.image} 
                     alt={deal.title}
                     fill
-                    className="object-contain mix-blend-multiply drop-shadow-[0_25px_25px_rgba(0,0,0,0.15)]"
+                    className="object-cover transition-transform duration-700 group-hover:scale-110"
                     unoptimized
                   />
                 </div>
