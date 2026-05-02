@@ -1,55 +1,61 @@
 "use client";
 import Link from "next/link";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function Navbar() {
-  const [activeTab, setActiveTab] = useState("DELIVERY");
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
-    <nav className="w-full bg-brand-dark h-[90px] flex items-center justify-between px-4 lg:px-12 shadow-lg relative z-50 border-b border-white/5">
-      {/* Left: Hamburger & Logo */}
-      <div className="flex items-center gap-6 lg:gap-10">
-        <button className="flex flex-col justify-center gap-1.5 w-7 h-7 hover:opacity-70 transition-opacity">
-          <span className="block w-full h-[2px] bg-brand-white rounded-full" />
-          <span className="block w-full h-[2px] bg-brand-white rounded-full" />
-          <span className="block w-full h-[2px] bg-brand-white rounded-full" />
-        </button>
-        <Link href="/" className="flex items-center">
-          <div className="relative w-20 h-20">
-            <Image src="/fiery-wok.png" alt="Fiery Wok Logo" fill className="object-contain drop-shadow-[0_0_15px_rgba(230,57,70,0.5)]" priority />
+    <nav className={`
+      w-full h-[90px] flex items-center justify-between px-4 lg:px-12 fixed top-0 z-[100] transition-all duration-500
+      ${isScrolled 
+        ? "bg-white/40 backdrop-blur-2xl border-b border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.05)]" 
+        : "bg-white/80 backdrop-blur-xl border-b border-gray-100 shadow-[0_4px_30px_rgba(0,0,0,0.02)]"}
+    `}>
+      {/* Left: Logo only (Hamburger removed) */}
+      <div className="flex items-center">
+        <Link href="/" className="flex items-center gap-4 group">
+          <div className="relative w-16 h-16 transition-transform duration-500 group-hover:rotate-[360deg]">
+            <Image src="/fiery-wok.png" alt="Fiery Wok Logo" fill className="object-contain" priority />
           </div>
+          <span className="font-black text-brand-dark text-3xl tracking-tighter hidden sm:block">
+            Zee<span className="text-brand-primary">Food</span>
+          </span>
         </Link>
       </div>
 
-      {/* Center: Tabs */}
-      <div className="hidden lg:flex items-center bg-brand-surface rounded-full p-1.5 border border-white/5 shadow-inner">
-        <button 
-          onClick={() => setActiveTab("DELIVERY")}
-          className={`px-8 py-2.5 rounded-full text-sm font-bold flex items-center gap-2 transition-all ${activeTab === "DELIVERY" ? "bg-brand-primary text-brand-white shadow-[0_4px_15px_rgba(230,57,70,0.4)]" : "text-brand-white/50 hover:text-brand-white"}`}
-        >
-          🛵 DELIVERY
-        </button>
-        <button 
-          onClick={() => setActiveTab("PICKUP")}
-          className={`px-8 py-2.5 rounded-full text-sm font-bold flex items-center gap-2 transition-all ${activeTab === "PICKUP" ? "bg-brand-primary text-brand-white shadow-[0_4px_15px_rgba(230,57,70,0.4)]" : "text-brand-white/50 hover:text-brand-white"}`}
-        >
-          🥡 PICKUP
-        </button>
+      {/* Center: Navigation Links */}
+      <div className="hidden lg:flex items-center gap-12">
+        <Link href="/menu" className="text-sm font-black text-brand-dark/80 hover:text-brand-primary transition-all tracking-[0.2em] uppercase hover:scale-105">Menu</Link>
+        <Link href="/about" className="text-sm font-black text-brand-dark/80 hover:text-brand-primary transition-all tracking-[0.2em] uppercase hover:scale-105">Our Story</Link>
+        <Link href="/track" className="text-sm font-black text-brand-dark/80 hover:text-brand-primary transition-all tracking-[0.2em] uppercase hover:scale-105">Track Order</Link>
       </div>
 
-      {/* Right: Cart & Login */}
-      <div className="flex items-center gap-8">
-        <button className="relative flex items-center justify-center hover:opacity-70 transition-opacity">
-          <svg className="w-7 h-7 text-brand-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-          </svg>
-          <span className="absolute top-2 left-1/2 -translate-x-1/2 text-[10px] font-bold text-brand-white bg-brand-primary px-1.5 rounded-full leading-none shadow-sm">
-            0
+      {/* Right: Premium Sign In Button (Cart removed) */}
+      <div className="flex items-center">
+        <Link 
+          href="/login" 
+          className="group relative px-10 py-4 bg-gradient-to-r from-brand-primary to-brand-secondary rounded-full overflow-hidden shadow-[0_10px_25px_rgba(230,57,70,0.3)] hover:shadow-[0_20px_40px_rgba(230,57,70,0.45)] transition-all duration-500 hover:-translate-y-1 active:scale-95"
+        >
+          {/* Animated background layer */}
+          <div className="absolute inset-0 bg-brand-dark translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out" />
+          
+          {/* Text layer */}
+          <span className="relative z-10 text-sm font-black tracking-[0.2em] uppercase text-white transition-colors duration-300">
+            Sign In
           </span>
-        </button>
-        <Link href="/login" className="bg-gradient-to-r from-brand-secondary to-brand-primary text-brand-white px-8 py-3 rounded-full font-black text-sm hover:opacity-90 transition-all shadow-[0_4px_15px_rgba(244,162,97,0.3)] hover:-translate-y-0.5 tracking-wider uppercase">
-          LOGIN
+          
+          {/* Subtle glow effect */}
+          <div className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 shadow-[inset_0_0_20px_rgba(255,255,255,0.2)]" />
         </Link>
       </div>
     </nav>

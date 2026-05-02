@@ -10,7 +10,21 @@ const menuItems = [
   { id: 5, name: "Samosa Chaat", image: "/images/home/menu/samosa_chaat.png" },
 ];
 
+import { useRef } from "react";
+
 export default function ExploreMenu() {
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  const scroll = (direction: 'left' | 'right') => {
+    if (scrollRef.current) {
+      const scrollAmount = 300;
+      scrollRef.current.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: 'smooth'
+      });
+    }
+  };
+
   return (
     <section className="bg-brand-light pb-24 w-full">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -18,8 +32,8 @@ export default function ExploreMenu() {
         {/* Header Area */}
         <div className="flex justify-between items-end mb-12">
           <div>
-            <h2 className="text-[2.5rem] lg:text-[3rem] font-black text-brand-dark tracking-tighter uppercase font-sans leading-none">
-              OUR MENU
+            <h2 className="text-3xl lg:text-5xl font-black tracking-tighter uppercase font-sans leading-none text-transparent bg-clip-text bg-gradient-to-r from-brand-primary to-brand-secondary">
+              Explore Our Menu
             </h2>
             <div className="w-24 h-1.5 bg-brand-primary mt-4 rounded-full" />
           </div>
@@ -38,12 +52,16 @@ export default function ExploreMenu() {
         <div className="relative flex items-center">
           
           <button 
-            className="hidden md:flex absolute -left-6 z-10 w-12 h-12 rounded-full bg-brand-white border border-brand-dark/10 text-brand-primary items-center justify-center hover:bg-brand-primary hover:text-brand-white transition-all shadow-lg hover:scale-110"
+            onClick={() => scroll('left')}
+            className="hidden md:flex absolute -left-6 z-10 w-12 h-12 rounded-full bg-brand-white border border-brand-dark/10 text-brand-primary items-center justify-center hover:bg-brand-primary hover:text-brand-white transition-all shadow-lg hover:scale-110 cursor-pointer"
           >
             <svg className="w-6 h-6 ml-[-2px]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" /></svg>
           </button>
 
-          <div className="w-full flex justify-between gap-6 overflow-x-auto pb-12 pt-6 snap-x no-scrollbar px-4">
+          <div 
+            ref={scrollRef}
+            className="w-full flex justify-between gap-6 overflow-x-auto pb-12 pt-6 snap-x no-scrollbar px-4"
+          >
             {menuItems.map((item, index) => (
               <div 
                 key={item.id} 
@@ -64,7 +82,8 @@ export default function ExploreMenu() {
           </div>
 
           <button 
-            className="hidden md:flex absolute -right-6 z-10 w-12 h-12 rounded-full bg-brand-primary text-brand-white items-center justify-center hover:bg-[#b0222e] transition-all shadow-lg hover:scale-110"
+            onClick={() => scroll('right')}
+            className="hidden md:flex absolute -right-6 z-10 w-12 h-12 rounded-full bg-brand-primary text-brand-white items-center justify-center hover:bg-[#b0222e] transition-all shadow-lg hover:scale-110 cursor-pointer"
           >
             <svg className="w-6 h-6 ml-[2px]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" /></svg>
           </button>

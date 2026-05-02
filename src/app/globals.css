@@ -3,6 +3,7 @@
 @theme {
   --color-brand-primary: #E63946; /* Premium Fiery Red */
   --color-brand-secondary: #F4A261; /* Flame Orange */
+  --color-brand-accent: #FFB84D; /* Vibrant Golden Orange */
   --color-brand-dark: #121212; /* Sleek Black */
   --color-brand-surface: #1E1E1E; /* Dark Grey Surface */
   --color-brand-light: #F8F9FA; /* Premium Light Grey */
@@ -10,9 +11,19 @@
 }
 
 body {
-  background-color: var(--color-brand-dark);
-  color: var(--color-brand-white);
+  background-color: var(--color-brand-white);
+  color: var(--color-brand-dark);
   -webkit-font-smoothing: antialiased;
+}
+
+@keyframes bounceSlow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes floatSlow {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(10px, 15px); }
 }
 
 @layer utilities {
@@ -21,3 +32,84 @@ body {
     color: transparent;
   }
 }
+
+/* ─── Login page animations ─── */
+
+/* Smooth floating bob for the avatar */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-16px); }
+}
+
+/* Hand-wave for the raised arm */
+@keyframes wave {
+  0%, 100% { transform: rotate(0deg); }
+  20%       { transform: rotate(-18deg); }
+  40%       { transform: rotate(10deg); }
+  60%       { transform: rotate(-14deg); }
+  80%       { transform: rotate(8deg); }
+}
+
+/* Eye blink — collapses the eyelid path height */
+@keyframes blink {
+  0%, 92%, 100% { transform: scaleY(1); }
+  95%           { transform: scaleY(0.05); }
+}
+
+/* Sparkle twinkle */
+@keyframes sparkle1 {
+  0%, 100% { opacity: 0.9; transform: scale(1) rotate(0deg); }
+  50%       { opacity: 0.4; transform: scale(0.6) rotate(30deg); }
+}
+@keyframes sparkle2 {
+  0%, 100% { opacity: 0.6; transform: scale(1) rotate(0deg); }
+  50%       { opacity: 0.2; transform: scale(0.7) rotate(-20deg); }
+}
+@keyframes sparkle3 {
+  0%, 100% { opacity: 0.5; transform: scale(1) rotate(0deg); }
+  50%       { opacity: 0.15; transform: scale(0.5) rotate(45deg); }
+}
+
+/* Slide in from top for optional email field */
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Floating particle drift */
+@keyframes floatParticle {
+  0%, 100% { transform: translateY(0) scale(1);   opacity: 0.6; }
+  33%       { transform: translateY(-18px) scale(1.1); opacity: 1; }
+  66%       { transform: translateY(-8px) scale(0.9);  opacity: 0.8; }
+}
+
+/* Slow pulse for background glow */
+@keyframes pulseSlow {
+  0%, 100% { opacity: 0.35; transform: scale(1); }
+  50%       { opacity: 0.55; transform: scale(1.08); }
+}
+
+/* Page fade-in on load */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-float           { animation: float 5s ease-in-out infinite; }
+.animate-wave            { animation: wave 2.6s ease-in-out infinite; transform-origin: 145px 240px; }
+.animate-blink           { animation: blink 4.5s ease-in-out infinite; transform-origin: center 155px; }
+.animate-sparkle-1       { animation: sparkle1 3s ease-in-out infinite; }
+.animate-sparkle-2       { animation: sparkle2 4s ease-in-out infinite 0.8s; }
+.animate-sparkle-3       { animation: sparkle3 3.5s ease-in-out infinite 1.6s; }
+.animate-slide-down      { animation: slideDown 0.3s ease-out both; }
+.animate-float-particle  { animation: floatParticle 6s ease-in-out infinite; }
+.animate-pulse-slow      { animation: pulseSlow 4s ease-in-out infinite; }
+.animate-fade-in         { animation: fadeIn 0.7s ease-out both; }
+.animate-bounce-slow      { animation: bounceSlow 3s ease-in-out infinite; }
+.animate-float-slow       { animation: floatSlow 6s ease-in-out infinite; }
+.animate-marquee          { animation: marquee 60s linear infinite; }
