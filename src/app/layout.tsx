@@ -15,6 +15,9 @@ export const metadata: Metadata = {
 
 import Navbar from "@/components/common/Navbar";
 import Footer from "@/components/common/Footer";
+import LocationModal from "@/components/common/LocationModal";
+import { LanguageProvider } from "@/context/LanguageContext";
+import { CartProvider } from "@/context/CartContext";
 
 export default function RootLayout({
   children,
@@ -27,9 +30,14 @@ export default function RootLayout({
       className={`${poppins.variable} h-full antialiased`}
     >
       <body className={`${poppins.className} min-h-full flex flex-col font-sans`}>
-        <Navbar />
-        <main className="flex-grow">{children}</main>
-        <Footer />
+        <LanguageProvider>
+          <CartProvider>
+            <LocationModal />
+            <Navbar />
+            <main className="flex-grow">{children}</main>
+            <Footer />
+          </CartProvider>
+        </LanguageProvider>
       </body>
     </html>
   );
