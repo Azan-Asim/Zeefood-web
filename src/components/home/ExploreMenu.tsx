@@ -75,7 +75,7 @@ export default function ExploreMenu() {
                 <h3 className="text-brand-dark font-black text-center text-lg leading-tight uppercase tracking-wide group-hover:text-brand-primary transition-colors">
                   {item.name}
                 </h3>
-                <div className={`w-12 h-[3px] bg-brand-secondary mt-4 rounded-full transition-all duration-300 ${index === 0 ? 'opacity-0 group-hover:opacity-100' : 'opacity-100 group-hover:w-20 group-hover:bg-brand-primary'}`} />
+                <div className="w-12 h-[3px] bg-brand-secondary mt-4 rounded-full transition-all duration-300 opacity-100 group-hover:w-20 group-hover:bg-brand-primary" />
                 <div className="absolute bottom-6 right-6 w-4 h-4 rounded-full bg-brand-secondary/20 group-hover:bg-brand-primary transition-colors duration-300" />
               </div>
             ))}
