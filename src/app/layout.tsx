@@ -13,6 +13,7 @@ export const metadata: Metadata = {
   description: "Premium food delivery experience.",
 };
 
+import Navbar from "@/components/common/Navbar";
 import Footer from "@/components/common/Footer";
 
 export default function RootLayout({
@@ -26,6 +27,7 @@ export default function RootLayout({
       className={`${poppins.variable} h-full antialiased`}
     >
       <body className={`${poppins.className} min-h-full flex flex-col font-sans`}>
+        <Navbar />
         <main className="flex-grow">{children}</main>
         <Footer />
       </body>

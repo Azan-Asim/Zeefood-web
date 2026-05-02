@@ -8,7 +8,6 @@ import PromoBanners from "@/components/home/PromoBanners";
 export default function Home() {
   return (
     <main className="min-h-screen bg-[#fdfcfb] relative overflow-x-hidden pt-[90px]">
-      <Navbar />
       <Hero />
       <ExploreMenu />
       <SignatureDesi />

@@ -185,38 +185,23 @@ export default function Footer() {
           ))}
         </div>
 
-        {/* App Download Strip */}
-        <div className="border-t border-gray-100 py-10">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-            <div>
-              <p className="text-xs font-black uppercase tracking-[0.2em] text-brand-dark/40 mb-3">Download Our App</p>
-              <div className="flex items-center gap-3">
-                <a href="#" className="flex items-center gap-3 px-6 py-3 bg-black text-white rounded-xl hover:bg-zinc-900 transition-all shadow-xl group border border-white/10">
-                  <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M3.5625 21.0188C3.15 21.4312 2.8125 21.3188 2.8125 20.7375V3.2625C2.8125 2.68125 3.15 2.56875 3.5625 2.98125L12.4125 11.8312C12.5062 11.925 12.5062 12.075 12.4125 12.1688L3.5625 21.0188Z" fill="#2196F3"/>
-                    <path d="M16.5938 7.66875L3.5625 2.98125C3.15 2.56875 3.15 3.01875 3.5625 3.43125L12.4125 12.2812C12.5062 12.375 12.6562 12.375 12.75 12.2812L16.5938 8.4375C16.8938 8.1375 16.8938 7.85625 16.5938 7.66875Z" fill="#4CAF50"/>
-                    <path d="M16.5938 16.3312C16.8938 16.1438 16.8938 15.8625 16.5938 15.5625L12.75 11.7188C12.6562 11.625 12.5062 11.625 12.4125 11.7188L3.5625 20.5688C3.15 20.9812 3.15 21.4312 3.5625 21.0188L16.5938 16.3312Z" fill="#F44336"/>
-                    <path d="M20.6625 12.5625L16.5938 14.9062C16.2938 15.0938 16.1438 15.0938 15.8438 14.9062L12.75 11.8125C12.6562 11.7188 12.6562 11.5688 12.75 11.475L15.8438 8.38125C16.1438 8.19375 16.2938 8.19375 16.5938 8.38125L20.6625 10.725C21.1125 10.9875 21.1125 12.3 20.6625 12.5625Z" fill="#FFEB3B"/>
-                  </svg>
-                  <div className="flex flex-col items-start leading-none">
-                    <span className="text-[10px] uppercase font-bold text-white/60 mb-0.5">GET IT ON</span>
-                    <span className="text-lg font-black tracking-tight text-white">Google Play</span>
-                  </div>
-                </a>
-              </div>
+        {/* Newsletter / Bottom CTA Section */}
+        <div className="border-t border-gray-100 py-12">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-10">
+            <div className="max-w-md">
+              <h4 className="text-xl font-black text-brand-dark tracking-tight mb-2">Subscribe to our newsletter</h4>
+              <p className="text-brand-dark/50 text-sm font-medium">Get the latest offers, recipes and desi food stories delivered to your inbox weekly.</p>
             </div>
-
-            {/* Newsletter */}
-            <div className="w-full md:w-auto">
-              <p className="text-xs font-black uppercase tracking-[0.2em] text-brand-dark/40 mb-3">Stay Updated</p>
+            
+            <div className="w-full md:w-auto flex-1 md:max-w-md">
               <div className="flex items-center gap-0 bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm focus-within:border-brand-primary focus-within:shadow-[0_0_0_3px_rgba(230,57,70,0.1)] transition-all">
                 <input
                   type="email"
-                  placeholder="your@email.com"
-                  className="px-5 py-3.5 text-sm text-brand-dark/80 font-medium bg-transparent outline-none flex-1 placeholder:text-brand-dark/30 min-w-[200px]"
+                  placeholder="Enter your email"
+                  className="px-5 py-4 text-sm text-brand-dark/80 font-medium bg-transparent outline-none flex-1 placeholder:text-brand-dark/30"
                 />
-                <button className="px-5 py-3.5 bg-brand-primary text-white font-black text-xs uppercase tracking-widest hover:bg-[#b0222e] transition-colors">
-                  Subscribe
+                <button className="px-6 py-4 bg-brand-primary text-white font-black text-xs uppercase tracking-widest hover:bg-[#b0222e] transition-colors">
+                  Join Now
                 </button>
               </div>
             </div>
