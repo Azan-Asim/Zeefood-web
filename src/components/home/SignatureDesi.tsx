@@ -49,7 +49,7 @@ export default function SignatureDesi() {
               >
                 <div className="absolute -top-16 lg:-top-20 w-[160px] h-[160px] lg:w-[200px] lg:h-[200px] transition-transform duration-700 group-hover:scale-105 group-hover:rotate-2 drop-shadow-[0_20px_35px_rgba(0,0,0,0.15)]">
                   <div className="w-full h-full relative z-10 border-4 border-white shadow-inner rounded-full bg-white group-hover:border-brand-primary/20 transition-colors duration-500 overflow-hidden">
-                    <Image src={item.image} alt={item.name} fill className="object-cover scale-100 group-hover:scale-110 transition-transform duration-700 mix-blend-multiply" unoptimized />
+                    <Image src={item.image} alt={item.name} fill className="object-cover scale-100 group-hover:scale-110 transition-transform duration-700" unoptimized />
                   </div>
                 </div>
                 <div className="h-[100px] lg:h-[110px] w-full" />
