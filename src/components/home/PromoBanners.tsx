@@ -7,6 +7,7 @@ const promoCards = [
     id: 1,
     tag: "Order Online",
     headline: "HOT FOOD,\nFAST DELIVERY",
+    headlineUr: "تازہ کھانا، تیز ترین ڈیلیوری",
     subtext: "Fresh from our kitchen to your doorstep in 30 minutes or less.",
     cta: "Order Now",
     href: "/order",
@@ -22,9 +23,10 @@ const promoCards = [
     id: 2,
     tag: "Family Size",
     headline: "BIRYANI\nFEAST",
+    headlineUr: "بریانی کی دعوت",
     subtext: "Golden saffron Dum Biryani. Made for the whole family.",
     cta: "View Menu",
-    href: "/menu",
+    href: "/product/nawabi-chicken-biryani",
     image: "/images/home/promo/promo_biryani.jpg",
     overlayFrom: "from-brand-dark/85",
     overlayTo: "to-transparent",
@@ -37,9 +39,10 @@ const promoCards = [
     id: 3,
     tag: "Chef Special",
     headline: "KARAHI\nNIGHT",
+    headlineUr: "کڑاہی نائٹ",
     subtext: "Peshawari-style Mutton Karahi. Authentic. Fiery. Unforgettable.",
     cta: "Explore",
-    href: "/menu",
+    href: "/product/special-mutton-karahi",
     image: "/images/home/promo/promo_karahi.jpg",
     overlayFrom: "from-brand-dark/85",
     overlayTo: "to-transparent",
@@ -52,6 +55,7 @@ const promoCards = [
     id: 4,
     tag: "Frozen Range",
     headline: "STOCK UP\nYOUR FREEZER",
+    headlineUr: "اپنا فریزر بھر لیں",
     subtext: "Export-quality frozen kebabs, samosas & parathas. Always ready.",
     cta: "Shop Frozen",
     href: "/menu",
@@ -181,8 +185,9 @@ function PromoCard({ card, className }: { card: typeof promoCards[0]; className?
 
         {/* Bottom: Text & CTA */}
         <div>
-          <h3 className={`font-black text-white uppercase tracking-tight leading-[0.9] whitespace-pre-line drop-shadow-lg mb-3 ${card.size === 'large' ? 'text-4xl lg:text-5xl' : 'text-3xl lg:text-4xl'}`}>
-            {card.headline}
+          <h3 className={`font-black text-white uppercase tracking-tight leading-[0.9] whitespace-pre-line drop-shadow-lg mb-3 flex flex-col ${card.size === 'large' ? 'text-4xl lg:text-5xl' : 'text-3xl lg:text-4xl'}`}>
+            <span>{card.headline}</span>
+            <span className="text-xl lg:text-2xl font-bold opacity-80">({card.headlineUr})</span>
           </h3>
           <p className={`text-white/70 text-sm font-medium leading-relaxed mb-6 ${card.size === 'large' ? 'max-w-sm' : 'max-w-xs'}`}>
             {card.subtext}

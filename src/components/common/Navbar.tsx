@@ -27,25 +27,31 @@ export default function Navbar() {
       <div className="flex items-center">
         <Link href="/" className="flex items-center gap-4 group">
           <div className="relative w-16 h-16 transition-transform duration-500 group-hover:rotate-[360deg]">
-            <Image src="/fiery-wok.png" alt="Hamari Jaga Dhaba" fill className="object-contain" priority />
+            <Image src="/fiery-wok.png" alt="Zee Food Gallery" fill className="object-contain" priority />
           </div>
-          <span className="font-black text-brand-dark text-xl lg:text-2xl tracking-tighter hidden sm:block whitespace-nowrap">
-            {t("brandName")}
-          </span>
+          <div className="flex flex-col leading-none">
+            <span className="text-[10px] lg:text-xs font-bold text-brand-primary hidden sm:block whitespace-nowrap mt-[-2px] italic uppercase tracking-widest">
+              {t("brandName")}
+            </span>
+            <span className="font-black text-brand-dark text-xl lg:text-2xl tracking-tighter hidden sm:block whitespace-nowrap">
+              {t("brandSubtitle")}
+            </span>
+          </div>
         </Link>
       </div>
 
       {/* Center: Navigation Links */}
       <div className="hidden lg:flex items-center gap-12">
+        <Link href="/" className="text-sm font-black text-brand-dark/80 hover:text-brand-primary transition-all tracking-[0.2em] uppercase hover:scale-105">Home</Link>
         <Link href="/menu" className="text-sm font-black text-brand-dark/80 hover:text-brand-primary transition-all tracking-[0.2em] uppercase hover:scale-105">{t("viewMenu")}</Link>
         <Link href="/about" className="text-sm font-black text-brand-dark/80 hover:text-brand-primary transition-all tracking-[0.2em] uppercase hover:scale-105">{t("ourStory")}</Link>
-        <Link href="/track" className="text-sm font-black text-brand-dark/80 hover:text-brand-primary transition-all tracking-[0.2em] uppercase hover:scale-105">{t("trackOrder")}</Link>
+        {/* <Link href="/track" className="text-sm font-black text-brand-dark/80 hover:text-brand-primary transition-all tracking-[0.2em] uppercase hover:scale-105">{t("trackOrder")}</Link> */}
       </div>
 
       {/* Right: Language Toggle & Sign In */}
       <div className="flex items-center gap-6">
         {/* Language Switcher */}
-        <div className="flex bg-gray-100 p-1 rounded-full border border-gray-200">
+        {/* <div className="flex bg-gray-100 p-1 rounded-full border border-gray-200">
           <button 
             onClick={() => setLanguage("EN")}
             className={`px-4 py-1.5 rounded-full text-[10px] font-black transition-all ${language === "EN" ? "bg-white text-brand-primary shadow-sm" : "text-brand-dark/30 hover:text-brand-dark/60"}`}
@@ -58,7 +64,7 @@ export default function Navbar() {
           >
             اردو
           </button>
-        </div>
+        </div> */}
 
         {/* Premium Sign In Button (Commented out as per previous request) */}
         {/* <div className="flex items-center">

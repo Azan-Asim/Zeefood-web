@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { useLanguage } from "@/context/LanguageContext";
 
@@ -8,27 +8,90 @@ export default function LocationModal() {
   const { t } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const [orderType, setOrderType] = useState("delivery");
-  const [city, setCity] = useState("");
+  const [city, setCity] = useState("Lahore");
   const [area, setArea] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const [mounted, setMounted] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const lahoreAreas = [
+    "Allama Iqbal Town",
+    "Architects Society",
+    "Askari 1-5",
+    "Askari 6-11",
+    "Baghbanpura",
+    "Bahria Town",
+    "Cavalry Ground",
+    "Cantt (Saddar)",
+    "Cantt (RA Bazaar)",
+    "DHA Phase 1",
+    "DHA Phase 2",
+    "DHA Phase 3",
+    "DHA Phase 4",
+    "DHA Phase 5",
+    "DHA Phase 6",
+    "DHA Phase 7",
+    "DHA Phase 8",
+    "DHA Phase 9",
+    "DHA Rahbar",
+    "Eden Gardens",
+    "Faisal Town",
+    "Ferozepur Road",
+    "Garden Town",
+    "Green Town",
+    "Gulberg I",
+    "Gulberg II",
+    "Gulberg III",
+    "Harbanspura",
+    "Ichhra",
+    "Iqbal Town",
+    "Jail Road",
+    "Johar Town",
+    "Lake City",
+    "Link Road",
+    "Mall Road",
+    "Model Town",
+    "Mozang",
+    "Mughalpura",
+    "Muslim Town",
+    "Paragon City",
+    "Raiwind Road",
+    "Sadaq Road",
+    "Samnabad",
+    "Shadman",
+    "Shalamar",
+    "State Life",
+    "Sui Gas Society",
+    "Township",
+    "Valencia Town",
+    "Walled City",
+    "Wapda Town",
+  ].sort();
+
+  const filteredAreas = lahoreAreas.filter(loc => 
+    loc.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   useEffect(() => {
     setMounted(true);
-    const savedLocation = localStorage.getItem("userLocation");
+    const savedLocation = sessionStorage.getItem("userLocation");
     if (!savedLocation) {
-      setIsOpen(true);
+      setTimeout(() => setIsOpen(true), 500);
     }
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   const handleSelect = () => {
     if (city && area) {
-      const locationData = {
-        orderType,
-        city,
-        area,
-        timestamp: new Date().toISOString(),
-      };
-      localStorage.setItem("userLocation", JSON.stringify(locationData));
+      sessionStorage.setItem("userLocation", JSON.stringify({ orderType, city, area, timestamp: new Date().toISOString() }));
       setIsOpen(false);
     }
   };
@@ -36,125 +99,110 @@ export default function LocationModal() {
   if (!mounted || !isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 lg:p-6">
-      {/* Backdrop with sophisticated blur */}
-      <div className="absolute inset-0 bg-brand-dark/40 backdrop-blur-[8px] animate-fade-in" />
+    <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4 overflow-hidden">
+      {/* Backdrop */}
+      <div className="absolute inset-0 bg-brand-dark/70 backdrop-blur-[12px] animate-in fade-in duration-500" onClick={() => setIsDropdownOpen(false)} />
 
-      {/* Modal Content - More Compact & Premium */}
-      <div className="relative bg-white/95 backdrop-blur-xl w-full max-w-[440px] rounded-[2rem] shadow-[0_30px_100px_-20px_rgba(0,0,0,0.3)] border border-white/50 overflow-hidden animate-fade-in-up">
+      {/* Modal Content */}
+      <div className="relative bg-white w-full max-w-[460px] rounded-[2.5rem] shadow-[0_50px_100px_-20px_rgba(0,0,0,0.6)] border border-white/20 overflow-hidden animate-in zoom-in-95 slide-in-from-bottom-10 duration-700">
         
-        {/* Subtle top accent bar */}
-        <div className="h-1.5 w-full bg-gradient-to-r from-brand-primary via-brand-secondary to-brand-primary" />
+        {/* Top accent bar */}
+        <div className="h-2 w-full bg-gradient-to-r from-brand-primary via-brand-secondary to-brand-primary" />
 
-        <div className="p-6 lg:p-8 flex flex-col items-center">
+        <div className="p-8 lg:p-10 flex flex-col items-center">
           
-          {/* Header Row: Logo & Title Side-by-Side to save height */}
-          <div className="w-full flex items-center gap-5 mb-6 bg-gray-50/50 p-4 rounded-2xl border border-gray-100">
-            <div className="relative w-14 h-14 shrink-0 drop-shadow-md">
-              <Image src="/fiery-wok.png" alt="ZeeFood" fill className="object-contain" />
+          {/* Logo & Title */}
+          <div className="w-full flex items-center gap-6 mb-8 bg-gray-50 p-5 rounded-[2rem] border border-gray-100">
+            <div className="relative w-16 h-16 shrink-0">
+              <Image src="/fiery-wok.png" alt="ZeeFood" fill className="object-contain" priority />
             </div>
             <div className="flex flex-col">
-              <h2 className="text-lg font-black text-brand-dark leading-none tracking-tight uppercase">
+              <h2 className="text-xl font-black text-brand-dark leading-none tracking-tight uppercase">
                 {t("orderType")}
               </h2>
-              <p className="text-[10px] font-bold text-brand-dark/40 uppercase tracking-widest mt-1">Select how you want your food</p>
+              <p className="text-[11px] font-bold text-brand-dark/40 uppercase tracking-widest mt-2">Where should we send your food?</p>
             </div>
           </div>
 
-          {/* Order Type Toggle - More Compact */}
-          <div className="flex bg-gray-100/80 p-1 rounded-full mb-6 w-full shadow-inner">
-            <button
-              onClick={() => setOrderType("delivery")}
-              className={`flex-1 py-2.5 px-6 rounded-full text-xs font-black transition-all duration-500 ${
-                orderType === "delivery" 
-                ? "bg-brand-primary text-white shadow-md scale-105" 
-                : "text-brand-dark/40 hover:text-brand-dark/60"
-              }`}
-            >
-              {t("delivery")}
-            </button>
-            <button
-              onClick={() => setOrderType("pickup")}
-              className={`flex-1 py-2.5 px-6 rounded-full text-xs font-black transition-all duration-500 ${
-                orderType === "pickup" 
-                ? "bg-brand-primary text-white shadow-md scale-105" 
-                : "text-brand-dark/40 hover:text-brand-dark/60"
-              }`}
-            >
-              {t("pickup")}
-            </button>
+          {/* Order Type Toggle */}
+          <div className="flex bg-gray-100 p-1.5 rounded-full mb-8 w-full shadow-inner border border-gray-200">
+            <button onClick={() => setOrderType("delivery")} className={`flex-1 py-3 px-6 rounded-full text-[11px] font-black transition-all duration-500 uppercase tracking-widest ${orderType === "delivery" ? "bg-brand-primary text-white shadow-lg" : "text-brand-dark/40"}`}>{t("delivery")}</button>
+            <button onClick={() => setOrderType("pickup")} className={`flex-1 py-3 px-6 rounded-full text-[11px] font-black transition-all duration-500 uppercase tracking-widest ${orderType === "pickup" ? "bg-brand-primary text-white shadow-lg" : "text-brand-dark/40"}`}>{t("pickup")}</button>
           </div>
 
-          {/* Location Section - Tighter Spacing */}
+          {/* Location Section */}
           <div className="w-full">
-            <div className="flex items-center gap-3 mb-4">
-               <span className="h-px flex-1 bg-gray-100" />
-               <span className="text-[10px] font-black text-brand-dark/30 uppercase tracking-[0.2em]">{t("yourLocation")}</span>
-               <span className="h-px flex-1 bg-gray-100" />
+            <div className="flex items-center gap-4 mb-6">
+               <span className="h-px flex-1 bg-gray-200" />
+               <span className="text-[11px] font-black text-brand-dark/30 uppercase tracking-[0.3em]">{t("yourLocation")}</span>
+               <span className="h-px flex-1 bg-gray-200" />
             </div>
 
-            <div className="space-y-3">
-              {/* Use Current Location Button */}
-              <button className="w-full flex items-center justify-center gap-3 py-3.5 bg-white border border-gray-100 rounded-xl text-xs font-black text-brand-dark/70 hover:border-brand-primary/40 hover:text-brand-primary transition-all group shadow-sm hover:shadow-md">
-                <svg className="w-4 h-4 text-brand-primary animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                </svg>
-                {t("useCurrentLocation")}
-              </button>
-
-              {/* Selection Grid */}
-              <div className="grid grid-cols-1 gap-3">
-                <div className="relative group">
-                  <select 
-                    value={city}
-                    onChange={(e) => setCity(e.target.value)}
-                    className="w-full appearance-none py-3.5 px-5 bg-gray-50/50 border border-gray-100 rounded-xl text-xs font-bold text-brand-dark/80 focus:outline-none focus:border-brand-primary/40 focus:bg-white transition-all cursor-pointer"
-                  >
-                    <option value="" disabled>{t("selectCity")}</option>
-                    <option value="Karachi">Karachi</option>
-                    <option value="Lahore">Lahore</option>
-                    <option value="Islamabad">Islamabad</option>
-                  </select>
-                  <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-brand-dark/20 group-hover:text-brand-primary transition-colors">
-                    <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={4}><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" /></svg>
-                  </div>
+            <div className="space-y-4">
+              <div className="w-full py-4 px-6 bg-gray-50 border-2 border-gray-100 rounded-2xl text-sm font-black text-brand-dark/40 flex items-center justify-between shadow-sm">
+                <span>Lahore</span>
+                <div className="flex items-center gap-2 text-brand-primary">
+                  <span className="text-[10px] font-bold uppercase tracking-widest">Active City</span>
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={4}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
                 </div>
+              </div>
 
-                <div className="relative group">
-                  <select 
-                    value={area}
-                    onChange={(e) => setArea(e.target.value)}
-                    className="w-full appearance-none py-3.5 px-5 bg-gray-50/50 border border-gray-100 rounded-xl text-xs font-bold text-brand-dark/80 focus:outline-none focus:border-brand-primary/40 focus:bg-white transition-all cursor-pointer"
-                  >
-                    <option value="" disabled>{t("selectArea")}</option>
-                    <option value="Gulshan-e-Iqbal">Gulshan-e-Iqbal</option>
-                    <option value="DHA Phase 6">DHA Phase 6</option>
-                    <option value="Johar Town">Johar Town</option>
-                    <option value="F-7 Markaz">F-7 Markaz</option>
-                  </select>
-                  <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-brand-dark/20 group-hover:text-brand-primary transition-colors">
-                    <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={4}><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" /></svg>
+              {/* Custom Area Selection with SEARCH */}
+              <div className="relative" ref={dropdownRef}>
+                <button 
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                  className="w-full py-4 px-6 bg-white border-2 border-gray-100 rounded-2xl text-sm font-black text-brand-dark/80 flex items-center justify-between hover:border-brand-primary/40 transition-all shadow-sm"
+                >
+                  <span>{area || t("selectArea")}</span>
+                  <svg className={`w-4 h-4 text-brand-dark/20 transition-transform duration-300 ${isDropdownOpen ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={4}><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" /></svg>
+                </button>
+
+                {isDropdownOpen && (
+                  <div className="absolute top-full left-0 right-0 mt-2 bg-white border-2 border-gray-100 rounded-2xl shadow-2xl z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 flex flex-col">
+                    {/* Search Input inside dropdown */}
+                    <div className="px-4 py-3 border-b border-gray-100 bg-gray-50/50">
+                      <div className="relative">
+                        <input 
+                          autoFocus
+                          type="text"
+                          placeholder="Search your area..."
+                          value={searchQuery}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                          className="w-full py-2 pl-9 pr-4 bg-white border border-gray-200 rounded-xl text-xs font-bold text-brand-dark focus:outline-none focus:border-brand-primary/40 transition-all"
+                        />
+                        <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                      </div>
+                    </div>
+                    
+                    <div className="max-h-[180px] overflow-y-auto no-scrollbar py-2">
+                      {filteredAreas.length > 0 ? (
+                        filteredAreas.map((loc) => (
+                          <button
+                            key={loc}
+                            onClick={() => { setArea(loc); setIsDropdownOpen(false); setSearchQuery(""); }}
+                            className={`w-full text-left px-6 py-3 text-[10px] font-black uppercase tracking-widest transition-colors ${area === loc ? "bg-brand-primary text-white" : "text-brand-dark/70 hover:bg-gray-50"}`}
+                          >
+                            {loc}
+                          </button>
+                        ))
+                      ) : (
+                        <div className="px-6 py-4 text-center text-[10px] font-bold text-gray-400 uppercase tracking-widest">No area found</div>
+                      )}
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
             </div>
           </div>
 
-          {/* Main Action Button */}
           <button 
-            disabled={!city || !area}
+            disabled={!area} 
             onClick={handleSelect}
-            className={`w-full mt-8 py-4 rounded-xl font-black uppercase tracking-[0.25em] text-[10px] transition-all duration-500 ${
-              city && area 
-              ? "bg-brand-primary text-white shadow-[0_15px_30px_rgba(230,57,70,0.3)] hover:shadow-[0_20px_40px_rgba(230,57,70,0.4)] hover:-translate-y-0.5 active:scale-95" 
-              : "bg-gray-100 text-gray-300 cursor-not-allowed"
-            }`}
+            className={`w-full mt-10 py-5 rounded-2xl font-black uppercase tracking-[0.3em] text-xs transition-all duration-500 ${area ? "bg-brand-primary text-white shadow-xl hover:-translate-y-1" : "bg-gray-100 text-gray-300"}`}
           >
             {t("startOrdering")}
           </button>
-
-          <p className="mt-6 text-[9px] font-bold text-brand-dark/20 uppercase tracking-[0.3em]">Premium Dining Experience Guaranteed</p>
-
+          <p className="mt-8 text-[10px] font-bold text-brand-dark/20 uppercase tracking-[0.4em]">Zee Food Gallery Premium</p>
         </div>
       </div>
     </div>

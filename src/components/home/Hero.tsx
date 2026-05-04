@@ -23,10 +23,10 @@ export default function Hero() {
         {[...Array(30)].map((_, i) => (
           <div key={i} className={`flex whitespace-nowrap animate-marquee ${i % 2 === 0 ? '' : 'direction-reverse'}`} style={{ animationDuration: `${60 + i * 2}s` }}>
             <span className="text-[5rem] lg:text-[8rem] font-black uppercase tracking-[0.6em] px-10 text-brand-dark">
-              ZEEFOOD ZEEFOOD ZEEFOOD ZEEFOOD ZEEFOOD ZEEFOOD
+              ZEE FOOD GALLERY • اماں جی کا ڈابہ • ZEE FOOD GALLERY • اماں جی کا ڈابہ
             </span>
             <span className="text-[5rem] lg:text-[8rem] font-black uppercase tracking-[0.6em] px-10 text-brand-dark">
-              ZEEFOOD ZEEFOOD ZEEFOOD ZEEFOOD ZEEFOOD ZEEFOOD
+              ZEE FOOD GALLERY • اماں جی کا ڈابہ • ZEE FOOD GALLERY • اماں جی کا ڈابہ
             </span>
           </div>
         ))}

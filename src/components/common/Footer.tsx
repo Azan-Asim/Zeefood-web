@@ -4,11 +4,11 @@ import Link from "next/link";
 
 const footerLinks = {
   Menu: [
-    { label: "Desi Cuisine", href: "/menu" },
-    { label: "Frozen Foods", href: "/menu" },
-    { label: "Family Deals", href: "/menu" },
-    { label: "New Arrivals", href: "/menu" },
-    { label: "Seasonal Specials", href: "/menu" },
+    { label: "Desi Cuisine (دیسی کھانے)", href: "/menu" },
+    { label: "Frozen Foods (منجمد اشیاء)", href: "/menu" },
+    { label: "Family Deals (فیملی ڈیلز)", href: "/menu" },
+    { label: "New Arrivals (نئی اشیاء)", href: "/menu" },
+    { label: "Seasonal Specials (موسمی پکوان)", href: "/menu" },
   ],
   Company: [
     { label: "About ZeeFood", href: "/about" },
@@ -208,15 +208,51 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Bottom Bar */}
-        <div className="border-t border-gray-100 py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-brand-dark/40 font-medium">
-            © {year} ZeeFood. All rights reserved. Made with ❤️ in Pakistan.
-          </p>
-          <div className="flex items-center gap-6">
-            <Link href="/privacy" className="text-xs text-brand-dark/40 hover:text-brand-primary transition-colors font-medium">Privacy Policy</Link>
-            <Link href="/terms" className="text-xs text-brand-dark/40 hover:text-brand-primary transition-colors font-medium">Terms of Service</Link>
-            <Link href="/contact" className="text-xs text-brand-dark/40 hover:text-brand-primary transition-colors font-medium">Contact</Link>
+        {/* Bottom Bar - INTEGRATED DEVSINN BRANDING */}
+        <div className="border-t border-gray-100 py-12 flex flex-col items-center justify-center gap-8">
+          
+          <a 
+            href="https://www.devsinntechnologies.com/" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="group transition-all"
+          >
+            <div className="flex flex-col items-center gap-6 px-10 py-8 bg-white rounded-[2rem] border border-gray-100 shadow-sm group-hover:shadow-[0_30px_60px_rgba(37,99,235,0.18)] group-hover:border-blue-500/30 transition-all duration-500">
+              
+              <div className="flex items-center gap-5">
+                <span className="text-xs font-black text-brand-dark/40 uppercase tracking-[0.3em] group-hover:text-blue-600 transition-colors">
+                  Powered by
+                </span>
+                <div className="relative w-44 h-12">
+                  <Image 
+                    src="/devsinn.png" 
+                    alt="Devsinn Technologies" 
+                    fill 
+                    className="object-contain transition-transform duration-500 group-hover:scale-105" 
+                    unoptimized
+                  />
+                </div>
+              </div>
+
+              {/* Company Name INSIDE the card at the bottom */}
+              <div className="pt-4 border-t border-gray-50 w-full text-center">
+                <span className="text-[12px] font-black uppercase tracking-[0.6em] text-transparent bg-clip-text bg-gradient-to-r from-[#2563eb] to-[#06b6d4] group-hover:tracking-[0.7em] transition-all duration-500">
+                  Devsinn Technologies
+                </span>
+              </div>
+              
+            </div>
+          </a>
+
+          <div className="w-full flex flex-col sm:flex-row items-center justify-between gap-6 border-t border-gray-50 pt-8">
+            <p className="text-[10px] text-brand-dark/40 font-black uppercase tracking-widest">
+              © {year} ZeeFood. All rights reserved. Made with ❤️ in Pakistan.
+            </p>
+            <div className="flex items-center gap-8">
+              <Link href="/privacy" className="text-[10px] text-brand-dark/40 hover:text-brand-primary transition-colors font-black uppercase tracking-widest">Privacy Policy</Link>
+              <Link href="/terms" className="text-[10px] text-brand-dark/40 hover:text-brand-primary transition-colors font-black uppercase tracking-widest">Terms</Link>
+              <Link href="/contact" className="text-[10px] text-brand-dark/40 hover:text-brand-primary transition-colors font-black uppercase tracking-widest">Contact</Link>
+            </div>
           </div>
         </div>
 

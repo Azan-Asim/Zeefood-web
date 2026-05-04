@@ -1,0 +1,178 @@
+"use client";
+
+import { useParams, useRouter } from "next/navigation";
+import Image from "next/image";
+import { useLanguage } from "@/context/LanguageContext";
+import { useCart } from "@/context/CartContext";
+import { allMenuItems } from "@/data/menuData";
+import { useEffect, useState } from "react";
+import Link from "next/link";
+
+export default function ProductDetailPage() {
+  const { slug } = useParams();
+  const router = useRouter();
+  const { t, language } = useLanguage();
+  const { addToCart } = useCart();
+  const [item, setItem] = useState<any>(null);
+
+  useEffect(() => {
+    const foundItem = allMenuItems.find((m) => m.slug === slug);
+    if (foundItem) {
+      setItem(foundItem);
+    }
+  }, [slug]);
+
+  if (!item) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-brand-light">
+        <div className="text-center">
+          <h2 className="text-2xl font-black text-brand-dark mb-4 uppercase">Item Not Found</h2>
+          <Link href="/menu" className="text-brand-primary font-bold hover:underline">Back to Menu</Link>
+        </div>
+      </div>
+    );
+  }
+
+  const handleBuyNow = () => {
+    const message = `*BUY NOW - ZEE FOOD GALLERY*\n\n*Item:* ${item.name} (${item.nameUr})\n*Price:* ${item.price}\n\nPlease confirm my order. Thank you!`;
+    const encodedMessage = encodeURIComponent(message);
+    const whatsappUrl = `https://wa.me/923136933988?text=${encodedMessage}`;
+    window.open(whatsappUrl, "_blank");
+  };
+
+  const handleAddToCart = () => {
+    addToCart(item);
+    router.push("/order");
+  };
+
+  return (
+    <main className="min-h-screen bg-[#fcfdfd] pt-32 pb-24">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        {/* Back Button */}
+        <button 
+          onClick={() => router.back()}
+          className="flex items-center gap-2 text-brand-dark/50 hover:text-brand-primary font-black uppercase tracking-widest text-[10px] mb-12 transition-all group"
+        >
+          <svg className="w-4 h-4 transition-transform group-hover:-translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+          </svg>
+          Back to browsing
+        </button>
+
+        <div className="flex flex-col lg:flex-row gap-16 lg:gap-24">
+          
+          {/* Left Side: Cinematic Image Area */}
+          <div className="lg:w-1/2">
+            <div className="sticky top-40">
+              <div className="relative aspect-square rounded-[3rem] overflow-hidden bg-gradient-to-br from-orange-50 to-brand-white border border-gray-100 shadow-2xl group">
+                <Image 
+                  src={item.image} 
+                  alt={item.name} 
+                  fill 
+                  className="object-contain p-12 group-hover:scale-105 transition-transform duration-700"
+                  unoptimized
+                />
+                
+                {/* Category Badge */}
+                <div className="absolute top-8 left-8">
+                  <span className="px-4 py-2 bg-brand-primary text-white text-[10px] font-black uppercase tracking-widest rounded-full shadow-lg">
+                    {item.category}
+                  </span>
+                </div>
+              </div>
+
+              {/* Stats/Quick Info */}
+              <div className="mt-12 grid grid-cols-2 gap-6">
+                <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 text-center">
+                  <span className="block text-[10px] font-black text-brand-primary uppercase tracking-widest mb-2">{t("timeLabel")}</span>
+                  <span className="text-lg font-black text-brand-dark">{language === "UR" ? item.details.prepTimeUr : item.details.prepTime}</span>
+                </div>
+                <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 text-center">
+                  <span className="block text-[10px] font-black text-brand-primary uppercase tracking-widest mb-2">{t("priceLabel")}</span>
+                  <span className="text-lg font-black text-brand-dark">{item.price}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Side: Detailed Content Area */}
+          <div className={`lg:w-1/2 flex flex-col ${language === "UR" ? "text-right" : "text-left"}`}>
+            
+            <div className="mb-12">
+              <h1 className="text-4xl lg:text-7xl font-black tracking-tighter uppercase leading-[0.9] mb-6 flex flex-col text-transparent bg-clip-text bg-gradient-to-r from-brand-primary to-brand-secondary">
+                <span>{item.name}</span>
+                <span className="text-2xl lg:text-3xl font-bold text-brand-dark/30 mt-2">({item.nameUr})</span>
+              </h1>
+              <div className={`w-24 h-2 bg-brand-primary rounded-full mb-8 ${language === "UR" ? "ml-auto" : ""}`} />
+              
+              <p className="text-xl text-brand-dark/70 font-medium leading-relaxed italic">
+                {language === "UR" ? item.descriptionUr : item.description}
+              </p>
+            </div>
+
+            {/* How It's Made */}
+            <div className="mb-12">
+              <h4 className={`flex items-center gap-3 text-xs font-black text-brand-primary uppercase tracking-[0.2em] mb-6 ${language === "UR" ? "flex-row-reverse" : ""}`}>
+                <span className="w-12 h-[2px] bg-brand-primary" />
+                {t("howItsMade")}
+              </h4>
+              <p className="text-lg text-brand-dark/60 font-medium leading-relaxed whitespace-pre-line border-l-4 border-brand-primary/20 pl-6 italic">
+                "{language === "UR" ? item.details.recipeUr : item.details.recipe}"
+              </p>
+            </div>
+
+            {/* Key Ingredients - NOW BILINGUAL */}
+            <div className="mb-12">
+              <h4 className={`flex items-center gap-3 text-xs font-black text-brand-primary uppercase tracking-[0.2em] mb-6 ${language === "UR" ? "flex-row-reverse" : ""}`}>
+                <span className="w-12 h-[2px] bg-brand-primary" />
+                {t("keyIngredients")}
+              </h4>
+              <div className={`flex flex-wrap gap-4 ${language === "UR" ? "justify-end" : "justify-start"}`}>
+                {item.details.ingredients.map((ing: string, i: number) => (
+                  <span 
+                    key={i} 
+                    className="px-6 py-3 bg-white rounded-2xl text-xs font-bold text-brand-dark border border-gray-100 shadow-sm hover:border-brand-primary/30 hover:-translate-y-1 transition-all cursor-default flex flex-col items-center gap-1"
+                  >
+                    <span>{ing}</span>
+                    <span className="text-[10px] text-brand-primary opacity-60">({item.details.ingredientsUr[i]})</span>
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* CTAs */}
+            <div className="mt-auto pt-12 flex flex-col sm:flex-row gap-4">
+              <button 
+                onClick={handleAddToCart}
+                className="flex-1 py-6 bg-brand-dark text-white rounded-[1.5rem] font-black uppercase tracking-[0.2em] text-sm shadow-2xl hover:bg-black transition-all active:scale-95"
+              >
+                {t("addToCart")}
+              </button>
+              <button 
+                onClick={handleBuyNow}
+                className="flex-1 py-6 bg-brand-primary text-white rounded-[1.5rem] font-black uppercase tracking-[0.2em] text-sm shadow-2xl hover:bg-[#b0222e] transition-all active:scale-95"
+              >
+                Buy Now
+              </button>
+            </div>
+
+            {/* Security/Trust Badges */}
+            <div className={`mt-12 flex items-center gap-8 ${language === "UR" ? "justify-end" : "justify-start"}`}>
+              <div className="flex items-center gap-2 opacity-40 grayscale group hover:grayscale-0 hover:opacity-100 transition-all">
+                <svg className="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
+                <span className="text-[10px] font-black uppercase tracking-widest text-brand-dark">Authentic Taste</span>
+              </div>
+              <div className="flex items-center gap-2 opacity-40 grayscale group hover:grayscale-0 hover:opacity-100 transition-all">
+                <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
+                <span className="text-[10px] font-black uppercase tracking-widest text-brand-dark">Fresh Daily</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </main>
+  );
+}

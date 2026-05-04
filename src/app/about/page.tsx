@@ -2,7 +2,7 @@ import AboutSection from "@/components/home/AboutSection";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = { 
-  title: "Our Story — Hamari Jaga Dhaba",
+  title: "Our Story — Zee Food Gallery",
   description: "Learn about our journey, local heritage, and commitment to authentic desi flavors."
 };
 
