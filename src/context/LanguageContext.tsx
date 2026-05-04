@@ -13,7 +13,7 @@ interface LanguageContextType {
 const translations: Record<Language, Record<string, string>> = {
   EN: {
     brandName: "Zee Food Gallery",
-    brandSubtitle: "اماں جی کا ڈابہ",
+    brandSubtitle: "اماں جی کا ڈھابہ",
     orderNow: "Order Now",
     viewMenu: "View Menu",
     ourStory: "Our Story",
@@ -69,7 +69,7 @@ const translations: Record<Language, Record<string, string>> = {
   },
   UR: {
     brandName: "Zee Food Gallery",
-    brandSubtitle: "اماں جی کا ڈابہ",
+    brandSubtitle: "اماں جی کا ڈھابہ",
     orderNow: "ابھی آرڈر کریں",
     viewMenu: "مینیو دیکھیں",
     ourStory: "ہماری کہانی",

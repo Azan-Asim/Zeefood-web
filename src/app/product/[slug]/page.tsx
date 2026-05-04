@@ -106,20 +106,33 @@ export default function ProductDetailPage() {
               </h1>
               <div className={`w-24 h-2 bg-brand-primary rounded-full mb-8 ${language === "UR" ? "ml-auto" : ""}`} />
               
-              <p className="text-xl text-brand-dark/70 font-medium leading-relaxed italic">
-                {language === "UR" ? item.descriptionUr : item.description}
-              </p>
+              {/* Bilingual Description */}
+              <div className="space-y-4">
+                <p className="text-xl lg:text-2xl text-brand-dark/80 font-medium leading-relaxed italic border-l-4 border-brand-primary/20 pl-6">
+                  {item.description}
+                </p>
+                <p className="text-xl lg:text-2xl text-brand-dark/50 font-bold leading-relaxed pr-6 text-right" dir="rtl">
+                  {item.descriptionUr}
+                </p>
+              </div>
             </div>
 
-            {/* How It's Made */}
+            {/* How It's Made - BILINGUAL */}
             <div className="mb-12">
-              <h4 className={`flex items-center gap-3 text-xs font-black text-brand-primary uppercase tracking-[0.2em] mb-6 ${language === "UR" ? "flex-row-reverse" : ""}`}>
+              <h4 className={`flex items-center gap-3 text-xs font-black text-brand-primary uppercase tracking-[0.2em] mb-8 ${language === "UR" ? "flex-row-reverse" : ""}`}>
                 <span className="w-12 h-[2px] bg-brand-primary" />
                 {t("howItsMade")}
               </h4>
-              <p className="text-lg text-brand-dark/60 font-medium leading-relaxed whitespace-pre-line border-l-4 border-brand-primary/20 pl-6 italic">
-                "{language === "UR" ? item.details.recipeUr : item.details.recipe}"
-              </p>
+              <div className="bg-white/50 rounded-[2rem] p-8 border border-gray-100 shadow-sm space-y-6">
+                <p className="text-lg text-brand-dark/70 font-medium leading-relaxed italic relative">
+                  <span className="absolute -left-4 top-0 text-4xl text-brand-primary/10 font-serif">"</span>
+                  {item.details.recipe}
+                </p>
+                <div className="w-20 h-[1px] bg-gray-100 mx-auto" />
+                <p className="text-lg text-brand-dark/40 font-bold leading-relaxed text-right" dir="rtl">
+                  {item.details.recipeUr}
+                </p>
+              </div>
             </div>
 
             {/* Key Ingredients - NOW BILINGUAL */}

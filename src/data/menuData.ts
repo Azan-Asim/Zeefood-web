@@ -130,7 +130,7 @@ export const allMenuItems: MenuItem[] = [
     id: 6,
     slug: "special-mutton-karahi",
     name: "Special Mutton Karahi",
-    nameUr: "خصوصی مٹن کڑاہی",
+    nameUr: "سپیشل مٹن کڑاہی",
     category: "Karahi",
     description: "Authentic Peshawari style mutton karahi cooked with fresh tomatoes and green chilies.",
     descriptionUr: "اصلی پشاوری سٹائل مٹن کڑاہی جو تازہ ٹماٹروں اور ہری مرچوں کے ساتھ تیار کی جاتی ہے۔",
@@ -200,7 +200,7 @@ export const allMenuItems: MenuItem[] = [
       recipe: "Our Nihari is slow-cooked for 8-10 hours in a rich, spicy gravy thickened with flour, resulting in incredibly tender meat.",
       recipeUr: "ہماری نہاری کو 8-10 گھنٹے تک ایک بھرپور مصالحے دار گریوی میں ہلکی آنچ پر پکایا جاتا ہے۔",
       ingredients: ["Beef Shank", "Bone Marrow", "Special Nihari Spices", "Pure Ghee", "Fresh Ginger & Lemon"],
-      ingredientsUr: ["بیف بونگ", "نلی مخ", "خصوصی نہاری مصالحے", "خالص گھی", "تازہ ادرک اور لیموں"],
+      ingredientsUr: ["بیف بونگ", "نلی مخ", "سپیشل نہاری مصالحے", "خالص گھی", "تازہ ادرک اور لیموں"],
       prepTime: "8-10 hours",
       prepTimeUr: "8-10 گھنٹے"
     }
@@ -261,7 +261,7 @@ export const allMenuItems: MenuItem[] = [
       recipe: "Perfectly seasoned beef seekh kebabs, grilled to perfection with a smoky aroma that will leave you wanting more.",
       recipeUr: "بہترین مصالحوں میں تیار بیف سیخ کباب، کوئلے کی مہک اور لاجواب ذائقے کے ساتھ۔",
       ingredients: ["12 Beef Kebabs", "Special Masala", "Green Chutney", "Fresh Onions"],
-      ingredientsUr: ["12 بیف کباب", "خصوصی مصالحہ", "ہری چٹنی", "تازہ پیاز"],
+      ingredientsUr: ["12 بیف کباب", "سپیشل مصالحہ", "ہری چٹنی", "تازہ پیاز"],
       prepTime: "15-20 mins",
       prepTimeUr: "15-20 منٹ"
     }
