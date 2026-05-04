@@ -111,7 +111,7 @@ export default function ProductDetailPage() {
                 <p className="text-xl lg:text-2xl text-brand-dark/80 font-medium leading-relaxed italic border-l-4 border-brand-primary/20 pl-6">
                   {item.description}
                 </p>
-                <p className="text-xl lg:text-2xl text-brand-dark/50 font-bold leading-relaxed pr-6 text-right" dir="rtl">
+                <p className="text-xl lg:text-2xl text-brand-dark/50 font-bold leading-relaxed pr-6 text-right font-urdu" dir="rtl">
                   {item.descriptionUr}
                 </p>
               </div>
@@ -129,7 +129,7 @@ export default function ProductDetailPage() {
                   {item.details.recipe}
                 </p>
                 <div className="w-20 h-[1px] bg-gray-100 mx-auto" />
-                <p className="text-lg text-brand-dark/40 font-bold leading-relaxed text-right" dir="rtl">
+                <p className="text-lg text-brand-dark/40 font-bold leading-relaxed text-right font-urdu" dir="rtl">
                   {item.details.recipeUr}
                 </p>
               </div>
@@ -148,7 +148,7 @@ export default function ProductDetailPage() {
                     className="px-6 py-3 bg-white rounded-2xl text-xs font-bold text-brand-dark border border-gray-100 shadow-sm hover:border-brand-primary/30 hover:-translate-y-1 transition-all cursor-default flex flex-col items-center gap-1"
                   >
                     <span>{ing}</span>
-                    <span className="text-[10px] text-brand-primary opacity-60">({item.details.ingredientsUr[i]})</span>
+                    <span className="text-[12px] text-brand-primary opacity-60 font-urdu">({item.details.ingredientsUr[i]})</span>
                   </span>
                 ))}
               </div>

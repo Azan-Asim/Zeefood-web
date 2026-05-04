@@ -55,7 +55,7 @@ export default function SignatureDesi() {
                 <div className="h-[100px] lg:h-[110px] w-full" />
                 <h3 className="text-xl font-black text-brand-dark uppercase tracking-wide mb-3 group-hover:text-brand-primary transition-colors flex flex-col items-center">
                   <span>{item.name}</span>
-                  <span className="text-sm font-bold opacity-80">({item.nameUr})</span>
+                  <span className="text-sm font-bold opacity-80 font-urdu">({item.nameUr})</span>
                 </h3>
                 <p className="text-brand-dark/70 text-sm font-bold mb-6 line-clamp-3">
                   {language === "UR" ? item.descriptionUr : item.description}

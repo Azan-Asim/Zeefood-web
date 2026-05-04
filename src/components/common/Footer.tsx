@@ -4,11 +4,11 @@ import Link from "next/link";
 
 const footerLinks = {
   Menu: [
-    { label: "Desi Cuisine (دیسی کھانے)", href: "/menu" },
-    { label: "Frozen Foods (منجمد اشیاء)", href: "/menu" },
-    { label: "Family Deals (فیملی ڈیلز)", href: "/menu" },
-    { label: "New Arrivals (نئی اشیاء)", href: "/menu" },
-    { label: "Seasonal Specials (موسمی پکوان)", href: "/menu" },
+    { label: <>Desi Cuisine <span className="font-urdu opacity-70">(دیسی کھانے)</span></>, href: "/menu" },
+    { label: <>Frozen Foods <span className="font-urdu opacity-70">(منجمد اشیاء)</span></>, href: "/menu" },
+    { label: <>Family Deals <span className="font-urdu opacity-70">(فیملی ڈیلز)</span></>, href: "/menu" },
+    { label: <>New Arrivals <span className="font-urdu opacity-70">(نئی اشیاء)</span></>, href: "/menu" },
+    { label: <>Seasonal Specials <span className="font-urdu opacity-70">(موسمی پکوان)</span></>, href: "/menu" },
   ],
   Company: [
     { label: "About ZeeFood", href: "/about" },

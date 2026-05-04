@@ -118,7 +118,7 @@ export default function HeroSlider() {
               </div>
 
               {/* Content Container */}
-              <div className="relative h-full flex flex-col justify-center items-start px-6 md:px-12 lg:px-24 max-w-7xl mx-auto w-full pt-20">
+              <div className="relative h-full flex flex-col justify-center items-start px-6 md:px-12 lg:px-24 max-w-7xl mx-auto w-full pt-28">
                 <div className={`transition-all duration-1000 delay-300 transform ${
                   index === current ? "translate-y-0 opacity-100" : "translate-y-12 opacity-0"
                 }`}>
@@ -131,8 +131,8 @@ export default function HeroSlider() {
                   </div>
 
                   {/* Headline */}
-                  <div className="mb-8 max-w-5xl">
-                    <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-white leading-[0.95] tracking-tighter uppercase italic whitespace-pre-line mb-4">
+                  <div className="mb-8 max-w-4xl">
+                    <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-white leading-[1] tracking-tighter uppercase italic whitespace-pre-line mb-4">
                       {englishParts.join('\n').split(' ').map((word, i) => (
                         <span key={i} className={i % 2 !== 0 && slide.type === 'image' ? "text-stroke-secondary" : ""}>
                           {word}{" "}
@@ -140,14 +140,14 @@ export default function HeroSlider() {
                       ))}
                     </h1>
                     {urduPart && (
-                      <div className="text-2xl md:text-4xl lg:text-5xl font-bold text-brand-secondary opacity-90 tracking-tight">
+                      <div className="text-xl md:text-3xl lg:text-4xl font-bold text-brand-secondary opacity-90 tracking-tight font-urdu">
                         {urduPart}
                       </div>
                     )}
                   </div>
 
                   {/* Description */}
-                  <p className="text-lg md:text-2xl text-white/70 font-medium max-w-xl mb-12 leading-relaxed border-l-4 border-brand-primary/50 pl-6">
+                  <p className="text-base md:text-xl text-white/70 font-medium max-w-lg mb-10 leading-relaxed border-l-4 border-brand-primary/50 pl-6">
                     {slide.desc}
                   </p>
                   

@@ -187,7 +187,7 @@ function PromoCard({ card, className }: { card: typeof promoCards[0]; className?
         <div>
           <h3 className={`font-black text-white uppercase tracking-tight leading-[0.9] whitespace-pre-line drop-shadow-lg mb-3 flex flex-col ${card.size === 'large' ? 'text-4xl lg:text-5xl' : 'text-3xl lg:text-4xl'}`}>
             <span>{card.headline}</span>
-            <span className="text-xl lg:text-2xl font-bold opacity-80">({card.headlineUr})</span>
+            <span className="text-xl lg:text-2xl font-bold opacity-80 font-urdu">({card.headlineUr})</span>
           </h3>
           <p className={`text-white/70 text-sm font-medium leading-relaxed mb-6 ${card.size === 'large' ? 'max-w-sm' : 'max-w-xs'}`}>
             {card.subtext}

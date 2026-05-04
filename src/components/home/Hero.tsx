@@ -22,10 +22,10 @@ export default function Hero() {
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden flex flex-col items-center justify-center opacity-[0.035] rotate-[-15deg] scale-150 select-none">
         {[...Array(30)].map((_, i) => (
           <div key={i} className={`flex whitespace-nowrap animate-marquee ${i % 2 === 0 ? '' : 'direction-reverse'}`} style={{ animationDuration: `${60 + i * 2}s` }}>
-            <span className="text-[5rem] lg:text-[8rem] font-black uppercase tracking-[0.6em] px-10 text-brand-dark">
+            <span className="text-[5rem] lg:text-[8rem] font-black uppercase tracking-[0.6em] px-10 text-brand-dark font-urdu">
               ZEE FOOD GALLERY • اماں جی کا ڈابہ • ZEE FOOD GALLERY • اماں جی کا ڈابہ
             </span>
-            <span className="text-[5rem] lg:text-[8rem] font-black uppercase tracking-[0.6em] px-10 text-brand-dark">
+            <span className="text-[5rem] lg:text-[8rem] font-black uppercase tracking-[0.6em] px-10 text-brand-dark font-urdu">
               ZEE FOOD GALLERY • اماں جی کا ڈابہ • ZEE FOOD GALLERY • اماں جی کا ڈابہ
             </span>
           </div>

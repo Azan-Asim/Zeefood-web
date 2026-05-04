@@ -31,6 +31,15 @@ body {
     -webkit-text-stroke: 1px var(--color-brand-secondary);
     color: transparent;
   }
+  .font-urdu {
+    font-family: var(--font-noto-urdu), serif;
+    line-height: 1.8;
+  }
+}
+
+[dir="rtl"], [lang="ur"] {
+  font-family: var(--font-noto-urdu), serif !important;
+  line-height: 1.8 !important;
 }
 
 /* ─── Login page animations ─── */

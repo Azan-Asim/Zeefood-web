@@ -1,11 +1,16 @@
 import type { Metadata } from "next";
-import { Poppins } from "next/font/google";
+import { Poppins, Noto_Nastaliq_Urdu } from "next/font/google";
 import "./globals.css";
 
 const poppins = Poppins({
   weight: ["300", "400", "500", "600", "700", "800", "900"],
   subsets: ["latin"],
   variable: "--font-poppins",
+});
+
+const notoUrdu = Noto_Nastaliq_Urdu({
+  subsets: ["arabic"],
+  variable: "--font-noto-urdu",
 });
 
 export const metadata: Metadata = {
@@ -27,7 +32,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${poppins.variable} h-full antialiased`}
+      className={`${poppins.variable} ${notoUrdu.variable} h-full antialiased`}
     >
       <body className={`${poppins.className} min-h-full flex flex-col font-sans`}>
         <LanguageProvider>
