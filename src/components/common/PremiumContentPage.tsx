@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import Footer from "@/components/common/Footer";
 
 interface PremiumContentPageProps {
   label: string;
@@ -78,7 +77,6 @@ export default function PremiumContentPage({ label, title1, title2, description,
         </div>
       </main>
 
-      <Footer />
     </div>
   );
 }
