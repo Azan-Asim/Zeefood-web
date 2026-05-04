@@ -62,7 +62,7 @@ export default function TopDeals() {
                     src={deal.image} 
                     alt={deal.name}
                     fill
-                    className="object-cover transition-transform duration-700 group-hover:scale-110"
+                    className="object-cover transition-transform duration-700 group-hover:scale-110 mix-blend-multiply"
                     unoptimized
                   />
                 </div>

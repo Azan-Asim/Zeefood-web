@@ -90,7 +90,7 @@ export default function OrderPage() {
               >
                 <Link href={`/product/${item.slug}`} className="absolute -top-16 w-44 h-44 transition-transform duration-700 group-hover:scale-105 group-hover:rotate-2 drop-shadow-[0_20px_35px_rgba(0,0,0,0.18)]">
                   <div className="w-full h-full relative z-10 border-4 border-white shadow-inner rounded-full bg-white group-hover:border-brand-primary/20 transition-colors duration-500 overflow-hidden">
-                    <Image src={item.image} alt={item.name} fill className="object-cover scale-100 group-hover:scale-110 transition-transform duration-700" unoptimized />
+                    <Image src={item.image} alt={item.name} fill className="object-cover scale-100 group-hover:scale-110 transition-transform duration-700 mix-blend-multiply" unoptimized />
                   </div>
                   {item.popular && (
                     <div className="absolute top-4 right-0 z-20 bg-[#E63946] text-white text-[9px] font-black uppercase tracking-wider px-2 py-1 rounded-full shadow-lg">
@@ -200,7 +200,7 @@ export default function OrderPage() {
             cart.map((c, i) => (
               <div key={i} className={`flex gap-4 items-center group ${language === "UR" ? "flex-row-reverse" : ""}`}>
                 <div className="w-16 h-16 bg-white border border-[#ebe3d9] shadow-sm rounded-2xl flex items-center justify-center relative overflow-hidden shrink-0 group-hover:scale-105 transition-transform duration-300">
-                  <Image src={c.item.image} alt={c.item.name} fill className="object-cover" unoptimized />
+                  <Image src={c.item.image} alt={c.item.name} fill className="object-cover mix-blend-multiply" unoptimized />
                 </div>
                 <div className={`flex-1 min-w-0 ${language === "UR" ? "text-right" : ""}`}>
                   <h4 className="font-bold text-[#1a0a04] text-sm leading-tight mb-1 truncate flex flex-col">
