@@ -48,7 +48,6 @@ export async function fetchProductsApi(
     },
     signal,
     // Next.js 15+ cache control
-    // @ts-expect-error — Next.js extended fetch options
     next: { revalidate: 60 },
   });
 
