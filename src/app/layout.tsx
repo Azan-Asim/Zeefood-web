@@ -23,6 +23,7 @@ import Footer from "@/components/common/Footer";
 import LocationModal from "@/components/common/LocationModal";
 import { LanguageProvider } from "@/context/LanguageContext";
 import { CartProvider } from "@/context/CartContext";
+import ReduxProvider from "@/components/common/ReduxProvider";
 
 export default function RootLayout({
   children,
@@ -33,16 +34,22 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${poppins.variable} ${notoUrdu.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
-      <body className={`${poppins.className} min-h-full flex flex-col font-sans`}>
-        <LanguageProvider>
-          <CartProvider>
-            <LocationModal />
-            <Navbar />
-            <main className="flex-grow">{children}</main>
-            <Footer />
-          </CartProvider>
-        </LanguageProvider>
+      <body 
+        className={`${poppins.className} min-h-full flex flex-col font-sans`}
+        suppressHydrationWarning
+      >
+        <ReduxProvider>
+          <LanguageProvider>
+            <CartProvider>
+              <LocationModal />
+              <Navbar />
+              <main className="flex-grow">{children}</main>
+              <Footer />
+            </CartProvider>
+          </LanguageProvider>
+        </ReduxProvider>
       </body>
     </html>
   );

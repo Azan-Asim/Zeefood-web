@@ -11,6 +11,17 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'images.unsplash.com',
       },
+      {
+        // DRM live product images
+        protocol: 'https',
+        hostname: 'drm.devsinntechnologies.com',
+        pathname: '/uploads/**',
+      },
+      {
+        // Noise texture for glassmorphic backgrounds
+        protocol: 'https',
+        hostname: 'grainy-gradients.vercel.app',
+      },
     ],
   },
 };

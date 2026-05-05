@@ -114,7 +114,7 @@ export default function PromoBanners() {
             <div className="absolute -bottom-10 -left-10 w-48 h-48 bg-black/10 rounded-full blur-xl pointer-events-none" />
             {/* Decorative diagonal bars */}
             <div className="absolute right-10 top-0 bottom-0 flex gap-3 opacity-10 pointer-events-none">
-              {[0,1,2,3].map(i => (
+              {[0, 1, 2, 3].map(i => (
                 <div key={i} className="w-8 bg-white skew-x-[-10deg]" />
               ))}
             </div>

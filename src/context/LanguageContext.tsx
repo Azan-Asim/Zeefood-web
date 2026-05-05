@@ -135,15 +135,20 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     if (savedLang) setLanguage(savedLang);
   }, []);
 
-  const handleSetLanguage = (lang: Language) => {
-    setLanguage(lang);
-    localStorage.setItem("appLanguage", lang);
-    document.documentElement.dir = lang === "UR" ? "rtl" : "ltr";
-    document.documentElement.lang = lang.toLowerCase();
+  const handleSetLanguage = (lang: string) => {
+    const normalizedLang = lang.toUpperCase() as Language;
+    if (translations[normalizedLang]) {
+      setLanguage(normalizedLang);
+      localStorage.setItem("appLanguage", normalizedLang);
+      document.documentElement.dir = normalizedLang === "UR" ? "rtl" : "ltr";
+      document.documentElement.lang = normalizedLang.toLowerCase();
+    }
   };
 
   const t = (key: string) => {
-    return translations[language][key] || key;
+    const langData = translations[language];
+    if (!langData) return key;
+    return langData[key] || key;
   };
 
   return (

@@ -3,7 +3,7 @@
 import { useState, useId } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import Footer from "@/components/common/Footer";
+
 
 export default function ContactPage() {
   const nameId = useId();
@@ -181,7 +181,7 @@ export default function ContactPage() {
         </div>
       </main>
 
-      <Footer />
+
     </div>
   );
 }
