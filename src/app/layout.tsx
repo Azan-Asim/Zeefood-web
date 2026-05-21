@@ -33,10 +33,10 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${poppins.variable} ${notoUrdu.variable} h-full antialiased`}
+      className={`${notoUrdu.variable} ${poppins.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      <body 
+      <body
         className={`${poppins.className} min-h-full flex flex-col font-sans`}
         suppressHydrationWarning
       >

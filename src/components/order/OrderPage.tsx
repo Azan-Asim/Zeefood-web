@@ -54,8 +54,8 @@ function ProductCard({
     lowestVariantPrice > 0
       ? `Rs. ${lowestVariantPrice.toLocaleString()}`
       : product.price > 0
-      ? `Rs. ${product.price.toLocaleString()}`
-      : "—";
+        ? `Rs. ${product.price.toLocaleString()}`
+        : "—";
 
   return (
     <div
@@ -285,11 +285,10 @@ export default function OrderPage() {
                 <button
                   key={cat}
                   onClick={() => changeCategory(cat)}
-                  className={`whitespace-nowrap px-5 py-2.5 rounded-full text-xs font-black uppercase tracking-widest transition-all duration-300 ${
-                    activeCategory === cat
-                      ? "bg-brand-primary text-white shadow-[0_8px_20px_rgba(230,57,70,0.35)] scale-105"
-                      : "bg-white text-[#6b5a50] border border-[#f0e4dc] hover:border-brand-primary/30 hover:text-brand-primary"
-                  }`}
+                  className={`whitespace-nowrap px-5 py-2.5 rounded-full text-xs font-black uppercase tracking-widest transition-all duration-300 ${activeCategory === cat
+                    ? "bg-brand-primary text-white "
+                    : "bg-white text-[#6b5a50] border border-[#f0e4dc] hover:border-brand-primary/30 hover:text-brand-primary"
+                    }`}
                 >
                   {cat}
                 </button>
@@ -332,13 +331,13 @@ export default function OrderPage() {
             {isLoading
               ? Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)
               : filteredProducts.map((product, index) => (
-                  <ProductCard
-                    key={product.id}
-                    product={product}
-                    index={index}
-                    onAddToCart={handleAddToCart}
-                  />
-                ))}
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  index={index}
+                  onAddToCart={handleAddToCart}
+                />
+              ))}
           </div>
         </div>
 
@@ -473,7 +472,7 @@ function CartContent({
 
       <div className="px-6 md:px-8 py-7 bg-white border-t border-[#ebe3d9]">
         {[
-          { label: t("subtotal"),    value: `Rs. ${cartTotal.toLocaleString()}` },
+          { label: t("subtotal"), value: `Rs. ${cartTotal.toLocaleString()}` },
           { label: t("deliveryFee"), value: `Rs. ${deliveryFee}` },
         ].map(({ label, value }) => (
           <div key={label} className={`flex justify-between items-center mb-3 ${language === "UR" ? "flex-row-reverse" : ""}`}>

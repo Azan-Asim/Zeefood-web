@@ -16,7 +16,7 @@ export default function SignatureDesi() {
 
         {/* Header Area */}
         <div className="flex flex-col items-center text-center mb-20">
-          <h2 className="text-3xl lg:text-5xl font-black tracking-tighter uppercase font-sans leading-none text-transparent bg-clip-text bg-gradient-to-r from-brand-primary to-brand-secondary">
+          <h2 className="text-3xl lg:text-5xl font-black tracking-tighter uppercase font-sans leading-none text-brand-primary">
             Signature Desi
           </h2>
           <div className="w-24 h-1.5 bg-brand-primary mt-4 rounded-full mb-6" />
@@ -53,11 +53,11 @@ export default function SignatureDesi() {
                   </div>
                 </div>
                 <div className="h-[100px] lg:h-[110px] w-full" />
-                <h3 className="text-xl font-black text-brand-dark uppercase tracking-wide mb-3 group-hover:text-brand-primary transition-colors flex flex-col items-center">
+                <h3 className="text-xl font-black text-black uppercase tracking-wide mb-3 group-hover:text-brand-primary transition-colors flex flex-col items-center">
                   <span>{item.name}</span>
                   <span className="text-sm font-bold opacity-80 font-urdu">({item.nameUr})</span>
                 </h3>
-                <p className="text-brand-dark/70 text-sm font-bold mb-6 line-clamp-3">
+                <p className="text-black text-sm font-bold mb-6 line-clamp-5">
                   {language === "UR" ? item.descriptionUr : item.description}
                 </p>
                 <div className="mt-auto flex flex-col items-center w-full">

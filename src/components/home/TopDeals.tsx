@@ -31,7 +31,7 @@ export default function TopDeals() {
           </div>
 
           <div className="flex flex-col items-center">
-            <h2 className="text-4xl lg:text-7xl font-black tracking-tighter uppercase font-sans leading-[0.9] text-transparent bg-clip-text bg-gradient-to-r from-brand-primary to-brand-secondary drop-shadow-sm pb-2">
+            <h2 className="text-4xl lg:text-7xl font-black tracking-tighter uppercase font-sans leading-[0.9] text-brand-primary pb-2">
               Top Deals
             </h2>
             <h3 className="text-2xl lg:text-3xl font-bold text-brand-dark/30 mt-2 font-urdu">
@@ -77,7 +77,7 @@ export default function TopDeals() {
                   </span>
                 </div>
 
-                <h3 className="text-[1.35rem] font-black text-brand-dark mb-3 leading-tight group-hover:text-brand-primary transition-colors duration-300 flex flex-col">
+                <h3 className="text-[1.35rem] font-black text-black mb-3 leading-tight group-hover:text-brand-primary transition-colors duration-300 flex flex-col">
                   <span>{deal.name}</span>
                   <span className="text-base font-bold opacity-80 font-urdu">({deal.nameUr})</span>
                 </h3>
