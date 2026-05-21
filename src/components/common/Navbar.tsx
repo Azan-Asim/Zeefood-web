@@ -26,30 +26,22 @@ export default function Navbar() {
   return (
     <>
       <nav className={`
-        fixed top-0 left-0 right-0 z-[100] w-full transition-all duration-300 backdrop-blur-md
-        ${isScrolled ? "h-20 shadow-md bg-white/90" : "h-24 bg-white/80"}
+        fixed top-0 left-0 right-0 z-[100] w-full transition-all duration-300
+        ${isScrolled ? "h-20 shadow-md bg-gray-50/90" : "h-24 bg-gray-50/80"}
       `}>
         <div className="max-w-[1400px] mx-auto h-full flex items-center justify-between px-6 lg:px-12">
-          
+
           {/* Logo Section */}
           <Link href="/" className="flex items-center gap-4">
-            <div className="relative w-12 h-12 lg:w-14 lg:h-14">
+            <div className="relative w-60 h-40">
               <Image
-                src="/fiery-wok.png"
+                src="/logo.svg"
                 alt="Zee Food"
                 fill
-                className="object-contain"
+                className="object-contain h-full w-full object-center"
                 priority
                 unoptimized
               />
-            </div>
-            <div className="flex flex-col -mt-1">
-              <span className="text-[12px] lg:text-[14px] font-black text-[#e63946] uppercase italic tracking-wider leading-tight">
-                ZEE FOOD GALLERY
-              </span>
-              <span className="text-[18px] lg:text-[24px] font-bold text-brand-dark leading-none font-urdu">
-                اماں جی کا ڈھابہ
-              </span>
             </div>
           </Link>
 
@@ -59,7 +51,7 @@ export default function Navbar() {
               <Link
                 key={link.name}
                 href={link.href}
-                className="text-[13px] font-black text-brand-dark/80 hover:text-[#e63946] transition-colors tracking-[0.1em]"
+                className=" hover:text-[#e63946] transition-colors tracking-[0.1em]"
               >
                 {link.name}
               </Link>
@@ -70,9 +62,9 @@ export default function Navbar() {
           <div className="hidden lg:flex items-center gap-6">
             <Link
               href="/order"
-              className="px-10 py-3.5 bg-gradient-to-r from-[#ef4444] to-[#fb923c] text-white rounded-full font-black text-[12px] uppercase tracking-[0.15em] shadow-lg hover:shadow-[0_10px_20px_rgba(239,68,68,0.2)] transition-all transform hover:-translate-y-0.5 active:scale-95"
+              className=" bg-brand-primary hover:bg-brand-primary text-white text-white font-medium py-3 px-8 rounded-md"
             >
-              ORDER NOW
+              Order Now
             </Link>
           </div>
 
@@ -101,8 +93,8 @@ export default function Navbar() {
           {/* Mobile Menu Header */}
           <div className="flex items-center justify-between mb-16">
             <span className="text-[14px] font-black text-[#e63946] tracking-[0.2em] uppercase">MENU</span>
-            <button 
-              onClick={() => setIsMobileMenuOpen(false)} 
+            <button
+              onClick={() => setIsMobileMenuOpen(false)}
               className="w-10 h-10 flex items-center justify-center bg-gray-100 rounded-xl text-gray-500 hover:text-[#e63946] transition-colors"
             >
               <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
@@ -110,7 +102,7 @@ export default function Navbar() {
               </svg>
             </button>
           </div>
-          
+
           <div className="flex flex-col gap-10">
             {navLinks.map((link) => (
               <Link
@@ -128,16 +120,16 @@ export default function Navbar() {
             <Link
               href="/order"
               onClick={() => setIsMobileMenuOpen(false)}
-              className="block w-full py-5 bg-gradient-to-r from-[#ef4444] to-[#fb923c] text-white text-center rounded-full font-black text-[14px] uppercase tracking-[0.2em] shadow-[0_15px_30px_rgba(239,68,68,0.25)] active:scale-95 transition-all"
+              className="block w-full py-5 bg-brand-primary text-white text-center text-white font-medium py-3 px-8 rounded-md"
             >
-              ORDER NOW
+              Order Now
             </Link>
-            
+
             <div className="mt-8 flex flex-col items-center gap-3">
               <span className="text-[9px] font-black text-gray-400 tracking-[0.4em] uppercase">Handcrafted By</span>
-              <a 
-                href="https://www.devsinntechnologies.com/" 
-                target="_blank" 
+              <a
+                href="https://www.devsinntechnologies.com/"
+                target="_blank"
                 rel="noopener noreferrer"
                 className="relative w-32 h-8 hover:scale-105 transition-transform"
               >

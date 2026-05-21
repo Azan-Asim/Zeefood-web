@@ -31,7 +31,7 @@ export async function fetchProductsApi(
   signal?: AbortSignal
 ): Promise<ProductsApiResponse> {
   const qs = buildQueryString({
-    businessId: params.businessId,
+    businessId: "5707b450-9723-4794-9ba4-ee03890cf504",
     search: params.search,
     category: params.category,
     page: params.page ?? 1,

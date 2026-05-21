@@ -94,7 +94,7 @@ export default function Footer() {
           <div>
             <h3 className="text-2xl lg:text-3xl font-black text-brand-dark tracking-tight">
               Ready to{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-primary to-brand-secondary">
+              <span className="text-brand-primary">
                 Order?
               </span>
             </h3>
@@ -211,7 +211,7 @@ export default function Footer() {
 
         {/* Bottom Bar */}
         <div className="border-t border-gray-100 py-4 flex flex-col sm:flex-row items-center sm:items-end justify-between gap-6 relative">
-          
+
           {/* Left: Copyright */}
           <p className="text-[10px] text-brand-dark/40 font-black uppercase tracking-widest text-center sm:text-left">
             © {year} ZeeFood. All rights reserved. Made with ❤️ in Pakistan.
