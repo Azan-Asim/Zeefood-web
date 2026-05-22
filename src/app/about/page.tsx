@@ -6,6 +6,7 @@ export const metadata: Metadata = {
   description: "Learn about our journey, local heritage, and commitment to authentic desi flavors."
 };
 
+
 export default function AboutPage() {
   return (
     <div className="pt-[90px]">
