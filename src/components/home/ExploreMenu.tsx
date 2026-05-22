@@ -1,12 +1,11 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useLanguage } from "@/context/LanguageContext";
 
 
 export default function ExploreMenu() {
   const { t, language } = useLanguage();
-  const scrollRef = useRef<HTMLDivElement>(null);
   const [categories, setCategories] = useState<Array<{ id: string; name: string; nameUr?: string }>>([]);
 
   // Fetch categories from API
@@ -33,16 +32,6 @@ export default function ExploreMenu() {
     fetchCategories();
   }, []);
 
-  const scroll = (direction: 'left' | 'right') => {
-    if (scrollRef.current) {
-      const scrollAmount = 300;
-      scrollRef.current.scrollBy({
-        left: direction === 'left' ? -scrollAmount : scrollAmount,
-        behavior: 'smooth'
-      });
-    }
-  };
-
   return (
     <section className="bg-brand-light pt-20 pb-24 w-full">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -65,45 +54,23 @@ export default function ExploreMenu() {
           </div>
         </div>
 
-        {/* Carousel Area */}
-        <div className="relative flex items-center">
-          <button
-            onClick={() => scroll('left')}
-            className="hidden md:flex absolute -left-6 z-10 w-12 h-12 rounded-full bg-brand-white border border-brand-dark/10 text-brand-primary items-center justify-center hover:bg-brand-primary hover:text-brand-white transition-all shadow-lg hover:scale-110 cursor-pointer"
-          >
-            <svg className="w-6 h-6 ml-[-2px]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" /></svg>
-          </button>
-
-          <div
-            ref={scrollRef}
-            className="w-full flex justify-between gap-6 overflow-x-auto pb-12 pt-6 snap-x no-scrollbar px-4"
-          >
-            {categories.map((cat) => (
-              <Link
-                key={cat.id}
-                href={`/category/${cat.id}`}
-                className="flex-none w-[210px] bg-brand-white pt-6 pb-6 px-5 flex flex-col items-center relative group cursor-pointer shadow-sm hover:shadow-[0_20px_40px_rgba(230,57,70,0.1)] hover:-translate-y-3 transition-all duration-300 snap-center shrink-0 border border-brand-dark/5"
-                style={{ borderRadius: '25px 80px 25px 80px' }}
-              >
-                <div className="w-32 h-32 bg-brand-primary/20 rounded-full flex items-center justify-center text-brand-primary font-bold text-lg mb-5">
-                  {cat.name.charAt(0)}
-                </div>
-                <h3 className="text-brand-dark font-black text-center text-black leading-tight uppercase tracking-wide group-hover:text-brand-primary transition-colors flex flex-col items-center">
-                  <span>{cat.name}</span>
-                  {cat.nameUr && <span className="text-sm font-bold opacity-80 font-urdu">({cat.nameUr})</span>}
-                </h3>
-                <div className="w-12 h-[3px] bg-brand-secondary mt-4 rounded-full transition-all duration-300 opacity-100 group-hover:w-20 group-hover:bg-brand-primary" />
-                <div className="absolute bottom-6 right-6 w-4 h-4 rounded-full bg-brand-secondary/20 group-hover:bg-brand-primary transition-colors duration-300" />
-              </Link>
-            ))}
-          </div>
-
-          <button
-            onClick={() => scroll('right')}
-            className="hidden md:flex absolute -right-6 z-10 w-12 h-12 rounded-full bg-brand-primary text-brand-white items-center justify-center hover:bg-[#b0222e] transition-all shadow-lg hover:scale-110 cursor-pointer"
-          >
-            <svg className="w-6 h-6 ml-[2px]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" /></svg>
-          </button>
+        {/* Categories Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pt-6">
+          {categories.map((cat) => (
+            <Link
+              key={cat.id}
+              href={`/category/${cat.id}`}
+              className="bg-brand-white pt-6 pb-6 px-5 flex flex-col items-center relative group cursor-pointer shadow-sm hover:shadow-[0_20px_40px_rgba(230,57,70,0.1)] hover:-translate-y-3 transition-all duration-300 border border-brand-dark/5"
+              style={{ borderRadius: '25px 80px 25px 80px' }}
+            >
+              <h3 className="text-brand-dark font-black font-serif text-center text-black leading-tight uppercase tracking-wide group-hover:text-brand-primary transition-colors flex flex-col items-center">
+                <span>{cat.name}</span>
+                {cat.nameUr && <span className="text-sm font-bold opacity-80 font-urdu">({cat.nameUr})</span>}
+              </h3>
+              <div className="w-12 h-[3px] bg-brand-secondary mt-4 rounded-full transition-all duration-300 opacity-100 group-hover:w-20 group-hover:bg-brand-primary" />
+              <div className="absolute bottom-6 right-6 w-4 h-4 rounded-full bg-brand-secondary/20 group-hover:bg-brand-primary transition-colors duration-300" />
+            </Link>
+          ))}
         </div>
       </div>
     </section>

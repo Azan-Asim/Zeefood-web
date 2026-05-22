@@ -8,8 +8,8 @@ export default function CareersPage() {
   return (
     <PremiumContentPage 
       label="Join Us" 
-      title1="Build Your" 
-      title2="Career" 
+      title1="Build Your Career" 
+      title2="" 
       description="Join the ZeeFood family! We are looking for passionate chefs, dedicated kitchen staff, and swift delivery riders."
     >
       <div className="space-y-16">

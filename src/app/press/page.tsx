@@ -7,8 +7,8 @@ export default function PressPage() {
   return (
     <PremiumContentPage 
       label="News" 
-      title1="Press &" 
-      title2="Media" 
+      title1="Press & Media" 
+      title2="" 
       description="Latest news, announcements, and media resources from the ZeeFood PR team."
     >
       <div className="space-y-12">

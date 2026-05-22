@@ -18,6 +18,7 @@ export const metadata: Metadata = {
   description: "Premium food delivery experience.",
 };
 
+
 import Navbar from "@/components/common/Navbar";
 import Footer from "@/components/common/Footer";
 import LocationModal from "@/components/common/LocationModal";

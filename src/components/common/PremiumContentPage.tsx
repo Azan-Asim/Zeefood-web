@@ -26,23 +26,6 @@ export default function PremiumContentPage({ label, title1, title2, description,
       <div className="absolute top-20 right-[15%] w-2 h-2 bg-brand-primary/20 rounded-full blur-sm animate-float" />
       <div className="absolute top-40 left-[10%] w-3 h-3 bg-brand-secondary/20 rounded-full blur-sm animate-float-particle" />
 
-      {/* Header Strip */}
-      <header className="relative z-30 w-full px-6 lg:px-12 h-[80px] flex items-center justify-between border-b border-black/5 bg-white/40 backdrop-blur-xl sticky top-0">
-        <Link href="/" className="flex items-center gap-3 group">
-          <div className="relative w-10 h-10 transition-transform duration-500 group-hover:rotate-[360deg]">
-            <Image src="/fiery-wok.png" alt="ZeeFood" fill className="object-contain" priority />
-          </div>
-          <span className="font-black text-[#1a0a04] text-2xl tracking-tighter hidden sm:block">
-            Zee<span className="text-[#E63946]">Food</span>
-          </span>
-        </Link>
-        <div className="flex items-center gap-6">
-          <Link href="/menu" className="text-sm font-bold text-brand-dark/70 hover:text-brand-primary transition-colors hidden md:block">Menu</Link>
-          <Link href="/login" className="px-7 py-2.5 rounded-full bg-brand-dark text-white text-sm font-bold hover:bg-[#E63946] transition-all duration-300 shadow-[0_10px_20px_rgba(0,0,0,0.1)] hover:shadow-[0_15px_25px_rgba(230,57,70,0.25)] hover:-translate-y-1">
-            Sign In
-          </Link>
-        </div>
-      </header>
 
       {/* Main Content Area */}
       <main className="relative z-20 flex-1 w-full max-w-5xl mx-auto px-6 py-20 lg:py-32">

@@ -57,6 +57,8 @@ function ProductCard({
         ? `Rs. ${product.price.toLocaleString()}`
         : "—";
 
+  const isActive = product.status ? product.status === "ACTIVE" : true;
+
   return (
     <div
       className={`relative flex flex-col items-center text-center p-6 lg:p-7 rounded-[35px] shadow-[0_20px_50px_rgba(0,0,0,0.06)] hover:shadow-[0_30px_60px_rgba(0,0,0,0.15)] border-2 ${theme.border} transition-all duration-500 hover:-translate-y-4 group ${theme.bg} min-h-[420px] lg:min-h-[460px]`}
@@ -129,11 +131,11 @@ function ProductCard({
         </span>
 
         <button
-          disabled={product.inStock === 0}
+          disabled={!isActive}
           onClick={() => onAddToCart(product)}
           className="w-full py-4 px-6 bg-white text-brand-dark font-black text-xs uppercase tracking-widest rounded-full shadow-md group-hover:bg-brand-primary group-hover:text-white transition-all duration-300 border border-gray-100 group-hover:border-transparent disabled:opacity-40 disabled:cursor-not-allowed"
         >
-          {product.inStock === 0 ? "Unavailable" : t("orderNow")}
+          {!isActive ? "Unavailable" : t("orderNow")}
         </button>
       </div>
     </div>
