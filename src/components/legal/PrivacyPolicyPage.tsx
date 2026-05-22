@@ -4,8 +4,8 @@ export default function PrivacyPolicyPage() {
   return (
     <PremiumContentPage 
       label="Legal & Compliance" 
-      title1="Privacy" 
-      title2="Policy" 
+      title1="Privacy Policy" 
+      title2="" 
       description="Last updated: May 2026. Your privacy is critically important to us at ZeeFood Premium Delivery."
     >
       <div className="space-y-12">

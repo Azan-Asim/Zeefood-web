@@ -8,8 +8,8 @@ export default function FAQPage() {
   return (
     <PremiumContentPage 
       label="Support" 
-      title1="Common" 
-      title2="Questions" 
+      title1="Common Questions" 
+      title2="" 
       description="Find quick answers to the most frequently asked questions about our food, delivery, and services."
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">

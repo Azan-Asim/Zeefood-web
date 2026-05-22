@@ -53,14 +53,14 @@ body {
   }
 
   .font-urdu {
-    font-family: var(--font-noto-urdu), serif;
+    font-family: "Jameel Noori Nastaleeq", var(--font-noto-urdu), serif;
     line-height: 1.8;
   }
 }
 
 [dir="rtl"],
 [lang="ur"] {
-  font-family: var(--font-noto-urdu), serif !important;
+  font-family: "Jameel Noori Nastaleeq", var(--font-noto-urdu), serif !important;
   line-height: 1.8 !important;
 }
 

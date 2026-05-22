@@ -1,17 +1,89 @@
 "use client";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useLanguage } from "@/context/LanguageContext";
-import { allMenuItems } from "@/data/menuData";
+import { useCart } from "@/context/CartContext";
+import { useRouter } from "next/navigation";
+
+type RemoteProduct = {
+  id: string;
+  name: string;
+  image?: string;
+  status?: string;
+  category?: { CategoryName?: string };
+  price?: number;
+  variants?: { id?: string; name?: string; price?: number }[];
+};
 
 export default function SignatureDesi() {
   const { t, language } = useLanguage();
+  const { addToCart } = useCart();
+  const router = useRouter();
+  const [desiItems, setDesiItems] = useState<Array<any>>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  // Filter items for Signature Desi (slugs 6 to 9)
-  const desiItems = allMenuItems.filter(item => typeof item.id === 'number' && item.id >= 6 && item.id <= 9);
+  useEffect(() => {
+    let mounted = true;
+    const fetchProducts = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const res = await fetch(
+          "https://drm.devsinntechnologies.com/public/products?businessId=5707b450-9723-4794-9ba4-ee03890cf504&page=1&limit=50"
+        );
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const json = await res.json();
+        const data: RemoteProduct[] = json.data || [];
+
+        // select desi category products (keep status for clickability), take first 4
+        const filtered = data
+          .filter((p) => p.category?.CategoryName === "Desi")
+          .slice(0, 4)
+          .map((p) => {
+            const imageUrl = p.image
+              ? `https://drm.devsinntechnologies.com/${p.image}`
+              : "/images/home/menu/placeholder.png";
+
+            const variantPrices = (p.variants || []).map((v: any) => Number(v.price || 0)).filter(Boolean);
+            const price = variantPrices.length > 0 ? Math.min(...variantPrices) : (p.price || 0);
+
+            return {
+              id: p.id,
+              name: p.name,
+              nameUr: "",
+              description: "",
+              descriptionUr: "",
+              price,
+              image: imageUrl,
+              slug: (p as any).slug ?? p.id,
+              status: p.status,
+              category: p.category?.CategoryName ?? "Desi",
+              variants: p.variants || [],
+              raw: p,
+            };
+          });
+
+        if (mounted) setDesiItems(filtered);
+      } catch (err: any) {
+        if (mounted) setError(err.message || "Failed to load products");
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    };
+
+    fetchProducts();
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   return (
-    <section className="bg-brand-white pt-24 pb-12 w-full relative">
+    <section
+      className="bg-brand-white pt-24 pb-12 w-full relative"
+      style={{ fontFamily: 'var(--font-poppins), Poppins, sans-serif' }}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Header Area */}
@@ -27,12 +99,14 @@ export default function SignatureDesi() {
 
         {/* Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 pt-16">
-          {desiItems.map((item, index) => {
+          {loading && <div className="col-span-4 text-center">Loading...</div>}
+          {error && <div className="col-span-4 text-center text-red-500">{error}</div>}
+          {!loading && !error && desiItems.map((item, index) => {
             const bgThemes = [
-              "bg-[#fecaca]", // Visible Light Red (red-200)
-              "bg-[#ffdec1]", // Visible Light Orange (orange-200 variant)
-              "bg-[#bbf7d0]", // Visible Light Emerald (emerald-200)
-              "bg-[#fef08a]", // Visible Light Amber/Yellow (amber-200)
+              "bg-[#fecaca]",
+              "bg-[#ffdec1]",
+              "bg-[#bbf7d0]",
+              "bg-[#fef08a]",
             ];
             const borderColors = [
               "border-red-300",
@@ -42,9 +116,8 @@ export default function SignatureDesi() {
             ];
 
             return (
-              <Link
+              <div
                 key={item.id}
-                href={`/product/${item.slug}`}
                 className={`relative mt-16 lg:mt-20 flex flex-col items-center text-center p-6 lg:p-7 rounded-[35px] shadow-[0_20px_50px_rgba(0,0,0,0.06)] hover:shadow-[0_30px_60px_rgba(0,0,0,0.15)] border-2 ${borderColors[index % 4]} transition-all duration-500 hover:-translate-y-4 group cursor-pointer ${bgThemes[index % 4]}`}
               >
                 <div className="absolute -top-16 lg:-top-20 w-[160px] h-[160px] lg:w-[200px] lg:h-[200px] transition-transform duration-700 group-hover:scale-105 group-hover:rotate-2 drop-shadow-[0_20px_35px_rgba(0,0,0,0.15)]">
@@ -53,20 +126,69 @@ export default function SignatureDesi() {
                   </div>
                 </div>
                 <div className="h-[100px] lg:h-[110px] w-full" />
-                <h3 className="text-xl font-black text-black uppercase tracking-wide mb-3 group-hover:text-brand-primary transition-colors flex flex-col items-center">
+                <h3 className={`text-xl font-black text-brand-dark  tracking-wide mb-3 group-hover:text-brand-primary transition-colors flex flex-col items-center ${language === "UR" ? "font-urdu" : ""}`}>
                   <span>{item.name}</span>
-                  <span className="text-sm font-bold opacity-80 font-urdu">({item.nameUr})</span>
+                  {/* <span className="text-sm font-bold opacity-80 font-urdu">({item.nameUr})</span> */}
                 </h3>
-                <p className="text-black text-sm font-bold mb-6 line-clamp-5">
+                <p
+                  className={`text-black text-sm font-bold mb-6 line-clamp-5 ${language === "UR" ? "font-urdu" : ""}`}
+                >
                   {language === "UR" ? item.descriptionUr : item.description}
                 </p>
-                <div className="mt-auto flex flex-col items-center w-full">
-                  <span className="text-3xl font-black mb-4 drop-shadow-sm" style={{ color: '#F87205' }}>{item.price}</span>
-                  <div className="w-full py-4 px-6 bg-white text-brand-dark font-black text-xs uppercase tracking-widest rounded-full shadow-md group-hover:bg-brand-primary group-hover:text-white transition-all duration-300 border border-gray-100 group-hover:border-transparent">
-                    {t("orderNow")}
+                {item.variants?.length > 0 && (
+                  <div className="mb-5 flex flex-wrap items-center justify-center gap-2">
+                    {item.variants.slice(0, 4).map((variant: any) => (
+                      <span
+                        key={variant.id ?? `${item.id}-${variant.name}`}
+                        className="px-3 py-1.5 rounded-full bg-white/80 border border-white text-[10px] font-black uppercase tracking-widest text-brand-dark/70 shadow-sm"
+                      >
+                        {variant.name}
+                        {variant.price ? ` • Rs. ${Number(variant.price).toLocaleString()}` : ""}
+                      </span>
+                    ))}
                   </div>
+                )}
+                <div className="mt-auto flex flex-col items-center w-full">
+                  <span className="text-3xl font-black mb-4 drop-shadow-sm" style={{ color: '#F87205' }}>{`Rs. ${Number(item.price).toLocaleString()}`}</span>
+                  {(() => {
+                    const isActive = item.status === "ACTIVE";
+                    const handleOrderNow = () => {
+                      if (!isActive) return;
+
+                      const lowestVariantPrice = item.variants && item.variants.length > 0
+                        ? Math.min(...item.variants.map((v: any) => Number(v.price || 0)))
+                        : item.price || 0;
+
+                      const cartItem = {
+                        id: item.id,
+                        name: item.name,
+                        nameUr: item.nameUr || "",
+                        price: `Rs. ${lowestVariantPrice.toLocaleString()}`,
+                        image: item.image,
+                        category: item.category ?? "Desi",
+                        description: item.description || "",
+                        descriptionUr: item.descriptionUr || "",
+                        slug: item.slug,
+                        popular: false,
+                        details: { prepTime: "20-30 min", prepTimeUr: "20-30 منٹ" },
+                      };
+
+                      addToCart(cartItem);
+                      router.push('/menu');
+                    };
+
+                    return (
+                      <button
+                        onClick={handleOrderNow}
+                        disabled={!isActive}
+                        className="w-full py-4 px-6 bg-white text-brand-dark font-black text-xs uppercase tracking-widest rounded-full shadow-md group-hover:bg-brand-primary group-hover:text-white transition-all duration-300 border border-gray-100 group-hover:border-transparent disabled:opacity-40 disabled:cursor-not-allowed"
+                      >
+                        {isActive ? t("orderNow") : "Unavailable"}
+                      </button>
+                    );
+                  })()}
                 </div>
-              </Link>
+              </div>
             );
           })}
         </div>

@@ -23,29 +23,15 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#fdfcfb] flex flex-col relative overflow-hidden">
+    <div className="min-h-screen bg-white relative overflow-hidden flex items-center justify-center px-4 py-8">
       {/* Decorative Blur Backgrounds */}
       <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-[#fef2eb] to-transparent pointer-events-none" />
       <div className="absolute top-40 -left-32 w-96 h-96 bg-[radial-gradient(circle,rgba(230,57,70,0.08)_0%,transparent_70%)] rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-20 -right-20 w-80 h-80 bg-[radial-gradient(circle,rgba(244,162,97,0.1)_0%,transparent_70%)] rounded-full blur-3xl pointer-events-none" />
 
-      {/* Header Strip */}
-      <header className="relative z-20 w-full px-6 lg:px-12 h-20 flex items-center justify-between border-b border-black/5 bg-white/50 backdrop-blur-md">
-        <Link href="/" className="flex items-center gap-2.5 group">
-          <div className="relative w-10 h-10">
-            <Image src="/fiery-wok.png" alt="ZeeFood" fill className="object-contain transition-transform group-hover:scale-105" priority />
-          </div>
-          <span className="font-black text-[#1a0a04] text-xl tracking-tight hidden sm:block">
-            Zee<span className="text-[#E63946]">Food</span>
-          </span>
-        </Link>
-        <Link href="/order" className="px-6 py-2.5 rounded-full bg-gradient-to-br from-[#E63946] to-[#c42d3a] text-white text-sm font-bold hover:-translate-y-0.5 transition-all shadow-[0_4px_14px_rgba(230,57,70,0.4)]">
-          Order Now
-        </Link>
-      </header>
 
       {/* Main Content */}
-      <main className="relative z-10 flex-1 max-w-7xl mx-auto w-full px-6 py-16 lg:py-24">
+      <main className="relative z-10 w-full max-w-6xl mx-auto px-6 py-16 lg:py-24">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
           
           {/* Left Side: Contact Info */}
@@ -58,7 +44,7 @@ export default function ContactPage() {
               Get in Touch
             </div>
             <h1 className="text-4xl lg:text-6xl font-black text-[#1a0a04] tracking-tight mb-6 leading-tight">
-              Let&apos;s talk about your <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#E63946] to-[#F4A261]">Next Meal.</span>
+              Let&apos;s talk about your <span className="text-brand-primary ">Next Meal.</span>
             </h1>
             <p className="text-[#6b5a50] text-lg font-medium max-w-md mb-12">
               Have questions, feedback, or want to partner with ZeeFood? We&apos;d love to hear from you. Drop us a message below.
@@ -72,8 +58,8 @@ export default function ContactPage() {
                     <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                   </svg>
                 }
-                title="Our Headquarters"
-                detail="123 Premium Food Blvd, Culinary District, FL 33101"
+                title="Address"
+                detail="464-Sir Handi Road, Near Gourmet bakers, first round about, Samnabad, Lahore"
               />
               <ContactMethod 
                 icon={
@@ -82,7 +68,7 @@ export default function ContactPage() {
                   </svg>
                 }
                 title="Call Us Directly"
-                detail="+1 (800) 123-FOOD"
+                detail="+92 335 415 3368"
               />
               <ContactMethod 
                 icon={
@@ -91,7 +77,7 @@ export default function ContactPage() {
                   </svg>
                 }
                 title="Email Support"
-                detail="hello@zeefood.premium"
+                detail="hello@zeefood.com"
               />
             </div>
           </div>
@@ -106,7 +92,7 @@ export default function ContactPage() {
                 <form onSubmit={handleSubmit} className="flex flex-col gap-6">
                   {/* Name Input */}
                   <div className="flex flex-col gap-1.5">
-                    <label htmlFor={nameId} className="text-xs font-bold text-[#3d2414] uppercase tracking-widest pl-1">Your Name</label>
+                    <label htmlFor={nameId} className="text-xs font-bold text-brand-primary uppercase tracking-widest pl-1">Your Name</label>
                     <input
                       id={nameId}
                       type="text"
@@ -114,13 +100,13 @@ export default function ContactPage() {
                       placeholder="John Doe"
                       value={state.name}
                       onChange={(e) => setState({ ...state, name: e.target.value })}
-                      className="w-full px-5 py-4 bg-white border-2 border-[#f0e4dc] focus:border-[#E63946] rounded-2xl outline-none transition-all placeholder:text-[#c0a898] text-[#1a0a04] font-medium shadow-sm focus:shadow-[0_0_0_4px_rgba(230,57,70,0.1)]"
+                      className="w-full px-5 py-4   focus:border-blaack rounded-2xl outline-none transition-all placeholder:text-[#c0a898] text-[#1a0a04] font-medium bg-gray-200"
                     />
                   </div>
 
                   {/* Email Input */}
                   <div className="flex flex-col gap-1.5">
-                    <label htmlFor={emailId} className="text-xs font-bold text-[#3d2414] uppercase tracking-widest pl-1">Email Address</label>
+                    <label htmlFor={emailId} className="text-xs font-bold text-brand-primary uppercase tracking-widest pl-1">Email Address</label>
                     <input
                       id={emailId}
                       type="email"
@@ -128,13 +114,13 @@ export default function ContactPage() {
                       placeholder="john@example.com"
                       value={state.email}
                       onChange={(e) => setState({ ...state, email: e.target.value })}
-                      className="w-full px-5 py-4 bg-white border-2 border-[#f0e4dc] focus:border-[#E63946] rounded-2xl outline-none transition-all placeholder:text-[#c0a898] text-[#1a0a04] font-medium shadow-sm focus:shadow-[0_0_0_4px_rgba(230,57,70,0.1)]"
+                      className="w-full px-5 py-4   focus:border-blaack rounded-2xl outline-none transition-all placeholder:text-[#c0a898] text-[#1a0a04] font-medium bg-gray-200"
                     />
                   </div>
 
                   {/* Message Input */}
                   <div className="flex flex-col gap-1.5">
-                    <label htmlFor={messageId} className="text-xs font-bold text-[#3d2414] uppercase tracking-widest pl-1">Your Message</label>
+                    <label htmlFor={messageId} className="text-xs font-bold text-brand-primary uppercase tracking-widest pl-1">Your Message</label>
                     <textarea
                       id={messageId}
                       required
@@ -142,20 +128,18 @@ export default function ContactPage() {
                       placeholder="How can we help you today?"
                       value={state.message}
                       onChange={(e) => setState({ ...state, message: e.target.value })}
-                      className="w-full px-5 py-4 bg-white border-2 border-[#f0e4dc] focus:border-[#E63946] rounded-2xl outline-none transition-all placeholder:text-[#c0a898] text-[#1a0a04] font-medium shadow-sm focus:shadow-[0_0_0_4px_rgba(230,57,70,0.1)] resize-none"
+                      className="w-full px-5 py-4   focus:border-blaack rounded-2xl outline-none transition-all placeholder:text-[#c0a898] text-[#1a0a04] font-medium bg-gray-200 "
                     />
                   </div>
 
                   <button
                     type="submit"
-                    className="relative w-full py-4 mt-2 rounded-2xl font-bold text-white text-lg tracking-wide overflow-hidden group transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_12px_32px_rgba(230,57,70,0.45)] shadow-[0_6px_20px_rgba(230,57,70,0.3)] bg-gradient-to-br from-[#E63946] via-[#d42e3a] to-[#b02030]"
+                    className="relative bg-brand-primary w-full py-4 mt-2 rounded-md font-bold text-white text-lg tracking-wide overflow-hidden group transition-all duration-300  "
                   >
-                    <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 translate-x-[-200%] group-hover:translate-x-[200%] duration-700 ease-in-out" />
+                    <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-primary translate-x-[-200%] group-hover:translate-x-[200%] duration-700 ease-in-out" />
                     <span className="relative flex items-center justify-center gap-2">
                       Send Message
-                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                      </svg>
+                    
                     </span>
                   </button>
                 </form>
@@ -189,11 +173,11 @@ export default function ContactPage() {
 function ContactMethod({ icon, title, detail }: { icon: React.ReactNode; title: string; detail: string }) {
   return (
     <div className="flex items-start gap-5 group">
-      <div className="w-14 h-14 rounded-2xl bg-white border border-[#fbd5cc] shadow-[0_8px_20px_rgba(230,57,70,0.06)] flex items-center justify-center text-[#E63946] transition-transform group-hover:scale-110 group-hover:bg-[#E63946] group-hover:text-white duration-300">
+      <div className="w-14 h-14 rounded-2xl bg-white border border-brand-primary  flex items-center justify-center text-[#E63946] transition-transform group-hover:scale-110 group-hover:bg-brand-primary group-hover:text-white duration-300">
         {icon}
       </div>
       <div className="pt-1.5">
-        <h4 className="text-[#1a0a04] font-black text-lg mb-1">{title}</h4>
+        <h4 className="text-brand-primary font-black text-lg mb-1">{title}</h4>
         <p className="text-[#6b5a50] font-medium">{detail}</p>
       </div>
     </div>

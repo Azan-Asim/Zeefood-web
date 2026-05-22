@@ -7,8 +7,8 @@ export default function RefundPage() {
   return (
     <PremiumContentPage 
       label="Legal" 
-      title1="Refund" 
-      title2="Policy" 
+      title1="Refund Policy" 
+      title2="" 
       description="Our commitment to quality is absolute. Learn about our clear, hassle-free refund and resolution process."
     >
       <div className="space-y-12">

@@ -8,8 +8,8 @@ export default function FranchisePage() {
   return (
     <PremiumContentPage 
       label="Business" 
-      title1="Own a" 
-      title2="Franchise" 
+      title1="Own a Franchise" 
+      title2="" 
       description="Partner with Pakistan's fastest-growing premium food brand and build a lucrative business."
     >
       <div className="space-y-16">
