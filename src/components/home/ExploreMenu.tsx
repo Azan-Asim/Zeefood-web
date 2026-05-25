@@ -59,11 +59,11 @@ export default function ExploreMenu() {
           {categories.map((cat) => (
             <Link
               key={cat.id}
-              href={`/category/${cat.id}`}
+              href={`/menu?category=${encodeURIComponent(cat.name)}`}
               className="bg-brand-white pt-6 pb-6 px-5 flex flex-col items-center relative group cursor-pointer shadow-sm hover:shadow-[0_20px_40px_rgba(230,57,70,0.1)] hover:-translate-y-3 transition-all duration-300 border border-brand-dark/5"
               style={{ borderRadius: '25px 80px 25px 80px' }}
             >
-              <h3 className="text-brand-dark font-black font-serif text-center text-black leading-tight uppercase tracking-wide group-hover:text-brand-primary transition-colors flex flex-col items-center">
+              <h3 className="text-brand-dark font-bold text-center text-black leading-tight uppercase tracking-wide group-hover:text-brand-primary transition-colors flex flex-col items-center">
                 <span>{cat.name}</span>
                 {cat.nameUr && <span className="text-sm font-bold opacity-80 font-urdu">({cat.nameUr})</span>}
               </h3>

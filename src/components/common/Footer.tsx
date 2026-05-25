@@ -101,7 +101,7 @@ export default function Footer() {
             <p className="text-brand-dark/50 font-medium mt-1">Hot food delivered to your doorstep in 30 minutes.</p>
           </div>
           <div className="flex items-center gap-4">
-            <Link href="/order" className="px-8 py-4 bg-brand-primary hover:bg-[#b0222e] text-white font-medium uppercase tracking-widest text-xs rounded-xl transition-all duration-300 shadow-[0_10px_30px_rgba(230,57,70,0.3)] hover:shadow-[0_15px_40px_rgba(230,57,70,0.5)] hover:-translate-y-0.5">
+            <Link href="/order" className="px-8 py-4 bg-brand-primary  text-white font-medium uppercase tracking-widest text-xs rounded-xl transition-all duration-300 shadow-[0_10px_30px_rgba(230,57,70,0.3)] hover:shadow-[0_15px_40px_rgba(230,57,70,0.5)] hover:-translate-y-0.5">
               Order Online
             </Link>
             <a href="https://wa.me/923354153368" className="px-8 py-4 bg-white border border-gray-200 text-brand-dark hover:border-brand-primary hover:text-brand-primary font-medium uppercase tracking-widest text-xs rounded-xl transition-all duration-300 shadow-sm hover:-translate-y-0.5 flex items-center gap-2">

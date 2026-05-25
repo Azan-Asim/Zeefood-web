@@ -2,10 +2,12 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import { useLanguage } from "@/context/LanguageContext";
 
 export default function Navbar() {
   const { t } = useLanguage();
+  const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -18,16 +20,16 @@ export default function Navbar() {
   }, []);
 
   const navLinks = [
-    { name: "HOME", href: "/" },
-    { name: "VIEW MENU", href: "/menu" },
-    { name: "OUR STORY", href: "/about" },
+    { name: "Home", href: "/" },
+    { name: "View Menu", href: "/menu" },
+    { name: "Our Story", href: "/about" },
   ];
 
   return (
     <>
       <nav className={`
         fixed top-0 left-0 right-0 z-[100] w-full transition-all duration-300
-        ${isScrolled ? "h-20 shadow-md bg-gray-50/90" : "h-24 bg-gray-50/80"}
+        ${isScrolled ? "h-20 shadow-md bg-gray-50/90" : "h-24 bg-white"}
       `}>
         <div className="max-w-[1400px] mx-auto h-full flex items-center justify-between px-6 lg:px-12">
 
@@ -51,7 +53,7 @@ export default function Navbar() {
               <Link
                 key={link.name}
                 href={link.href}
-                className=" hover:text-[#e63946] transition-colors tracking-[0.1em]"
+                className={` ${pathname === link.href ? "text-brand-primary font-semibold" : "font-medium"} hover:text-brand-primary transition-colors tracking-[0.1em]`}
               >
                 {link.name}
               </Link>
@@ -109,7 +111,7 @@ export default function Navbar() {
                 key={link.name}
                 href={link.href}
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="text-2xl font-black text-black hover:text-[#e63946] transition-all tracking-[0.1em]"
+                className={`text-2xl ${pathname === link.href ? "font-black" : "font-medium"} text-black hover:text-[#e63946] transition-all tracking-[0.1em]`}
               >
                 {link.name}
               </Link>

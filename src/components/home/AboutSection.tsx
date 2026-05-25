@@ -19,9 +19,41 @@ export default function AboutSection() {
             </span>
             <div className="w-12 h-[2px] bg-brand-primary" />
           </div>
-          <h2 className="text-4xl lg:text-6xl font-black text-brand-dark mb-6 tracking-tighter uppercase italic">
+          <h2 className="text-4xl lg:text-6xl font-medium text-brand-dark mb-6  italic">
             {t("aboutSubtitle")}
           </h2>
+        </div>
+
+        {/* Portrait & Bio: clean two-column responsive layout */}
+        <div className="mb-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center max-w-4xl mx-auto">
+            <div className="flex justify-center md:justify-start">
+              <div className="w-48 h-48 md:w-64 md:h-64 rounded-full overflow-hidden shadow-lg ring-1 ring-black/5">
+                <Image
+                  src="/amir-bhai.jpeg"
+                  alt="Mr Amir"
+                  width={256}
+                  height={256}
+                  className="object-cover"
+                />
+              </div>
+            </div>
+
+            <div className="text-center md:text-left">
+              <p className="text-brand-primary uppercase text-xs font-semibold tracking-wider mb-2">Our Founder</p>
+              <h3 className="text-2xl lg:text-3xl font-extrabold text-brand-dark mb-4">Mr. Amir — Founder & Owner</h3>
+
+              <div className="space-y-4">
+                <p className="text-brand-dark/80 leading-relaxed">
+                  Mr. Amir founded this restaurant with a simple belief: excellent food and genuine hospitality bring people together. Over the years he built the business through hands-on leadership, careful sourcing, and a deep respect for local flavors.
+                </p>
+
+                <p className="text-brand-dark/70 leading-relaxed">
+                  His values continue to guide Zee Food Gallery—quality ingredients, warm service, and a commitment to the neighborhood. That legacy informs everything we do, from the dishes we serve to the way we present our story online.
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Content Grid */}

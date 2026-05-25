@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useLanguage } from "@/context/LanguageContext";
 import { useCart } from "@/context/CartContext";
 
@@ -188,6 +189,7 @@ function toCartItem(product: Product) {
 export default function OrderPage() {
   const { t, language } = useLanguage();
   const { cart, addToCart, updateQuantity, cartTotal } = useCart();
+  const searchParams = useSearchParams();
 
   const [userLocation, setUserLocation] = useState<{ area: string; city: string; orderType: string } | null>(null);
   const [isMobileCartOpen, setIsMobileCartOpen] = useState(false);
@@ -202,6 +204,14 @@ export default function OrderPage() {
     changeCategory,
     changeSearch,
   } = useProductFilters();
+
+  useEffect(() => {
+    const requestedCategory = searchParams.get("category")?.trim();
+    if (!requestedCategory) return;
+    if (requestedCategory !== activeCategory && categories.includes(requestedCategory)) {
+      changeCategory(requestedCategory);
+    }
+  }, [activeCategory, categories, changeCategory, searchParams]);
 
   // ── Debounced search ────────────────────────────────────────────────────
   const searchTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -245,7 +255,7 @@ export default function OrderPage() {
     msg += `\n*Subtotal:* Rs. ${cartTotal.toLocaleString()}\n`;
     msg += `*Delivery:* Rs. ${deliveryFee}\n`;
     msg += `*Total:* Rs. ${totalAmount.toLocaleString()}\n\nPlease confirm. Thank you!`;
-    window.open(`https://wa.me/923136933988?text=${encodeURIComponent(msg)}`, "_blank");
+    window.open(`https://wa.me/923354153368?text=${encodeURIComponent(msg)}`, "_blank");
   }, [cart, userLocation, cartTotal, deliveryFee, totalAmount]);
 
   // ─────────────────────────────────────────────────────────────────────────
