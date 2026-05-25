@@ -82,11 +82,11 @@ function ProductCard({
             Low Stock
           </div>
         )}
-        {product.inStock === 0 && (
+        {/* {product.inStock === 0 && (
           <div className="absolute top-2 right-0 z-20 bg-gray-400 text-white text-[9px] font-black uppercase tracking-wider px-2 py-1 rounded-full shadow-lg">
             Out of Stock
           </div>
-        )}
+        )} */}
       </div>
 
       <div className="h-24 lg:h-28 w-full" />

@@ -17,56 +17,10 @@ export default function LocationModal() {
 
   const lahoreAreas = [
     "Allama Iqbal Town",
-    "Architects Society",
-    "Askari 1-5",
-    "Askari 6-11",
-    "Baghbanpura",
-    "Bahria Town",
-    "Cavalry Ground",
-    "Cantt (Saddar)",
-    "Cantt (RA Bazaar)",
-    "DHA Phase 1",
-    "DHA Phase 2",
-    "DHA Phase 3",
-    "DHA Phase 4",
-    "DHA Phase 5",
-    "DHA Phase 6",
-    "DHA Phase 7",
-    "DHA Phase 8",
-    "DHA Phase 9",
-    "DHA Rahbar",
-    "Eden Gardens",
-    "Faisal Town",
-    "Ferozepur Road",
-    "Garden Town",
-    "Green Town",
-    "Gulberg I",
-    "Gulberg II",
-    "Gulberg III",
-    "Harbanspura",
-    "Ichhra",
-    "Iqbal Town",
-    "Jail Road",
-    "Johar Town",
-    "Lake City",
-    "Link Road",
-    "Mall Road",
-    "Model Town",
-    "Mozang",
-    "Mughalpura",
-    "Muslim Town",
-    "Paragon City",
-    "Raiwind Road",
-    "Sadaq Road",
     "Samnabad",
-    "Shadman",
-    "Shalamar",
-    "State Life",
-    "Sui Gas Society",
-    "Township",
-    "Valencia Town",
-    "Walled City",
-    "Wapda Town",
+    "Chauburji",
+    "Gulshan E Ravi",
+
   ].sort();
 
   const filteredAreas = lahoreAreas.filter(loc => 
@@ -90,6 +44,12 @@ export default function LocationModal() {
   }, []);
 
   const handleSelect = () => {
+    if (orderType === "pickup") {
+      sessionStorage.setItem("userLocation", JSON.stringify({ orderType, city: null, area: null, timestamp: new Date().toISOString() }));
+      setIsOpen(false);
+      return;
+    }
+
     if (city && area) {
       sessionStorage.setItem("userLocation", JSON.stringify({ orderType, city, area, timestamp: new Date().toISOString() }));
       setIsOpen(false);
@@ -104,10 +64,10 @@ export default function LocationModal() {
       <div className="absolute inset-0 bg-brand-dark/70 backdrop-blur-[12px] animate-in fade-in duration-500" onClick={() => setIsDropdownOpen(false)} />
 
       {/* Modal Content */}
-      <div className="relative bg-white w-full max-w-[460px] rounded-[2.5rem] shadow-[0_50px_100px_-20px_rgba(0,0,0,0.6)] border border-white/20 overflow-hidden animate-in zoom-in-95 slide-in-from-bottom-10 duration-700">
+      <div className="relative bg-white w-full max-w-[460px] rounded-[2.5rem] shadow-[0_50px_100px_-20px_rgba(0,0,0,0.6)] border border-white/20 overflow-visible animate-in zoom-in-95 slide-in-from-bottom-10 duration-700">
         
         {/* Top accent bar */}
-        <div className="h-2 w-full bg-gradient-to-r from-brand-primary via-brand-secondary to-brand-primary" />
+        {/* <div className="h-2 w-full bg-gradient-to-r from-brand-primary via-brand-secondary to-brand-primary" /> */}
 
         <div className="p-8 lg:p-10 flex flex-col items-center">
           
@@ -117,10 +77,10 @@ export default function LocationModal() {
               <Image src="/fiery-wok.png" alt="ZeeFood" fill className="object-contain" priority />
             </div>
             <div className="flex flex-col">
-              <h2 className="text-xl font-black text-brand-dark leading-none tracking-tight uppercase">
-                {t("orderType")}
+              <h2 className="text-xl text-black font-bold">
+               Order Type
               </h2>
-              <p className="text-[11px] font-bold text-brand-dark/40 uppercase tracking-widest mt-2">Where should we send your food?</p>
+              <p className="text-[11px] text-black mt-2">Where should we send your food?</p>
             </div>
           </div>
 
@@ -130,16 +90,17 @@ export default function LocationModal() {
             <button onClick={() => setOrderType("pickup")} className={`flex-1 py-3 px-6 rounded-full text-[11px] font-black transition-all duration-500 uppercase tracking-widest ${orderType === "pickup" ? "bg-brand-primary text-white shadow-lg" : "text-brand-dark/40"}`}>{t("pickup")}</button>
           </div>
 
-          {/* Location Section */}
-          <div className="w-full">
+          {/* Location Section (only for delivery) */}
+          {orderType === "delivery" && (
+            <div className="w-full">
             <div className="flex items-center gap-4 mb-6">
                <span className="h-px flex-1 bg-gray-200" />
-               <span className="text-[11px] font-black text-brand-dark/30 uppercase tracking-[0.3em]">{t("yourLocation")}</span>
+               <span className="text-[11px] font-medium text-black ">{t("yourLocation")}</span>
                <span className="h-px flex-1 bg-gray-200" />
             </div>
 
             <div className="space-y-4">
-              <div className="w-full py-4 px-6 bg-gray-50 border-2 border-gray-100 rounded-2xl text-sm font-black text-brand-dark/40 flex items-center justify-between shadow-sm">
+              <div className="w-full py-4 px-6 bg-gray-50 border-2 border-gray-100 rounded-2xl text-sm font-medium text-black flex items-center justify-between shadow-sm">
                 <span>Lahore</span>
                 <div className="flex items-center gap-2 text-brand-primary">
                   <span className="text-[10px] font-bold uppercase tracking-widest">Active City</span>
@@ -151,7 +112,7 @@ export default function LocationModal() {
               <div className="relative" ref={dropdownRef}>
                 <button 
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                  className="w-full py-4 px-6 bg-white border-2 border-gray-100 rounded-2xl text-sm font-black text-brand-dark/80 flex items-center justify-between hover:border-brand-primary/40 transition-all shadow-sm"
+                  className="w-full py-4 px-6 bg-white border-2 border-gray-100 rounded-2xl text-sm font-medium text-black flex items-center justify-between hover:border-brand-primary/40 transition-all shadow-sm"
                 >
                   <span>{area || t("selectArea")}</span>
                   <svg className={`w-4 h-4 text-brand-dark/20 transition-transform duration-300 ${isDropdownOpen ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={4}><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" /></svg>
@@ -168,19 +129,19 @@ export default function LocationModal() {
                           placeholder="Search your area..."
                           value={searchQuery}
                           onChange={(e) => setSearchQuery(e.target.value)}
-                          className="w-full py-2 pl-9 pr-4 bg-white border border-gray-200 rounded-xl text-xs font-bold text-brand-dark focus:outline-none focus:border-brand-primary/40 transition-all"
+                          className="w-full py-2 pl-9 pr-4 bg-white border border-gray-200 rounded-xl text-xs font-medium text-black focus:outline-none focus:border-brand-primary/40 transition-all"
                         />
                         <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                       </div>
                     </div>
                     
-                    <div className="max-h-[180px] overflow-y-auto no-scrollbar py-2">
+                    <div className="max-h-[180px] overflow-y-auto no-scrollbar py-2" style={{ WebkitOverflowScrolling: "touch" }}>
                       {filteredAreas.length > 0 ? (
                         filteredAreas.map((loc) => (
                           <button
                             key={loc}
                             onClick={() => { setArea(loc); setIsDropdownOpen(false); setSearchQuery(""); }}
-                            className={`w-full text-left px-6 py-3 text-[10px] font-black uppercase tracking-widest transition-colors ${area === loc ? "bg-brand-primary text-white" : "text-brand-dark/70 hover:bg-gray-50"}`}
+                            className={`w-full text-left px-6 py-3 text-[10px] font-medium text-black transition-colors ${area === loc ? "bg-brand-primary text-white" : "text-brand-dark/70 hover:bg-gray-50"}`}
                           >
                             {loc}
                           </button>
@@ -193,16 +154,17 @@ export default function LocationModal() {
                 )}
               </div>
             </div>
-          </div>
+            </div>
+          )}
 
           <button 
-            disabled={!area} 
+            disabled={orderType === "delivery" ? !area : false} 
             onClick={handleSelect}
-            className={`w-full mt-10 py-5 rounded-2xl font-black uppercase tracking-[0.3em] text-xs transition-all duration-500 ${area ? "bg-brand-primary text-white shadow-xl hover:-translate-y-1" : "bg-gray-100 text-gray-300"}`}
+            className={`w-full mt-10 py-5 rounded-2xl font-medium text-md transition-all duration-500 ${orderType === "delivery" ? (area ? "bg-brand-primary text-white shadow-xl hover:-translate-y-1" : "bg-gray-100 text-gray-300") : "bg-brand-primary text-white shadow-xl hover:-translate-y-1"}`}
           >
             {t("startOrdering")}
           </button>
-          <p className="mt-8 text-[10px] font-bold text-brand-dark/20 uppercase tracking-[0.4em]">Zee Food Gallery Premium</p>
+          <p className="mt-8 text-[10px]  text-black">Zee Food Gallery Premium</p>
         </div>
       </div>
     </div>
