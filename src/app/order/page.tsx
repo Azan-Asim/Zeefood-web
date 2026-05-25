@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import OrderPage from "@/components/order/OrderPage";
 
 export const metadata = {
@@ -6,5 +7,9 @@ export const metadata = {
 };
 
 export default function OrderRoute() {
-  return <OrderPage />;
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-white" />}>
+      <OrderPage />
+    </Suspense>
+  );
 }
