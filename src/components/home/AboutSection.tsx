@@ -1,10 +1,79 @@
 "use client";
 
 import Image from "next/image";
+import { useState } from "react";
 import { useLanguage } from "@/context/LanguageContext";
 
 export default function AboutSection() {
   const { t } = useLanguage();
+
+  const journey = [
+    {
+      year: "01",
+      title: "Started with a simple kitchen idea",
+      description: "A family-led mission to serve desi food that feels honest, warm, and memorable from the very first plate.",
+    },
+    {
+      year: "02",
+      title: "Built a loyal neighborhood following",
+      description: "Word of mouth, repeat guests, and consistent quality helped turn a small idea into a trusted local brand.",
+    },
+    {
+      year: "03",
+      title: "Growing with the same values",
+      description: "We continue to focus on freshness, hospitality, and the flavors that keep families coming back.",
+    },
+  ];
+
+  const highlights = [
+    {
+      title: "Fresh ingredients",
+      description: "We keep sourcing simple and quality-driven so every dish tastes clean, vibrant, and satisfying.",
+    },
+    {
+      title: "Warm service",
+      description: "Our team is trained to make every visit feel personal, attentive, and genuinely welcoming.",
+    },
+    {
+      title: "Authentic flavor",
+      description: "We respect traditional recipes while refining the experience for a premium dining feel.",
+    },
+    {
+      title: "Family-friendly dining",
+      description: "From casual meals to celebrations, our space is designed to feel comfortable for everyone.",
+    },
+  ];
+
+  const testimonials = [
+    {
+      quote: "Best biryani in town — rich spices and perfectly cooked rice. A regular favourite!",
+      author: "Ubaid Asim",
+      role: "Customer",
+    },
+    {
+      quote: "Consistently good food and warm service. Feels like home every time.",
+      author: "Arham Sarwar",
+      role: "Customer",
+    },
+    {
+      quote: "Great place for family dinners — large portions and authentic flavours.",
+      author: "Azan Asim",
+      role: "Local Guide",
+    },
+  ];
+
+  const staff = [
+    { name: "Chef Amir", role: "Head Chef", image: "/amir-bhai.jpeg" },
+    { name: "Sadia", role: "Front of House Manager", image: "/team-1.jpg" },
+    { name: "Raza", role: "Sous Chef", image: "/team-2.jpg" },
+  ];
+
+  const faqs = [
+    { q: "Do you offer delivery?", a: "Yes — we deliver across our service areas. Choose delivery at checkout or contact us on WhatsApp." },
+    { q: "Can I pick up an order?", a: "Yes — choose pickup in the order flow and collect from our store when ready." },
+    { q: "Do you cater events?", a: "We offer catering for small to medium events. Contact us with your requirements for a quote." },
+  ];
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   return (
     <section className="py-24 lg:py-32 bg-white overflow-hidden">
@@ -61,9 +130,9 @@ export default function AboutSection() {
           
           {/* Card 1: Fresh Food */}
           <div className="group relative bg-gray-50 p-8 lg:p-12 rounded-[3rem] transition-all duration-500 hover:bg-brand-primary hover:-translate-y-4 shadow-[0_20px_50px_rgba(0,0,0,0.02)]">
-            <div className="w-20 h-20 bg-white rounded-3xl flex items-center justify-center mb-10 shadow-xl group-hover:scale-110 transition-transform duration-500">
+            {/* <div className="w-20 h-20 bg-white rounded-3xl flex items-center justify-center mb-10 shadow-xl group-hover:scale-110 transition-transform duration-500">
                <span className="text-4xl">🥗</span>
-            </div>
+            </div> */}
             <h3 className="text-2xl font-black text-brand-dark mb-6 uppercase transition-colors group-hover:text-white">
               {t("freshFoodTitle")}
             </h3>
@@ -77,9 +146,9 @@ export default function AboutSection() {
 
           {/* Card 2: Local Staff */}
           <div className="group relative bg-gray-50 p-8 lg:p-12 rounded-[3rem] transition-all duration-500 hover:bg-brand-secondary hover:-translate-y-4 shadow-[0_20px_50px_rgba(0,0,0,0.02)] lg:mt-12">
-            <div className="w-20 h-20 bg-white rounded-3xl flex items-center justify-center mb-10 shadow-xl group-hover:scale-110 transition-transform duration-500">
+            {/* <div className="w-20 h-20 bg-white rounded-3xl flex items-center justify-center mb-10 shadow-xl group-hover:scale-110 transition-transform duration-500">
                <span className="text-4xl">👨‍🍳</span>
-            </div>
+            </div> */}
             <h3 className="text-2xl font-black text-brand-dark mb-6 uppercase transition-colors group-hover:text-white">
               {t("localStaffTitle")}
             </h3>
@@ -92,9 +161,9 @@ export default function AboutSection() {
 
           {/* Card 3: Authentic Desi */}
           <div className="group relative bg-gray-50 p-8 lg:p-12 rounded-[3rem] transition-all duration-500 hover:bg-brand-dark hover:-translate-y-4 shadow-[0_20px_50px_rgba(0,0,0,0.02)]">
-            <div className="w-20 h-20 bg-white rounded-3xl flex items-center justify-center mb-10 shadow-xl group-hover:scale-110 transition-transform duration-500">
+            {/* <div className="w-20 h-20 bg-white rounded-3xl flex items-center justify-center mb-10 shadow-xl group-hover:scale-110 transition-transform duration-500">
                <span className="text-4xl">🥘</span>
-            </div>
+            </div> */}
             <h3 className="text-2xl font-black text-brand-dark mb-6 uppercase transition-colors group-hover:text-white">
               {t("desiDiningTitle")}
             </h3>
@@ -106,13 +175,112 @@ export default function AboutSection() {
           </div>
 
         </div>
+        {/* My Vision Section */}
+        <div className="mt-16 max-w-4xl mx-auto rounded-[2.5rem] border border-gray-100 bg-gradient-to-br from-brand-primary/5 via-white to-brand-secondary/5 p-8 lg:p-12 shadow-sm text-center">
+          <span className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.35em] text-brand-primary mb-4">
+            <span className="h-px w-8 bg-brand-primary" />
+            My Vision
+            <span className="h-px w-8 bg-brand-primary" />
+          </span>
+          <p className="text-lg lg:text-xl text-brand-dark/75 leading-relaxed max-w-3xl mx-auto font-medium">
+            My vision is to build a place where authentic desi food feels both timeless and welcoming, where every dish is made with care, every guest feels at home, and every visit reflects the warmth, flavor, and pride of our community.
+          </p>
+        </div>
+
+        {/* Journey + Highlights */}
+        <div className="mt-20 grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 items-start">
+          <div className="rounded-[3rem] bg-[#fbfaf8] border border-gray-100 p-8 lg:p-10 shadow-sm">
+            <span className="text-brand-primary text-xs font-black tracking-[0.4em] uppercase">Our Journey</span>
+            <h3 className="mt-3 text-3xl font-medium text-brand-dark">From a family idea to a neighborhood favorite</h3>
+            <div className="mt-8 space-y-6">
+              {journey.map((item) => (
+                <div key={item.year} className="flex gap-5 items-start">
+                  <div className="w-14 h-14 shrink-0 rounded-2xl bg-brand-primary text-white flex items-center justify-center font-black text-sm shadow-lg">
+                    {item.year}
+                  </div>
+                  <div>
+                    <h4 className="text-lg font-medium text-brand-dark">{item.title}</h4>
+                    <p className="mt-2 text-sm lg:text-base text-brand-dark/70 leading-relaxed">{item.description}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="rounded-[3rem] bg-brand-dark p-8 lg:p-10 text-white shadow-2xl">
+            <span className="text-brand-primary text-xs font-medium tracking-[0.4em] uppercase">What makes us different</span>
+            <h3 className="mt-3 text-3xl font-medium">A kitchen built on trust, taste, and consistency</h3>
+            <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {highlights.map((item) => (
+                <div key={item.title} className="rounded-[2rem] bg-white/5 border border-white/10 p-5 backdrop-blur-sm">
+                  <h4 className="text-base font-medium text-white">{item.title}</h4>
+                  <p className="mt-2 text-sm text-white/70 leading-relaxed">{item.description}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom Banner Image Section */}
+        {/* Testimonials */}
+        <div className="mt-24 max-w-[1100px] mx-auto">
+          <h3 className="text-2xl font-medium text-brand-dark text-center mb-8">What People Are Saying</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {testimonials.map((titem, i) => (
+              <div key={i} className="p-6 rounded-2xl bg-white border border-gray-100 shadow-sm">
+                <p className="text-brand-dark/70 italic">“{titem.quote}”</p>
+                <div className="mt-4 text-sm font-medium text-brand-dark">{titem.author}</div>
+                <div className="text-xs text-brand-dark/50">{titem.role}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Meet The Kitchen */}
+        {/* <div className="mt-16 max-w-[1100px] mx-auto">
+          <h3 className="text-2xl font-black text-brand-dark text-center mb-8">Meet The Kitchen</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            {staff.map((s) => (
+              <div key={s.name} className="flex flex-col items-center gap-4 bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+                <div className="w-28 h-28 rounded-full overflow-hidden bg-gray-100">
+                  <Image src={s.image} alt={s.name} width={112} height={112} className="object-cover" />
+                </div>
+                <div className="text-lg font-black text-brand-dark">{s.name}</div>
+                <div className="text-sm text-brand-dark/60">{s.role}</div>
+              </div>
+            ))}
+          </div>
+        </div> */}
+
+        {/* FAQ */}
+        <div className="mt-16 max-w-[900px] mx-auto">
+          <h3 className="text-2xl font-medium text-brand-dark text-center mb-8">Frequently Asked Questions</h3>
+          <div className="space-y-4">
+            {faqs.map((f, idx) => (
+              <div key={f.q} className="border border-gray-100 rounded-2xl overflow-hidden">
+                <button
+                  onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
+                  className="w-full text-left px-6 py-4 flex items-center justify-between bg-white"
+                >
+                  <span className="font-medium text-brand-dark">{f.q}</span>
+                  <span className="text-brand-dark/50">{openFaq === idx ? "−" : "+"}</span>
+                </button>
+                {openFaq === idx && (
+                  <div className="px-6 py-4 bg-white/50 text-brand-dark/70">{f.a}</div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
 
         {/* Bottom Banner Image Section */}
         <div className="mt-24 lg:mt-32 relative h-[500px] lg:h-[600px] rounded-[4rem] overflow-hidden group shadow-2xl">
           <Image 
-            src="/images/home/promo/promo_karahi.jpg" 
+            src="/images/home/promo/hq720.jpg" 
             alt="Authentic Dining" 
             fill 
+            sizes="(max-width: 1024px) 100vw, 1400px"
+            loading="eager"
             className="object-cover transition-transform duration-[10000ms] group-hover:scale-110"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-brand-dark via-transparent to-transparent opacity-80" />
