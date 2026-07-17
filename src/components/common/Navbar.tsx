@@ -21,6 +21,7 @@ export default function Navbar() {
 
   const navLinks = [
     { name: "Home", href: "/" },
+    { name: "Deals", href: "/deals" },
     { name: "View Menu", href: "/menu" },
     { name: "Our Story", href: "/about" },
   ];
@@ -29,15 +30,15 @@ export default function Navbar() {
     <>
       <nav className={`
         fixed top-0 left-0 right-0 z-[100] w-full transition-all duration-300
-        ${isScrolled ? "h-20 shadow-md bg-gray-50/90" : "h-24 bg-white"}
+        ${isScrolled ? "h-16 shadow-md bg-gray-50/90" : "h-20 bg-white"}
       `}>
-        <div className="max-w-[1400px] mx-auto h-full flex items-center justify-between px-6 lg:px-12">
+        <div className="max-w-[1400px] mx-auto h-full flex items-center justify-between px-4 sm:px-6 lg:px-12">
 
           {/* Logo Section */}
           <Link href="/" className="flex items-center gap-4">
-            <div className="relative w-60 h-40">
+            <div className="relative h-16 w-48 sm:w-56">
               <Image
-                src="/logo.svg"
+                src="/logo.png"
                 alt="Zee Food"
                 fill
                 className="object-contain h-full w-full object-center"
@@ -53,7 +54,7 @@ export default function Navbar() {
               <Link
                 key={link.name}
                 href={link.href}
-                className={` ${pathname === link.href ? "text-brand-primary font-semibold" : "font-medium"} hover:text-brand-primary transition-colors tracking-[0.1em]`}
+                className={`border-0 outline-none ring-0 no-underline before:hidden after:hidden hover:no-underline focus:border-0 focus:outline-none focus:ring-0 focus-visible:border-0 focus-visible:outline-none focus-visible:ring-0 ${pathname === link.href ? "text-brand-primary font-semibold" : "font-medium text-brand-dark"} hover:text-brand-primary transition-colors duration-300 tracking-[0.1em]`}
               >
                 {link.name}
               </Link>
@@ -64,7 +65,7 @@ export default function Navbar() {
           <div className="hidden lg:flex items-center gap-6">
             <Link
               href="/order"
-              className=" bg-brand-primary hover:bg-brand-primary text-white text-white font-medium py-3 px-8 rounded-md"
+              className="inline-flex items-center justify-center rounded-[18px] bg-brand-primary px-8 py-3 text-white font-medium no-underline hover:no-underline transition-all duration-300 hover:bg-brand-primary/90 hover:shadow-[0_10px_25px_rgba(248,114,5,0.18)] focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary/40 focus-visible:ring-offset-2"
             >
               Order Now
             </Link>
@@ -73,11 +74,15 @@ export default function Navbar() {
           {/* Mobile Hamburger Button */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="lg:hidden p-2 text-brand-dark"
+            aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={isMobileMenuOpen}
+            className="lg:hidden flex h-11 w-11 items-center justify-center rounded-[18px] text-brand-dark transition-all duration-300 hover:bg-brand-primary/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary/40"
           >
-            <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d={isMobileMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} />
-            </svg>
+            <span className="flex w-6 flex-col gap-1.5" aria-hidden="true">
+              <span className={`h-0.5 w-full rounded-full bg-current transition-transform duration-300 ${isMobileMenuOpen ? "translate-y-2 rotate-45" : ""}`} />
+              <span className={`h-0.5 w-full rounded-full bg-current transition-opacity duration-300 ${isMobileMenuOpen ? "opacity-0" : ""}`} />
+              <span className={`h-0.5 w-full rounded-full bg-current transition-transform duration-300 ${isMobileMenuOpen ? "-translate-y-2 -rotate-45" : ""}`} />
+            </span>
           </button>
         </div>
       </nav>
@@ -89,19 +94,21 @@ export default function Navbar() {
       `}>
         <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setIsMobileMenuOpen(false)} />
         <div className={`
-          absolute right-0 top-0 bottom-0 w-[80%] bg-white p-10 flex flex-col transition-transform duration-500 rounded-l-[3.5rem]
+          absolute right-0 top-0 bottom-0 flex w-[min(84%,24rem)] flex-col rounded-l-[30px] bg-white p-6 shadow-[-18px_0_50px_rgba(18,18,18,0.12)] transition-transform duration-500 sm:p-8
           ${isMobileMenuOpen ? "translate-x-0" : "translate-x-full"}
         `}>
           {/* Mobile Menu Header */}
-          <div className="flex items-center justify-between mb-16">
-            <span className="text-[14px] font-black text-[#e63946] tracking-[0.2em] uppercase">MENU</span>
+          <div className="flex items-center justify-between mb-10">
+            <span className="text-[25px] font-black text-[#e63946] tracking-[0.2em] uppercase">MENU</span>
             <button
               onClick={() => setIsMobileMenuOpen(false)}
-              className="w-10 h-10 flex items-center justify-center bg-gray-100 rounded-xl text-gray-500 hover:text-[#e63946] transition-colors"
+              aria-label="Close menu"
+              className="flex h-10 w-10 items-center justify-center rounded-[18px] bg-gray-100 text-gray-500 transition-all duration-300 hover:bg-brand-primary/10 hover:text-brand-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary/40"
             >
-              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-              </svg>
+              <span className="relative h-5 w-5" aria-hidden="true">
+                <span className="absolute left-0 top-1/2 h-0.5 w-full -translate-y-1/2 rotate-45 rounded-full bg-current" />
+                <span className="absolute left-0 top-1/2 h-0.5 w-full -translate-y-1/2 -rotate-45 rounded-full bg-current" />
+              </span>
             </button>
           </div>
 
@@ -111,7 +118,7 @@ export default function Navbar() {
                 key={link.name}
                 href={link.href}
                 onClick={() => setIsMobileMenuOpen(false)}
-                className={`text-2xl ${pathname === link.href ? "font-black" : "font-medium"} text-black hover:text-[#e63946] transition-all tracking-[0.1em]`}
+                className={`text-xl border-0 outline-none ring-0 no-underline before:hidden after:hidden hover:no-underline focus:border-0 focus:outline-none focus:ring-0 focus-visible:border-0 focus-visible:outline-none focus-visible:ring-0 ${pathname === link.href ? "font-black text-brand-primary" : "font-medium text-brand-dark"} transition-colors duration-300 tracking-[0.1em] hover:text-brand-primary`}
               >
                 {link.name}
               </Link>
@@ -122,7 +129,7 @@ export default function Navbar() {
             <Link
               href="/order"
               onClick={() => setIsMobileMenuOpen(false)}
-              className="block w-full py-5 bg-brand-primary text-white text-center text-white font-medium py-3 px-8 rounded-md"
+              className="flex w-full items-center justify-center rounded-[18px] bg-brand-primary px-8 py-3 text-center text-white font-medium no-underline hover:no-underline transition-all duration-300 hover:bg-brand-primary/90 hover:shadow-[0_10px_25px_rgba(248,114,5,0.18)] focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary/40 focus-visible:ring-offset-2"
             >
               Order Now
             </Link>

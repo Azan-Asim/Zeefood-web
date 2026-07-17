@@ -33,7 +33,7 @@ export default function ExploreMenu() {
   }, []);
 
   return (
-    <section className="bg-brand-light pt-20 pb-24 w-full">
+    <section className="w-full bg-brand-light pb-24 pt-20 sm:pt-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header Area */}
         <div className="flex justify-between items-end mb-12">
@@ -60,15 +60,23 @@ export default function ExploreMenu() {
             <Link
               key={cat.id}
               href={`/menu?category=${encodeURIComponent(cat.name)}`}
-              className="bg-brand-white pt-6 pb-6 px-5 flex flex-col items-center relative group cursor-pointer shadow-sm hover:shadow-[0_20px_40px_rgba(230,57,70,0.1)] hover:-translate-y-3 transition-all duration-300 border border-brand-dark/5"
-              style={{ borderRadius: '25px 80px 25px 80px' }}
+              className="group relative overflow-hidden cursor-pointer rounded-[30px] border border-brand-primary/10 bg-white p-8 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_60px_rgba(248,114,5,0.12)]"
             >
-              <h3 className="text-brand-dark font-bold text-center text-black leading-tight uppercase tracking-wide group-hover:text-brand-primary transition-colors flex flex-col items-center">
-                <span>{cat.name}</span>
-                {cat.nameUr && <span className="text-sm font-bold opacity-80 font-urdu">({cat.nameUr})</span>}
-              </h3>
-              <div className="w-12 h-[3px] bg-brand-secondary mt-4 rounded-full transition-all duration-300 opacity-100 group-hover:w-20 group-hover:bg-brand-primary" />
-              <div className="absolute bottom-6 right-6 w-4 h-4 rounded-full bg-brand-secondary/20 group-hover:bg-brand-primary transition-colors duration-300" />
+              <div className="flex flex-col items-center justify-center gap-3 text-center">
+                <div className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-brand-primary/10 text-brand-primary font-black text-lg">
+                  {cat.name.charAt(0)}
+                </div>
+                <h3 className="text-brand-dark font-black uppercase tracking-[0.18em] text-lg leading-tight transition-colors duration-300 group-hover:text-brand-primary">
+                  {cat.name}
+                </h3>
+                {cat.nameUr && (
+                  <span className="text-sm font-semibold text-gray-500 opacity-80 font-urdu">
+                    ({cat.nameUr})
+                  </span>
+                )}
+                <div className="mt-3 h-1.5 w-16 rounded-full bg-brand-primary transition-all duration-300 group-hover:w-24" />
+              </div>
+              <div className="pointer-events-none absolute -right-8 -top-8 h-24 w-24 rounded-full bg-brand-primary/10 blur-2xl opacity-80 transition-all duration-300 group-hover:opacity-100" />
             </Link>
           ))}
         </div>

@@ -81,7 +81,7 @@ export default function SignatureDesi() {
 
   return (
     <section
-      className="bg-brand-white pt-24 pb-12 w-full relative"
+      className="relative w-full bg-brand-white pb-12 pt-20 sm:pt-24"
       style={{ fontFamily: 'var(--font-poppins), Poppins, sans-serif' }}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -181,7 +181,7 @@ export default function SignatureDesi() {
                       <button
                         onClick={handleOrderNow}
                         disabled={!isActive}
-                        className="w-full py-4 px-6 bg-white text-brand-dark font-black text-xs uppercase tracking-widest rounded-full shadow-md group-hover:bg-brand-primary group-hover:text-white transition-all duration-300 border border-gray-100 group-hover:border-transparent disabled:opacity-40 disabled:cursor-not-allowed"
+                        className="w-full rounded-[18px] border border-gray-100 bg-white px-6 py-4 text-xs font-black uppercase tracking-widest text-brand-dark shadow-md transition-all duration-300 group-hover:border-transparent group-hover:bg-brand-primary group-hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
                       >
                         {isActive ? t("orderNow") : "Unavailable"}
                       </button>
@@ -194,7 +194,7 @@ export default function SignatureDesi() {
         </div>
 
         <div className="mt-12 flex justify-center">
-          <Link href="/menu" className="px-10 py-4 bg-transparent border-2 border-brand-primary text-brand-primary font-black uppercase tracking-widest rounded-full hover:bg-brand-primary hover:text-brand-white transition-all duration-300 shadow-lg hover:shadow-[0_15px_30px_rgba(230,57,70,0.3)] hover:-translate-y-1">
+          <Link href="/menu" className="inline-flex items-center justify-center rounded-[18px] border-2 border-brand-primary bg-transparent px-10 py-4 font-black uppercase tracking-widest text-brand-primary no-underline hover:bg-brand-primary hover:text-brand-white hover:no-underline transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_15px_30px_rgba(248,114,5,0.30)]">
             {t("viewMenu")}
           </Link>
         </div>
