@@ -79,7 +79,7 @@ export default function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="bg-[#fdfcfb] border-t border-gray-100 relative overflow-hidden">
+    <footer className="bg-[#FFFFFF] border-t border-gray-100 relative overflow-hidden">
 
       {/* Decorative top gradient strip */}
       <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-brand-primary via-brand-secondary to-amber-400" />
@@ -102,7 +102,7 @@ export default function Footer() {
             <p className="text-brand-dark/50 font-medium mt-1">Hot food delivered to your doorstep in 30 minutes.</p>
           </div>
           <div className="flex items-center gap-4">
-            <Link href="/order" className="px-8 py-4 bg-brand-primary  text-white font-medium uppercase tracking-widest text-xs rounded-xl transition-all duration-300 shadow-[0_10px_30px_rgba(230,57,70,0.3)] hover:shadow-[0_15px_40px_rgba(230,57,70,0.5)] hover:-translate-y-0.5">
+            <Link href="/order" className="px-8 py-4 bg-brand-primary  text-white font-medium uppercase tracking-widest text-xs rounded-xl transition-all duration-300 shadow-[0_10px_30px_rgba(248,114,5,0.3)] hover:shadow-[0_15px_40px_rgba(248,114,5,0.5)] hover:-translate-y-0.5">
               Order Online
             </Link>
             <a href="https://wa.me/923354153368" className="px-8 py-4 bg-white border border-gray-200 text-brand-dark hover:border-brand-primary hover:text-brand-primary font-medium uppercase tracking-widest text-xs rounded-xl transition-all duration-300 shadow-sm hover:-translate-y-0.5 flex items-center gap-2">
@@ -128,7 +128,7 @@ export default function Footer() {
 
           {/* Right Buttons Section (Column on Mobile, Row on Desktop) */}
           <div className="w-full md:w-auto flex flex-col sm:flex-row items-center gap-4">
-            <Link href="/order" className="w-full sm:w-auto flex items-center justify-center whitespace-nowrap px-8 py-4 bg-brand-primary text-white font-medium uppercase tracking-widest text-xs rounded-xl transition-all duration-300 shadow-[0_10px_30px_rgba(230,57,70,0.3)] hover:shadow-[0_15px_40px_rgba(230,57,70,0.5)] hover:-translate-y-0.5">
+            <Link href="/order" className="w-full sm:w-auto flex items-center justify-center whitespace-nowrap px-8 py-4 bg-brand-primary text-white font-medium uppercase tracking-widest text-xs rounded-xl transition-all duration-300 shadow-[0_10px_30px_rgba(248,114,5,0.3)] hover:shadow-[0_15px_40px_rgba(248,114,5,0.5)] hover:-translate-y-0.5">
               Order Online
             </Link>
             <a href="https://wa.me/923354153368" className="w-full sm:w-auto justify-center whitespace-nowrap px-8 py-4 bg-white border border-gray-200 text-brand-dark hover:border-brand-primary hover:text-brand-primary font-medium uppercase tracking-widest text-xs rounded-xl transition-all duration-300 shadow-sm hover:-translate-y-0.5 flex items-center gap-2">
@@ -168,7 +168,7 @@ export default function Footer() {
                   aria-label={s.label}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-10 h-10 rounded-xl bg-white border border-gray-100 shadow-sm flex items-center justify-center text-brand-dark/50 hover:text-brand-primary hover:border-brand-primary/30 hover:shadow-[0_5px_15px_rgba(230,57,70,0.15)] transition-all duration-300 hover:-translate-y-0.5"
+                  className="w-10 h-10 rounded-xl bg-white border border-gray-100 shadow-sm flex items-center justify-center text-brand-dark/50 hover:text-brand-primary hover:border-brand-primary/30 hover:shadow-[0_5px_15px_rgba(248,114,5,0.15)] transition-all duration-300 hover:-translate-y-0.5"
                 >
                   {s.icon}
                 </a>
@@ -233,13 +233,13 @@ export default function Footer() {
             </div>
 
             <div className="w-full md:w-auto flex-1 md:max-w-md">
-              <div className="flex items-center gap-0 bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm focus-within:border-brand-primary focus-within:shadow-[0_0_0_3px_rgba(230,57,70,0.1)] transition-all">
+              <div className="flex items-center gap-0 bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm focus-within:border-brand-primary focus-within:shadow-[0_0_0_3px_rgba(248,114,5,0.1)] transition-all">
                 <input
                   type="email"
                   placeholder="Enter your email"
                   className="px-5 py-4 text-sm text-brand-dark/80 font-medium bg-transparent outline-none flex-1 placeholder:text-brand-dark/30"
                 />
-                <button className="px-6 py-4 bg-brand-primary text-white font-medium text-xs uppercase tracking-widest hover:bg-[#b0222e] transition-colors">
+                <button className="px-6 py-4 bg-brand-primary text-white font-medium text-xs uppercase tracking-widest hover:bg-[#F87205] transition-colors">
                   Join Now
                 </button>
               </div>

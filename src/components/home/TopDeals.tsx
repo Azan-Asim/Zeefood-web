@@ -3,15 +3,15 @@ import Image from "next/image";
 import { useLanguage } from "@/context/LanguageContext";
 
 export default function TopDeals() {
-  const { t, language } = useLanguage();
+  const { language } = useLanguage();
 
   return (
-    <section className="relative z-10 w-full overflow-hidden bg-[#fcfdfd] pb-24 pt-20 sm:pt-24">
+    <section className="relative z-10 w-full overflow-hidden bg-white py-20 sm:py-24 lg:py-28 2xl:py-36">
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20">
+      <div className="relative z-20 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 2xl:max-w-[1600px] 2xl:px-10">
 
         {/* Header */}
-        <div className="flex flex-col items-center text-center mb-12">
+        <div className="mb-18 flex flex-col items-center py-4 text-center sm:mb-20 sm:py-6 2xl:mb-24 2xl:py-8">
           <h2 className="text-4xl lg:text-6xl font-black tracking-tighter uppercase font-sans leading-[0.95] text-brand-primary">
             {language === "UR" ? "طریقۂ پکانے" : "Way of Cooking"}
           </h2>
@@ -22,7 +22,7 @@ export default function TopDeals() {
         </div>
 
         {/* Content Grid: Image + Text */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
+        <div className="grid grid-cols-1 items-center gap-8 sm:gap-10 lg:grid-cols-2 2xl:gap-16">
           <div className="flex items-center justify-center">
          
               <Image
@@ -30,13 +30,13 @@ export default function TopDeals() {
                 alt={language === "UR" ? "دیسی پکوان" : "Desi Cooking"}
                 width={800}
                 height={560}
-                className="object-cover w-full h-auto"
+                className="h-auto w-full max-w-[760px] object-contain"
                 unoptimized
               />
        
           </div>
 
-          <div className="flex flex-col gap-6">
+          <div className="mx-auto flex max-w-3xl flex-col gap-5 lg:mx-0 2xl:gap-7">
             <div>
               <h4 className="text-xl font-black text-brand-dark mb-3">{language === "UR" ? "روایتی انداز" : "Traditional Techniques"}</h4>
               <p className={`text-brand-dark/70 leading-relaxed ${language === "UR" ? "font-urdu" : ""}`}>

@@ -116,7 +116,7 @@ export function useProductById(id: string) {
 // useProductSearch
 // Debounced search that dispatches to the store after 350 ms.
 // ─────────────────────────────────────────────────────────────────────────────
-export function useProductSearch(debounceMs = 350) {
+export function useProductSearch() {
   const dispatch    = useAppDispatch();
   const searchQuery = useAppSelector(selectSearchQuery);
 

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useMemo, useState } from "react";
 import { useCart } from "@/context/CartContext";
 import type { Product } from "@/lib/store/types";
@@ -62,7 +63,7 @@ export default function DealPage({ products }: { products: Product[] }) {
     }, [products]);
 
     return (
-        <main className="min-h-screen bg-[#fffaf6] pb-20 pt-28 text-brand-dark sm:pt-32">
+        <main className="min-h-screen bg-[#FFFFFF] pb-20 pt-28 text-brand-dark sm:pt-32">
             <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 <div className="mb-10 flex flex-col gap-5 sm:mb-12 lg:flex-row lg:items-end lg:justify-between">
                     <div className="max-w-2xl">
@@ -85,14 +86,22 @@ export default function DealPage({ products }: { products: Product[] }) {
                         return (
                             <article
                                 key={deal.id}
-                                className="group flex min-w-0 flex-col overflow-hidden rounded-[30px] border border-gray-200 bg-white shadow-[0_18px_55px_rgba(18,18,18,0.08)] transition-[box-shadow,transform] duration-300 [@media(hover:hover)]:hover:-translate-y-1 [@media(hover:hover)]:hover:shadow-[0_24px_70px_rgba(248,114,5,0.16)]"
+                                className="group flex min-w-0 flex-col !overflow-hidden rounded-[30px] border border-gray-200 bg-white shadow-[0_18px_55px_rgba(18,18,18,0.08)] transition-[box-shadow,transform] duration-300 [@media(hover:hover)]:hover:-translate-y-1 [@media(hover:hover)]:hover:shadow-[0_24px_70px_rgba(248,114,5,0.16)]"
                             >
-                                <div className="relative h-48 shrink-0 overflow-hidden bg-brand-primary/5">
-                                    <img
+                                <div className="product-card-image !relative flex !w-full shrink-0 items-center justify-center !overflow-hidden !rounded-t-2xl !bg-white">
+                                    <Image
                                         src={deal.product.image || "/fiery-wok.png"}
                                         alt={deal.product.name}
-                                        className="h-full w-full object-cover"
-                                        loading="lazy"
+                                        width={900}
+                                        height={700}
+                                        className="!h-full !w-full !object-cover !object-center"
+                                        style={{
+                                            width: "100%",
+                                            height: "100%",
+                                            objectFit: "cover",
+                                            objectPosition: "center",
+                                        }}
+                                        unoptimized
                                     />
                                     <div className="pointer-events-none absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-black/25 to-transparent" />
                                     <span className="absolute left-4 top-4 rounded-[18px] bg-brand-primary px-3 py-1.5 text-sm font-semibold text-white shadow-md">
