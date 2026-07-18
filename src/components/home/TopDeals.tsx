@@ -6,7 +6,7 @@ export default function TopDeals() {
   const { t, language } = useLanguage();
 
   return (
-    <section className="bg-[#fcfdfd] pt-12 pb-24 w-full relative z-10 overflow-hidden">
+    <section className="relative z-10 w-full overflow-hidden bg-[#fcfdfd] pb-24 pt-20 sm:pt-24">
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20">
 

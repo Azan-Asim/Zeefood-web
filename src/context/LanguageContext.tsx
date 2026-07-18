@@ -128,21 +128,21 @@ const translations: Record<Language, Record<string, string>> = {
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [language, setLanguage] = useState<Language>("EN");
+  const [language, setLanguage] = useState<Language>(() => {
+    if (typeof window === "undefined") return "EN";
+
+    const savedLang = window.localStorage.getItem("appLanguage") as Language | null;
+    return savedLang && translations[savedLang] ? savedLang : "EN";
+  });
 
   useEffect(() => {
-    const savedLang = localStorage.getItem("appLanguage") as Language;
-    if (savedLang) setLanguage(savedLang);
-  }, []);
+    document.documentElement.dir = language === "UR" ? "rtl" : "ltr";
+    document.documentElement.lang = language.toLowerCase();
+    window.localStorage.setItem("appLanguage", language);
+  }, [language]);
 
-  const handleSetLanguage = (lang: string) => {
-    const normalizedLang = lang.toUpperCase() as Language;
-    if (translations[normalizedLang]) {
-      setLanguage(normalizedLang);
-      localStorage.setItem("appLanguage", normalizedLang);
-      document.documentElement.dir = normalizedLang === "UR" ? "rtl" : "ltr";
-      document.documentElement.lang = normalizedLang.toLowerCase();
-    }
+  const handleSetLanguage = (lang: Language) => {
+    setLanguage(lang);
   };
 
   const t = (key: string) => {

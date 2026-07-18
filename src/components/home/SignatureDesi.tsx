@@ -9,18 +9,39 @@ import { useRouter } from "next/navigation";
 type RemoteProduct = {
   id: string;
   name: string;
+  slug?: string;
   image?: string;
   status?: string;
   category?: { CategoryName?: string };
   price?: number;
-  variants?: { id?: string; name?: string; price?: number }[];
+  variants?: ProductVariant[];
+};
+
+type ProductVariant = {
+  id?: string;
+  name?: string;
+  price?: number;
+};
+
+type SignatureItem = {
+  id: string;
+  name: string;
+  nameUr: string;
+  description: string;
+  descriptionUr: string;
+  price: number;
+  image: string;
+  slug: string;
+  status?: string;
+  category: string;
+  variants: ProductVariant[];
 };
 
 export default function SignatureDesi() {
   const { t, language } = useLanguage();
   const { addToCart } = useCart();
   const router = useRouter();
-  const [desiItems, setDesiItems] = useState<Array<any>>([]);
+  const [desiItems, setDesiItems] = useState<SignatureItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -30,9 +51,7 @@ export default function SignatureDesi() {
       setLoading(true);
       setError(null);
       try {
-        const res = await fetch(
-          "https://drm.devsinntechnologies.com/public/products?businessId=5707b450-9723-4794-9ba4-ee03890cf504&page=1&limit=50"
-        );
+        const res = await fetch("/api/products?page=1&limit=50");
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const json = await res.json();
         const data: RemoteProduct[] = json.data || [];
@@ -46,7 +65,7 @@ export default function SignatureDesi() {
               ? `https://drm.devsinntechnologies.com/${p.image}`
               : "/images/home/menu/placeholder.png";
 
-            const variantPrices = (p.variants || []).map((v: any) => Number(v.price || 0)).filter(Boolean);
+            const variantPrices = (p.variants || []).map((v) => Number(v.price || 0)).filter(Boolean);
             const price = variantPrices.length > 0 ? Math.min(...variantPrices) : (p.price || 0);
 
             return {
@@ -57,17 +76,17 @@ export default function SignatureDesi() {
               descriptionUr: "",
               price,
               image: imageUrl,
-              slug: (p as any).slug ?? p.id,
+              slug: p.slug ?? p.id,
               status: p.status,
               category: p.category?.CategoryName ?? "Desi",
               variants: p.variants || [],
-              raw: p,
             };
           });
 
         if (mounted) setDesiItems(filtered);
-      } catch (err: any) {
-        if (mounted) setError(err.message || "Failed to load products");
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : "Failed to load products";
+        if (mounted) setError(message);
       } finally {
         if (mounted) setLoading(false);
       }
@@ -81,7 +100,7 @@ export default function SignatureDesi() {
 
   return (
     <section
-      className="bg-brand-white pt-24 pb-12 w-full relative"
+      className="relative w-full bg-brand-white pb-12 pt-20 sm:pt-24"
       style={{ fontFamily: 'var(--font-poppins), Poppins, sans-serif' }}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -137,7 +156,7 @@ export default function SignatureDesi() {
                 </p>
                 {item.variants?.length > 0 && (
                   <div className="mb-5 flex flex-wrap items-center justify-center gap-2">
-                    {item.variants.slice(0, 4).map((variant: any) => (
+                    {item.variants.slice(0, 4).map((variant) => (
                       <span
                         key={variant.id ?? `${item.id}-${variant.name}`}
                         className="px-3 py-1.5 rounded-full bg-white/80 border border-white text-[10px] font-black uppercase tracking-widest text-brand-dark/70 shadow-sm"
@@ -156,7 +175,7 @@ export default function SignatureDesi() {
                       if (!isActive) return;
 
                       const lowestVariantPrice = item.variants && item.variants.length > 0
-                        ? Math.min(...item.variants.map((v: any) => Number(v.price || 0)))
+                        ? Math.min(...item.variants.map((v) => Number(v.price || 0)))
                         : item.price || 0;
 
                       const cartItem = {
@@ -181,7 +200,7 @@ export default function SignatureDesi() {
                       <button
                         onClick={handleOrderNow}
                         disabled={!isActive}
-                        className="w-full py-4 px-6 bg-white text-brand-dark font-black text-xs uppercase tracking-widest rounded-full shadow-md group-hover:bg-brand-primary group-hover:text-white transition-all duration-300 border border-gray-100 group-hover:border-transparent disabled:opacity-40 disabled:cursor-not-allowed"
+                        className="w-full rounded-[18px] border border-gray-100 bg-white px-6 py-4 text-xs font-black uppercase tracking-widest text-brand-dark shadow-md transition-all duration-300 group-hover:border-transparent group-hover:bg-brand-primary group-hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
                       >
                         {isActive ? t("orderNow") : "Unavailable"}
                       </button>
@@ -194,7 +213,7 @@ export default function SignatureDesi() {
         </div>
 
         <div className="mt-12 flex justify-center">
-          <Link href="/menu" className="px-10 py-4 bg-transparent border-2 border-brand-primary text-brand-primary font-black uppercase tracking-widest rounded-full hover:bg-brand-primary hover:text-brand-white transition-all duration-300 shadow-lg hover:shadow-[0_15px_30px_rgba(230,57,70,0.3)] hover:-translate-y-1">
+          <Link href="/menu" className="inline-flex items-center justify-center rounded-[18px] border-2 border-brand-primary bg-transparent px-10 py-4 font-black uppercase tracking-widest text-brand-primary no-underline hover:bg-brand-primary hover:text-brand-white hover:no-underline transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_15px_30px_rgba(248,114,5,0.30)]">
             {t("viewMenu")}
           </Link>
         </div>

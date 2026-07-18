@@ -4,6 +4,7 @@
 import type { ProductsApiResponse, ProductsQueryParams } from "./types";
 
 const BASE_URL = "https://drm.devsinntechnologies.com";
+const PRODUCTS_PATH = "/public/products";
 export const BUSINESS_ID = "5519eece-b74c-4b6d-b773-eff1ab16a4cc";
 
 /**
@@ -38,7 +39,10 @@ export async function fetchProductsApi(
     limit: params.limit ?? 50,
   });
 
-  const url = `${BASE_URL}/public/products?${qs}`;
+  const url =
+    typeof window === "undefined"
+      ? `${BASE_URL}${PRODUCTS_PATH}?${qs}`
+      : `/api/products?${qs}`;
 
   const response = await fetch(url, {
     method: "GET",

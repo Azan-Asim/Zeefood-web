@@ -23,6 +23,7 @@ const footerLinks = {
     // { label: "Track Order", href: "/track" },
     { label: "Refund Policy", href: "/refund" },
     { label: "Privacy Policy", href: "/privacy" },
+    { label: "Terms of Service", href: "/terms" },
   ],
 };
 
@@ -90,7 +91,7 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 relative z-10">
 
         {/* TOP CTA Strip */}
-        <div className="flex flex-col md:flex-row items-center justify-between gap-6 py-12 border-b border-gray-100">
+        {/* <div className="flex flex-col md:flex-row items-center justify-between gap-6 py-12 border-b border-gray-100">
           <div>
             <h3 className="text-2xl lg:text-3xl font-medium text-brand-dark tracking-tight">
               Ready to{" "}
@@ -111,10 +112,36 @@ export default function Footer() {
               Order on WhatsApp
             </a>
           </div>
+        </div> */}
+
+        <div className="flex flex-col md:flex-row items-center justify-between gap-6 py-12 border-b border-gray-100">
+          {/* Left Text Section (Centered on Mobile) */}
+          <div className="text-center md:text-left w-full md:w-auto">
+            <h3 className="text-2xl lg:text-3xl font-medium text-brand-dark tracking-tight">
+              Ready to{" "}
+              <span className="text-brand-primary">
+                Order?
+              </span>
+            </h3>
+            <p className="text-brand-dark/50 font-medium mt-1">Hot food delivered to your doorstep in 30 minutes.</p>
+          </div>
+
+          {/* Right Buttons Section (Column on Mobile, Row on Desktop) */}
+          <div className="w-full md:w-auto flex flex-col sm:flex-row items-center gap-4">
+            <Link href="/order" className="w-full sm:w-auto flex items-center justify-center whitespace-nowrap px-8 py-4 bg-brand-primary text-white font-medium uppercase tracking-widest text-xs rounded-xl transition-all duration-300 shadow-[0_10px_30px_rgba(230,57,70,0.3)] hover:shadow-[0_15px_40px_rgba(230,57,70,0.5)] hover:-translate-y-0.5">
+              Order Online
+            </Link>
+            <a href="https://wa.me/923354153368" className="w-full sm:w-auto justify-center whitespace-nowrap px-8 py-4 bg-white border border-gray-200 text-brand-dark hover:border-brand-primary hover:text-brand-primary font-medium uppercase tracking-widest text-xs rounded-xl transition-all duration-300 shadow-sm hover:-translate-y-0.5 flex items-center gap-2">
+              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
+              </svg>
+              Order on WhatsApp
+            </a>
+          </div>
         </div>
 
         {/* MAIN FOOTER GRID */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 py-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 py-8">
 
           {/* Brand Column */}
           <div className="lg:col-span-2 flex flex-col gap-6">
@@ -148,26 +175,7 @@ export default function Footer() {
               ))}
             </div>
 
-            {/* Contact Info */}
-            <div className="flex flex-col gap-3 mt-2">
-              <a href="https://wa.me/923354153368" className="flex items-center gap-3 text-sm text-brand-dark/60 hover:text-brand-primary transition-colors group font-medium">
-                <span className="w-8 h-8 rounded-lg bg-brand-primary/10 flex items-center justify-center group-hover:bg-brand-primary/20 transition-colors">
-                  <svg className="w-4 h-4 text-brand-primary" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
-                  </svg>
-                </span>
-                +92 335 415 3368
-              </a>
-              <div className="flex items-start gap-3 text-sm text-brand-dark/60 font-medium">
-                <span className="w-8 h-8 rounded-lg bg-brand-primary/10 flex items-center justify-center shrink-0">
-                  <svg className="w-4 h-4 text-brand-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
-                </span>
-                <span>464-Sir Handi Road, Near Gourmet bakers, first round about, Samnabad, Lahore</span>
-              </div>
-            </div>
+
           </div>
 
           {/* Links Columns */}
@@ -193,8 +201,31 @@ export default function Footer() {
           ))}
         </div>
 
-        {/* Newsletter / Bottom CTA Section */}
-        <div className="border-t border-gray-100 py-12">
+        <div className="flex flex-col xl:flex-row xl:items-end justify-between gap-10 mt-2 w-full">
+          {/* Contact Info */}
+
+          <div className="flex flex-col gap-3 mt-2">
+            <a href="https://wa.me/923354153368" className="flex items-center gap-3 text-sm text-brand-dark/60 hover:text-brand-primary transition-colors group font-medium">
+              <span className="w-8 h-8 rounded-lg bg-brand-primary/10 flex items-center justify-center group-hover:bg-brand-primary/20 transition-colors">
+                <svg className="w-4 h-4 text-brand-primary" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
+                </svg>
+              </span>
+              +92 335 415 3368
+            </a>
+            <div className="flex items-start gap-3 text-sm text-brand-dark/60 font-medium">
+              <span className="w-8 h-8 rounded-lg bg-brand-primary/10 flex items-center justify-center shrink-0">
+                <svg className="w-4 h-4 text-brand-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+              </span>
+              <span>464-Sir Handi Road, Near Gourmet bakers, first round about, Samnabad, Lahore</span>
+            </div>
+          </div>
+
+          {/* Newsletter / Bottom CTA Section */}
+          {/* <div className="border-t border-gray-100 py-12">
           <div className="flex flex-col md:flex-row items-center justify-between gap-10">
             <div className="max-w-md">
               <h4 className="text-xl font-medium text-brand-dark tracking-tight mb-2">Subscribe to our newsletter</h4>
@@ -217,42 +248,50 @@ export default function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="border-t border-gray-100 py-4 flex flex-col sm:flex-row items-center sm:items-end justify-between gap-6 relative">
+          <div className="border-t border-gray-100 py-4 flex flex-col sm:flex-row items-center sm:items-end justify-between gap-6 relative">
 
-          {/* Left: Copyright */}
-          <p className="text-[10px] text-brand-dark/40 font-medium tracking-widest text-center sm:text-left">
+
+
+            {/* Right: Powered By + Links */}
+            <div className="flex flex-col items-center sm:items-end gap-5">
+              <a
+                href="https://www.devsinntechnologies.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group flex items-center justify-center gap-3 transition-all duration-300 hover:opacity-80 active:scale-95"
+              >
+                <span className="text-[13px] font-medium text-gray-400 uppercase tracking-widest group-hover:text-[#2563eb] transition-colors duration-300">
+                  POWERED BY
+                </span>
+                <div className="h-6 w-[2px] bg-gray-200 group-hover:bg-[#2563eb]/30 transition-colors duration-300"></div>
+                <div className="relative w-40 h-10">
+                  <Image
+                    src="/devsinnlogo0.svg"
+                    alt="Devsinn Technologies"
+                    fill
+                    className="object-contain"
+                    unoptimized
+                  />
+                </div>
+              </a>
+
+              {/* <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-8">
+                <Link href="/privacy" className="text-[11px] text-brand-dark/40 hover:text-brand-primary transition-colors font-medium uppercase tracking-widest">Privacy Policy</Link>
+                <Link href="/terms" className="text-[11px] text-brand-dark/40 hover:text-brand-primary transition-colors font-medium uppercase tracking-widest">Terms</Link>
+                <Link href="/contact" className="text-[11px] text-brand-dark/40 hover:text-brand-primary transition-colors font-medium uppercase tracking-widest">Contact</Link>
+              </div> */}
+            </div>
+
+
+          </div>
+
+
+        </div>
+
+        <div className="w-full border-t border-gray-100 py-6 mt-8 flex items-center justify-center">
+          <p className="text-[10px] text-brand-dark/40 font-medium tracking-widest text-center">
             © {year} ZeeFood. All rights reserved.
           </p>
-
-          {/* Right: Powered By + Links */}
-          <div className="flex flex-col items-center sm:items-end gap-5">
-            <a
-              href="https://www.devsinntechnologies.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group flex items-center justify-center gap-3 transition-all duration-300 hover:opacity-80 active:scale-95"
-            >
-              <span className="text-[13px] font-medium text-gray-400 uppercase tracking-widest group-hover:text-[#2563eb] transition-colors duration-300">
-                POWERED BY
-              </span>
-              <div className="h-6 w-[2px] bg-gray-200 group-hover:bg-[#2563eb]/30 transition-colors duration-300"></div>
-              <div className="relative w-40 h-10">
-                <Image
-                  src="/devsinn.png"
-                  alt="Devsinn Technologies"
-                  fill
-                  className="object-contain"
-                  unoptimized
-                />
-              </div>
-            </a>
-
-            <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-8">
-              <Link href="/privacy" className="text-[11px] text-brand-dark/40 hover:text-brand-primary transition-colors font-medium uppercase tracking-widest">Privacy Policy</Link>
-              <Link href="/terms" className="text-[11px] text-brand-dark/40 hover:text-brand-primary transition-colors font-medium uppercase tracking-widest">Terms</Link>
-              <Link href="/contact" className="text-[11px] text-brand-dark/40 hover:text-brand-primary transition-colors font-medium uppercase tracking-widest">Contact</Link>
-            </div>
-          </div>
         </div>
 
       </div>

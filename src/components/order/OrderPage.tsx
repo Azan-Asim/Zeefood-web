@@ -35,6 +35,120 @@ const CARD_THEMES = [
 // ─────────────────────────────────────────────────────────────────────────────
 // ProductCard
 // ─────────────────────────────────────────────────────────────────────────────
+// function ProductCard({
+//   product,
+//   index,
+//   onAddToCart,
+// }: {
+//   product: Product;
+//   index: number;
+//   onAddToCart: (p: Product) => void;
+// }) {
+//   const { t } = useLanguage();
+//   // const theme = CARD_THEMES[index % CARD_THEMES.length];
+//   const theme = { bg: "bg-white", border: "border-gray-100" };
+//   const lowestVariantPrice =
+//     product.variants.length > 0
+//       ? Math.min(...product.variants.map((v) => v.price))
+//       : product.price;
+
+//   const displayPrice =
+//     lowestVariantPrice > 0
+//       ? `Rs. ${lowestVariantPrice.toLocaleString()}`
+//       : product.price > 0
+//         ? `Rs. ${product.price.toLocaleString()}`
+//         : "—";
+
+//   const isActive = product.status ? product.status === "ACTIVE" : true;
+
+//   return (
+
+//     <div
+//       // className={`relative flex flex-col items-center text-center p-6 lg:p-7 rounded-[35px] shadow-[0_20px_50px_rgba(0,0,0,0.06)] hover:shadow-[0_30px_60px_rgba(0,0,0,0.15)] border-2 ${theme.border} transition-all duration-500 hover:-translate-y-4 group ${theme.bg} min-h-[420px] lg:min-h-[460px]`}
+//       className="relative flex flex-col overflow-hidden items-center text-center p-4 rounded-2xl border border-gray-100 bg-white shadow-sm hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 group"     >
+//       {/* Floating Image */}
+//       <div className="relative -top-16 lg:-top-20 w-[160px] h-[160px] lg:w-[180px] lg:h-[180px] transition-transform duration-700 group-hover:scale-105 group-hover:rotate-2 drop-shadow-[0_20px_35px_rgba(0,0,0,0.15)]">
+//         {/* <div className="w-full h-full relative z-10 border-4 border-white shadow-inner rounded-full bg-white group-hover:border-brand-primary/20 transition-colors duration-500 overflow-hidden"> */}
+//         <div className="w-full h-48 overflow-hidden rounded-2xl mb-4 relative shadow-sm">
+//           <Image
+//             src={productImageUrl(product.image)}
+//             alt={product.name}
+//             fill
+//             // className="object-cover scale-100 group-hover:scale-110 transition-transform duration-700"
+//             className="object-cover group-hover:scale-110 transition-transform duration-500"
+//             unoptimized
+//           />
+//         </div>
+
+//         {/* In-stock badge */}
+//         {product.inStock < 20 && product.inStock > 0 && (
+//           // <div className="absolute top-2 right-0 z-20 bg-amber-500 text-white text-[9px] font-black uppercase tracking-wider px-2 py-1 rounded-full shadow-lg">
+//           <div className="absolute top-3 left-3 z-20 bg-white/90 backdrop-blur-sm text-brand-primary text-[10px] font-bold uppercase px-3 py-1 rounded-full shadow-sm border border-brand-primary/10">
+//             Low Stock
+//           </div>
+//         )}
+//         {/* {product.inStock === 0 && (
+//           <div className="absolute top-2 right-0 z-20 bg-gray-400 text-white text-[9px] font-black uppercase tracking-wider px-2 py-1 rounded-full shadow-lg">
+//             Out of Stock
+//           </div>
+//         )} */}
+//       </div>
+
+//       <div className="h-24 lg:h-28 w-full" />
+
+//       {/* Category chip */}
+//       <span className="mb-2 px-3 py-1 bg-white/60 rounded-full text-[9px] font-black uppercase tracking-widest text-brand-dark/50">
+//         {product.category?.CategoryName ?? "General"}
+//       </span>
+
+//       {/* Title */}
+//       <h3 className="text-xl font-black text-brand-dark uppercase tracking-wide mb-2 group-hover:text-brand-primary transition-colors">
+//         {product.name}
+//       </h3>
+
+//       {/* Variants pill list — always reserves the same vertical space */}
+//       <div className="flex flex-wrap items-center justify-center gap-2 mb-4 min-h-[56px]">
+//         {product.variants.map((v) => (
+//           <span
+//             key={v.id}
+//             className="px-3 py-1 bg-white/70 border border-white/80 rounded-full text-[10px] font-black text-brand-dark/60 uppercase tracking-wider"
+//           >
+//             {v.name} — Rs.&nbsp;{v.price.toLocaleString()}
+//           </span>
+//         ))}
+//       </div>
+
+//       {/* Rating row */}
+//       <div className="flex items-center justify-center gap-2 text-[10px] font-black text-brand-dark/40 uppercase tracking-widest mb-5">
+//         <span className="flex items-center gap-1">
+//           <span className="text-[#F87205]">★</span> 4.9
+//         </span>
+//         <span className="w-1 h-1 bg-brand-dark/20 rounded-full" />
+//         <span>20–30 min</span>
+//       </div>
+
+//       {/* Price + CTA */}
+//       <div className="mt-auto flex flex-col items-center w-full">
+//         <span
+//           className="text-3xl font-black mb-5 drop-shadow-sm"
+//           style={{ color: "#F87205" }}
+//         >
+//           {displayPrice}
+//         </span>
+
+//         <button
+//           disabled={!isActive}
+//           onClick={() => onAddToCart(product)}
+//           className="w-full py-4 px-6 bg-white text-brand-dark font-black text-xs uppercase tracking-widest rounded-full shadow-md group-hover:bg-brand-primary group-hover:text-white transition-all duration-300 border border-gray-100 group-hover:border-transparent disabled:opacity-40 disabled:cursor-not-allowed"
+//         >
+//           {!isActive ? "Unavailable" : t("orderNow")}
+//         </button>
+//       </div>
+//     </div>
+//   );
+// }
+
+
 function ProductCard({
   product,
   index,
@@ -45,10 +159,18 @@ function ProductCard({
   onAddToCart: (p: Product) => void;
 }) {
   const { t } = useLanguage();
-  const theme = CARD_THEMES[index % CARD_THEMES.length];
+  const [showDetails, setShowDetails] = useState(false);
+
+  const theme = {
+    bg: "bg-white",
+    border: "border-gray-100",
+  };
+
+  const variants = product.variants ?? [];
+
   const lowestVariantPrice =
-    product.variants.length > 0
-      ? Math.min(...product.variants.map((v) => v.price))
+    variants.length > 0
+      ? Math.min(...variants.map((variant) => variant.price))
       : product.price;
 
   const displayPrice =
@@ -58,91 +180,249 @@ function ProductCard({
         ? `Rs. ${product.price.toLocaleString()}`
         : "—";
 
-  const isActive = product.status ? product.status === "ACTIVE" : true;
+  const isActive = product.status
+    ? product.status === "ACTIVE"
+    : true;
+
+  const detailsId = `product-details-${index}`;
 
   return (
-    <div
-      className={`relative flex flex-col items-center text-center p-6 lg:p-7 rounded-[35px] shadow-[0_20px_50px_rgba(0,0,0,0.06)] hover:shadow-[0_30px_60px_rgba(0,0,0,0.15)] border-2 ${theme.border} transition-all duration-500 hover:-translate-y-4 group ${theme.bg} min-h-[420px] lg:min-h-[460px]`}
+    <article
+      className={` relative grid h-[400px] md:h-[480px] w-full grid-rows-[200px_200px] md:grid-rows-[230px_250px] overflow-hidden rounded-[24px] md-rounded-[30px] border ${theme.border} bg-gray-50 shadow-sm transition-all duration-300 hover:shadow-2xl group
+      `}
     >
-      {/* Floating Image */}
-      <div className="absolute -top-16 lg:-top-20 w-[160px] h-[160px] lg:w-[180px] lg:h-[180px] transition-transform duration-700 group-hover:scale-105 group-hover:rotate-2 drop-shadow-[0_20px_35px_rgba(0,0,0,0.15)]">
-        <div className="w-full h-full relative z-10 border-4 border-white shadow-inner rounded-full bg-white group-hover:border-brand-primary/20 transition-colors duration-500 overflow-hidden">
+      {/* IMAGE SECTION */}
+      <div className="relative min-h-0 w-full bg-gray-50">
+        {/*
+          Important:
+          The nested relative container creates a real inner frame.
+          Next/Image fills this inner frame instead of ignoring the padding.
+        */}
+        {/* <div className="absolute inset-4">
           <Image
             src={productImageUrl(product.image)}
             alt={product.name}
             fill
-            className="object-cover scale-100 group-hover:scale-110 transition-transform duration-700"
+            sizes="
+              (max-width: 640px) 100vw,
+              (max-width: 1024px) 50vw,
+              33vw
+            "
+            className="object-contain object-center"
+            style={{
+              objectFit: "contain",
+              objectPosition: "center",
+            }}
             unoptimized
           />
+        </div> */}
+
+        {/* IMAGE SECTION */}
+<div className="relative h-full w-full overflow-hidden bg-gray-50  ">
+  <Image
+    src={productImageUrl(product.image)}
+    alt={product.name}
+    fill
+    sizes=" (max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+    
+    className=" object-cover object-center transition-transform duration-500 ease-out group-hover:scale-[1.03]"
+    
+    unoptimized
+  />
+</div>
+      </div>
+
+
+
+      {/* MAIN CONTENT SECTION */}
+      <div
+        className={` relative z-10 flex h-full min-h-0 flex-col border-t ${theme.border} ${theme.bg} p-3 md:p-5
+        `}
+      >
+        {/* RATING AND DELIVERY TIME */}
+        <div className="mb-2 flex items-center justify-end">
+          <div className="flex items-center gap-1 text-[10px] font-black uppercase tracking-widest text-brand-dark/40">
+            <span className="text-[#F87205]">★</span>
+
+            <span>4.9</span>
+
+            <span className="mx-1 h-1 w-1 rounded-full bg-brand-dark/20" />
+
+            <span>20–30 min</span>
+          </div>
         </div>
 
-        {/* In-stock badge */}
-        {product.inStock < 20 && product.inStock > 0 && (
-          <div className="absolute top-2 right-0 z-20 bg-amber-500 text-white text-[9px] font-black uppercase tracking-wider px-2 py-1 rounded-full shadow-lg">
-            Low Stock
-          </div>
-        )}
-        {/* {product.inStock === 0 && (
-          <div className="absolute top-2 right-0 z-20 bg-gray-400 text-white text-[9px] font-black uppercase tracking-wider px-2 py-1 rounded-full shadow-lg">
-            Out of Stock
-          </div>
-        )} */}
-      </div>
-
-      <div className="h-24 lg:h-28 w-full" />
-
-      {/* Category chip */}
-      <span className="mb-2 px-3 py-1 bg-white/60 rounded-full text-[9px] font-black uppercase tracking-widest text-brand-dark/50">
-        {product.category?.CategoryName ?? "General"}
-      </span>
-
-      {/* Title */}
-      <h3 className="text-xl font-black text-brand-dark uppercase tracking-wide mb-2 group-hover:text-brand-primary transition-colors">
-        {product.name}
-      </h3>
-
-      {/* Variants pill list — always reserves the same vertical space */}
-      <div className="flex flex-wrap items-center justify-center gap-2 mb-4 min-h-[56px]">
-        {product.variants.map((v) => (
-          <span
-            key={v.id}
-            className="px-3 py-1 bg-white/70 border border-white/80 rounded-full text-[10px] font-black text-brand-dark/60 uppercase tracking-wider"
-          >
-            {v.name} — Rs.&nbsp;{v.price.toLocaleString()}
-          </span>
-        ))}
-      </div>
-
-      {/* Rating row */}
-      <div className="flex items-center justify-center gap-2 text-[10px] font-black text-brand-dark/40 uppercase tracking-widest mb-5">
-        <span className="flex items-center gap-1">
-          <span className="text-[#F87205]">★</span> 4.9
-        </span>
-        <span className="w-1 h-1 bg-brand-dark/20 rounded-full" />
-        <span>20–30 min</span>
-      </div>
-
-      {/* Price + CTA */}
-      <div className="mt-auto flex flex-col items-center w-full">
-        <span
-          className="text-3xl font-black mb-5 drop-shadow-sm"
-          style={{ color: "#F87205" }}
+        {/* PRODUCT TITLE */}
+        <h3
+          className=" mb-2 min-h-[44px]  md:min-h-[52px] line-clamp-2 text-lg md:text-xl font-black uppercase leading-[1.3] tracking-wide text-brand-dark transition-colors group-hover:text-brand-primary
+          "
+          title={product.name}
         >
-          {displayPrice}
-        </span>
+          {product.name}  
+        </h3>
 
+        {/* EXPAND DETAILS BUTTON */}
         <button
-          disabled={!isActive}
-          onClick={() => onAddToCart(product)}
-          className="w-full py-4 px-6 bg-white text-brand-dark font-black text-xs uppercase tracking-widest rounded-full shadow-md group-hover:bg-brand-primary group-hover:text-white transition-all duration-300 border border-gray-100 group-hover:border-transparent disabled:opacity-40 disabled:cursor-not-allowed"
+          type="button"
+          aria-expanded={showDetails}
+          aria-controls={detailsId}
+          onClick={() => setShowDetails(true)}
+          className=" flex w-fit items-center gap-2 rounded-full  border border-gray-200 bg-white px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-brand-dark/60 transition-all duration-300 hover:border-brand-primary hover:text-brand-primary
+          "
         >
-          {!isActive ? "Unavailable" : t("orderNow")}
+          View details
+
+          {variants.length > 0 && (
+            <span className="text-brand-primary">
+              ({variants.length})
+            </span>
+          )}
+
+          <svg
+            viewBox="0 0 20 20"
+            fill="none"
+            className="h-3.5 w-3.5"
+            aria-hidden="true"
+          >
+            <path
+              d="M5 7.5L10 12.5L15 7.5"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
         </button>
+
+        {/* PRICE AND CTA */}
+        <div className="mt-auto flex w-full flex-col items-center">
+          <span
+            className="mb-2 md:mb-3 md:text-3xl text-2xl font-black drop-shadow-sm"
+            style={{ color: "#F87205" }}
+          >
+            {displayPrice}
+          </span>
+
+          <button
+            type="button"
+            disabled={!isActive}
+            onClick={() => onAddToCart(product)}
+            className=" w-full rounded-full border border-transparent bg-brand-dark px-4 md:px-6 py-3 md:py-4 text-[10px] md:text-xs font-black uppercase tracking-widest text-white shadow-md transition-all duration-300 group-hover:bg-brand-primary disabled:cursor-not-allowed disabled:opacity-40
+            "
+          >
+            {!isActive ? "Unavailable" : t("orderNow")}
+          </button>
+        </div>
       </div>
-    </div>
+
+      {/* BACKDROP */}
+      {showDetails && (
+        <button
+          type="button"
+          aria-label="Close product details"
+          onClick={() => setShowDetails(false)}
+          className=" absolute inset-0 z-20 cursor-default bg-black/10 backdrop-blur-[1px]
+          "
+        />
+      )}
+
+      {/* EXPANDABLE DETAILS DRAWER */}
+      <section
+        id={detailsId}
+        aria-hidden={!showDetails}
+        className={` absolute inset-x-3 bottom-3 z-30 max-h-[315px] overflow-hidden rounded-[26px] border ${theme.border} bg-white shadow-2xl transition-all duration-300
+          ${
+            showDetails
+              ? "translate-y-0 opacity-100"
+              : "pointer-events-none translate-y-[110%] opacity-0"
+          }
+        `}
+      >
+        {/* DRAWER HEADER */}
+        <div className="flex items-center justify-between border-b border-gray-100 px-5 py-4">
+          <div>
+            <p className="text-[10px] font-black uppercase tracking-widest text-brand-primary">
+              Product information
+            </p>
+
+            <h4 className="mt-1 line-clamp-1 text-base font-black uppercase text-brand-dark">
+              {product.name}
+            </h4>
+          </div>
+
+          <button
+            type="button"
+            aria-label="Close details"
+            onClick={() => setShowDetails(false)}
+            className=" flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-gray-200 bg-gray-50 text-lg font-bold text-brand-dark transition-colors hover:border-brand-primary hover:text-brand-primary
+            "
+          >
+            ×
+          </button>
+        </div>
+
+        {/* SCROLLABLE DETAILS CONTENT */}
+        <div className="max-h-[235px] overflow-y-auto px-5 py-4">
+          {/* CATEGORY */}
+          <div className="mb-5">
+            <p className="mb-2 text-[9px] font-black uppercase tracking-widest text-brand-dark/40">
+              Category
+            </p>
+
+            <span className="inline-flex rounded-full bg-gray-100 px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-brand-dark/60">
+              {product.category?.CategoryName ?? "General"}
+            </span>
+          </div>
+
+          {/* VARIANTS */}
+          <div>
+            <p className="mb-2 text-[9px] font-black uppercase tracking-widest text-brand-dark/40">
+              Available options
+            </p>
+
+            {variants.length > 0 ? (
+              <div className="flex flex-wrap gap-2">
+                {variants.map((variant) => (
+                  <span
+                    key={variant.id}
+                    className=" rounded-full border border-gray-200 bg-white px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-brand-dark/60
+                    "
+                  >
+                    {variant.name} — Rs.&nbsp;
+                    {variant.price.toLocaleString()}
+                  </span>
+                ))}
+              </div>
+            ) : (
+              <p className="text-xs font-bold text-brand-dark/50">
+                No additional options available.
+              </p>
+            )}
+          </div>
+
+          {/* STOCK */}
+          <div className="mt-5 flex items-center justify-between border-t border-gray-100 pt-4">
+            <span className="text-[9px] font-black uppercase tracking-widest text-brand-dark/40">
+              Stock availability
+            </span>
+
+            <span
+              className={`text-[10px] font-black uppercase tracking-wider ${
+                product.inStock > 0
+                  ? "text-brand-primary"
+                  : "text-brand-dark/40"
+              }`}
+            >
+              {product.inStock > 0
+                ? `${product.inStock} available`
+                : "Out of stock"}
+            </span>
+          </div>
+        </div>
+      </section>
+    </article>
   );
 }
-
 // ─────────────────────────────────────────────────────────────────────────────
 // Skeleton Card — shown while loading
 // ─────────────────────────────────────────────────────────────────────────────
@@ -191,7 +471,12 @@ export default function OrderPage() {
   const { cart, addToCart, updateQuantity, cartTotal } = useCart();
   const searchParams = useSearchParams();
 
-  const [userLocation, setUserLocation] = useState<{ area: string; city: string; orderType: string } | null>(null);
+  const [userLocation] = useState<{ area: string; city: string; orderType: string } | null>(() => {
+    if (typeof window === "undefined") return null;
+
+    const loc = window.sessionStorage.getItem("userLocation");
+    return loc ? JSON.parse(loc) : null;
+  });
   const [isMobileCartOpen, setIsMobileCartOpen] = useState(false);
 
   // ── Redux hooks ─────────────────────────────────────────────────────────
@@ -224,8 +509,6 @@ export default function OrderPage() {
   );
 
   useEffect(() => {
-    const loc = sessionStorage.getItem("userLocation");
-    if (loc) setUserLocation(JSON.parse(loc));
     return () => {
       if (searchTimer.current) clearTimeout(searchTimer.current);
     };
@@ -372,7 +655,7 @@ export default function OrderPage() {
           <div className="md:hidden fixed bottom-6 left-4 right-4 z-[90] animate-in fade-in slide-in-from-bottom-10">
             <button
               onClick={() => setIsMobileCartOpen(true)}
-              className="w-full bg-brand-primary text-white p-4 rounded-[20px] shadow-2xl flex items-center justify-between font-black uppercase tracking-widest text-sm"
+              className="w-full bg-brand-primary text-white p-4 rounded-[20px] shadow-2xl flex items-center justify-between font-medium uppercase tracking-widest text-sm"
             >
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
@@ -429,13 +712,13 @@ function CartContent({
   updateQuantity,
   onCheckout,
 }: {
-  cart: { item: ReturnType<typeof toCartItem>; quantity: number }[];
+  cart: ReturnType<typeof useCart>["cart"];
   cartTotal: number;
   deliveryFee: number;
   totalAmount: number;
   language: string;
   t: (key: string) => string;
-  updateQuantity: (id: string, delta: number) => void;
+  updateQuantity: (id: string | number, delta: number) => void;
   onCheckout: () => void;
 }) {
   return (
@@ -462,7 +745,7 @@ function CartContent({
           cart.map((c, i) => (
             <div key={i} className={`flex gap-4 items-center group ${language === "UR" ? "flex-row-reverse" : ""}`}>
               <div className="w-16 h-16 bg-white border border-[#ebe3d9] shadow-sm rounded-2xl flex items-center justify-center relative overflow-hidden shrink-0 group-hover:scale-105 transition-transform duration-300">
-                <Image src={c.item.image} alt={c.item.name} fill className="object-cover" unoptimized />
+                <Image src={c.item.image || "/images/placeholder-food.png"} alt={c.item.name || "Cart item"} fill className="object-cover" unoptimized />
               </div>
               <div className={`flex-1 min-w-0 ${language === "UR" ? "text-right" : ""}`}>
                 <h4 className="font-bold text-[#1a0a04] text-sm leading-tight mb-1 truncate">{c.item.name}</h4>

@@ -54,7 +54,7 @@ export default function RefundPage() {
           <div>
             <h3 className="text-2xl font-black mb-2 italic">Processing Time</h3>
             <p className="text-white/70 m-0 text-lg font-medium leading-relaxed">
-              Refunds reflect in your account within <strong>3-5 business days</strong> depending on your bank's policies.
+              Refunds reflect in your account within <strong>3-5 business days</strong> depending on your bank&apos;s policies.
             </p>
           </div>
         </div>

@@ -10,7 +10,7 @@ export default function FranchisePage() {
       label="Business" 
       title1="Own a Franchise" 
       title2="" 
-      description="Partner with Pakistan's fastest-growing premium food brand and build a lucrative business."
+      description="Partner with Pakistan&apos;s fastest-growing premium food brand and build a lucrative business."
     >
       <div className="space-y-16">
         <section>
@@ -29,7 +29,7 @@ export default function FranchisePage() {
               {[
                 "Minimum liquid capital of Rs 5.0 Million",
                 "Prime real estate location (min 1,200 sq ft)",
-                "Commitment to ZeeFood's premium standards",
+                "Commitment to ZeeFood&apos;s premium standards",
                 "Prior experience in F&B management preferred"
               ].map((item, i) => (
                 <li key={i} className="flex items-start gap-4 text-brand-dark font-bold text-lg">
@@ -56,7 +56,7 @@ export default function FranchisePage() {
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(230,57,70,0.15),transparent)] pointer-events-none" />
           <h3 className="text-3xl lg:text-4xl font-black text-white mb-4 relative z-10">Ready to start?</h3>
           <p className="text-white/60 mb-10 max-w-md mx-auto relative z-10 text-lg">
-            Submit your proposal to our franchise development team and we'll get back to you within 48 hours.
+            Submit your proposal to our franchise development team and we&apos;ll get back to you within 48 hours.
           </p>
           <Link href="/contact" className="inline-flex items-center gap-3 px-10 py-4 bg-brand-primary hover:bg-[#d42e3a] text-white font-black uppercase tracking-widest text-sm rounded-full transition-all duration-300 shadow-[0_15px_35px_rgba(230,57,70,0.4)] hover:-translate-y-1 relative z-10">
             Apply Now

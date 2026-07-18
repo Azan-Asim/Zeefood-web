@@ -8,10 +8,9 @@ export default function LocationModal() {
   const { t } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const [orderType, setOrderType] = useState("delivery");
-  const [city, setCity] = useState("Lahore");
+  const city = "Lahore";
   const [area, setArea] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
-  const [mounted, setMounted] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -28,10 +27,11 @@ export default function LocationModal() {
   );
 
   useEffect(() => {
-    setMounted(true);
     const savedLocation = sessionStorage.getItem("userLocation");
+    let openTimer: ReturnType<typeof setTimeout> | undefined;
+
     if (!savedLocation) {
-      setTimeout(() => setIsOpen(true), 500);
+      openTimer = setTimeout(() => setIsOpen(true), 500);
     }
 
     const handleClickOutside = (event: MouseEvent) => {
@@ -40,7 +40,10 @@ export default function LocationModal() {
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    return () => {
+      if (openTimer) clearTimeout(openTimer);
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
   }, []);
 
   const handleSelect = () => {
@@ -56,7 +59,7 @@ export default function LocationModal() {
     }
   };
 
-  if (!mounted || !isOpen) return null;
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4 overflow-hidden">

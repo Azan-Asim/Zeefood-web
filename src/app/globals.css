@@ -22,6 +22,17 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+:root {
+  --button-radius: 1.5rem;
+}
+
+button,
+input[type="button"],
+input[type="submit"],
+input[type="reset"] {
+  border-radius: var(--button-radius) !important;
+}
+
 @keyframes bounceSlow {
 
   0%,
@@ -352,4 +363,45 @@ body {
 
 .animate-sweep {
   animation: sweep 1.5s ease-in-out infinite;
+}
+
+@media (hover: hover) {
+  .deal-card:hover {
+    transform: translateY(-0.25rem);
+    box-shadow: 0 24px 70px rgba(249, 114, 5, 0.16);
+  }
+
+  .deal-card:hover .deal-card-image {
+    transform: scale(1.03);
+  }
+
+  .deal-card:hover .deal-card-badge {
+    transform: scale(1.05);
+  }
+
+  .deal-card:hover .deal-card-includes {
+    border-color: #fed7aa;
+    background-color: rgba(255, 237, 213, 0.7);
+  }
+
+}
+
+/* Some mobile browsers retain :hover after a tap. Keep deal cards static on touch screens. */
+@media (hover: none), (pointer: coarse) {
+  .deal-card,
+  .deal-card:hover {
+    transform: none;
+    box-shadow: 0 18px 55px rgba(18, 18, 18, 0.08);
+  }
+
+  .deal-card:hover .deal-card-image,
+  .deal-card:hover .deal-card-badge {
+    transform: none;
+  }
+
+  .deal-card:hover .deal-card-includes {
+    border-color: #f3f4f6;
+    background-color: #f9fafb;
+  }
+
 }

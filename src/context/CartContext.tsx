@@ -2,14 +2,31 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
+type CartProduct = {
+  id: string | number;
+  name?: string;
+  nameUr?: string;
+  price: string | number;
+  image?: string | null;
+  category?: unknown;
+  description?: string;
+  descriptionUr?: string;
+  slug?: string;
+  popular?: boolean;
+  details?: {
+    prepTime: string;
+    prepTimeUr: string;
+  };
+};
+
 interface CartItem {
-  item: any;
+  item: CartProduct;
   quantity: number;
 }
 
 interface CartContextType {
   cart: CartItem[];
-  addToCart: (item: any) => void;
+  addToCart: (item: CartProduct) => void;
   removeFromCart: (itemId: string | number) => void;
   updateQuantity: (itemId: string | number, delta: number) => void;
   clearCart: () => void;
@@ -19,26 +36,27 @@ interface CartContextType {
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
-  const [cart, setCart] = useState<CartItem[]>([]);
+  const [cart, setCart] = useState<CartItem[]>(() => {
+    if (typeof window === "undefined") return [];
 
-  // Load cart from localStorage on mount
-  useEffect(() => {
-    const savedCart = localStorage.getItem('zeefood_cart');
+    const savedCart = window.localStorage.getItem('zeefood_cart');
     if (savedCart) {
       try {
-        setCart(JSON.parse(savedCart));
+        return JSON.parse(savedCart) as CartItem[];
       } catch (e) {
         console.error("Failed to parse cart", e);
       }
     }
-  }, []);
+
+    return [];
+  });
 
   // Save cart to localStorage on change
   useEffect(() => {
-    localStorage.setItem('zeefood_cart', JSON.stringify(cart));
+    window.localStorage.setItem('zeefood_cart', JSON.stringify(cart));
   }, [cart]);
 
-  const addToCart = (item: any) => {
+  const addToCart = (item: CartProduct) => {
     setCart(prev => {
       const existing = prev.find(i => String(i.item.id) === String(item.id));
       if (existing) {
