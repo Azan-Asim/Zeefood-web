@@ -1,8 +1,8 @@
-import HeroSlider from "@/components/home/HeroSlider";
 import ExploreMenu from "@/components/home/ExploreMenu";
 import SignatureDesi from "@/components/home/SignatureDesi";
 import TopDeals from "@/components/home/TopDeals";
 import Hero from "@/components/home/Hero";
+import CulinarySecrets from "@/components/home/CulinarySecrets";
 // import PromoBanners from "@/components/home/PromoBanners";
 
 export default function Home() {
@@ -12,6 +12,7 @@ export default function Home() {
       <ExploreMenu />
       <SignatureDesi />
       <TopDeals />
+      <CulinarySecrets />
       {/* <PromoBanners /> */}
     </main>
   );

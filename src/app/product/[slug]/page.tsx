@@ -39,7 +39,7 @@ export default function ProductDetailPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#fcfdfd] pt-32 pb-24">
+    <main className="min-h-screen bg-[#FFFFFF] pt-32 pb-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Back Button */}
@@ -58,12 +58,12 @@ export default function ProductDetailPage() {
           {/* Left Side: Cinematic Image Area */}
           <div className="lg:w-1/2">
             <div className="sticky top-40">
-              <div className="relative aspect-square rounded-[3rem] overflow-hidden bg-gradient-to-br from-orange-50 to-brand-white border border-gray-100 shadow-2xl group">
+              <div className="no-cut-image relative aspect-square rounded-[2rem] lg:rounded-[3rem] overflow-hidden bg-gradient-to-br from-orange-50 to-brand-white border border-gray-100 shadow-2xl group">
                 <Image 
                   src={item.image} 
                   alt={item.name} 
                   fill 
-                  className="object-contain p-12 group-hover:scale-105 transition-transform duration-700"
+                  className="object-contain p-6 sm:p-10 lg:p-12"
                   unoptimized
                 />
                 
@@ -157,7 +157,7 @@ export default function ProductDetailPage() {
               </button>
               <button 
                 onClick={handleBuyNow}
-                className="flex-1 py-6 bg-brand-primary text-white rounded-[1.5rem] font-black uppercase tracking-[0.2em] text-sm shadow-2xl hover:bg-[#b0222e] transition-all active:scale-95"
+                className="flex-1 py-6 bg-brand-primary text-white rounded-[1.5rem] font-black uppercase tracking-[0.2em] text-sm shadow-2xl hover:bg-[#F87205] transition-all active:scale-95"
               >
                 Buy Now
               </button>

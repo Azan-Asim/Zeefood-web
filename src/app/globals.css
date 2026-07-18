@@ -1,18 +1,12 @@
 @import "tailwindcss";
 
 @theme {
-  --color-brand-primary: #FC5D01;
-  /* Updated primary color */
-  --color-brand-secondary: #F4A261;
-  /* Flame Orange */
-  --color-brand-accent: #FFB84D;
-  /* Vibrant Golden Orange */
-  --color-brand-dark: #121212;
-  /* Sleek Black */
-  --color-brand-surface: #1E1E1E;
-  /* Dark Grey Surface */
-  --color-brand-light: #F8F9FA;
-  /* Premium Light Grey */
+  --color-brand-primary: #F87205;
+  --color-brand-secondary: #111827;
+  --color-brand-accent: #F87205;
+  --color-brand-dark: #111827;
+  --color-brand-surface: #F8FAFC;
+  --color-brand-light: #FFFFFF;
   --color-brand-white: #FFFFFF;
 }
 
@@ -22,15 +16,61 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-:root {
-  --button-radius: 1.5rem;
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
+* {
+  box-sizing: border-box;
+}
+
+img,
+svg,
+video,
+canvas {
+  max-width: 100%;
+}
+
+a,
 button,
+input,
+textarea,
+select {
+  min-width: 0;
+}
+
+:root {
+  /* 60-30-10 palette tokens */
+  --color-bg: #ffffff;       /* 60% dominant background */
+  --color-text: #111827;     /* 30% secondary/text */
+  --color-accent: #F87205;   /* 10% accent/CTA */
+  --button-radius: 1rem;     /* 16px = rounded-2xl */
+}
+
+/* ── Global button radius standardization (rounded-2xl = 16px) ── */
+button:not(.rounded-none):not(.rounded-full):not([class*="rounded-"]),
 input[type="button"],
 input[type="submit"],
 input[type="reset"] {
-  border-radius: var(--button-radius) !important;
+  border-radius: var(--button-radius);
+}
+
+@media (max-width: 640px) {
+  section {
+    scroll-margin-top: 5rem;
+  }
+
+  h1,
+  h2,
+  h3,
+  p,
+  a,
+  button,
+  span {
+    overflow-wrap: anywhere;
+  }
 }
 
 @keyframes bounceSlow {
@@ -67,6 +107,111 @@ input[type="reset"] {
     font-family: "Jameel Noori Nastaleeq", var(--font-noto-urdu), serif;
     line-height: 1.8;
   }
+
+  /* Hide scrollbar cross-browser */
+  .no-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* ─── Product / cart card images ────────────────────────────────────────
+   Rule: the container clips via overflow:hidden + border-radius.
+   The wrapper owns overflow:hidden + rounded corners. The image always uses
+   object-contain so no side of the product graphic is cut.
+─────────────────────────────────────────────────────────────────────── */
+.product-card-image,
+.cart-item-image,
+.no-cut-image {
+  position: relative !important;
+  display: block;
+  width: 100% !important;
+  overflow: hidden !important;
+}
+
+.product-card-image {
+  aspect-ratio: 4 / 3 !important;
+  background: #ffffff !important;
+  border-radius: 1rem 1rem 0 0 !important;
+  padding: 0 !important;
+}
+
+/* Strip any interfering overrides from the Next.js injected span wrapper */
+.product-card-image > span,
+.cart-item-image > span,
+.no-cut-image > span {
+  position: absolute !important;
+  inset: 0 !important;
+  overflow: visible !important;
+  border-radius: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.product-card-image > span {
+  inset: 0 !important;
+  overflow: hidden !important;
+  border-radius: 1rem 1rem 0 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  background: #ffffff !important;
+}
+
+/* The actual <img> — always fill its frame without distortion */
+.product-card-image img,
+.no-cut-image img {
+  object-fit: cover !important;
+  object-position: center center !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  transform: none !important;
+  inset: 0 !important;
+}
+
+.cart-item-image img {
+  object-fit: contain !important;
+  object-position: center center !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  transform: none !important;
+  inset: 0 !important;
+}
+
+.product-card-image img,
+.product-card-image img[data-nimg],
+.product-card-image > img {
+  display: block !important;
+  box-sizing: border-box !important;
+  object-fit: cover !important;
+  object-position: center center !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  background: #ffffff !important;
+}
+
+.product-card-image img[data-nimg="fill"] {
+  position: absolute !important;
+  inset: 0 !important;
+}
+
+.cart-item-image img {
+  box-sizing: border-box !important;
+  padding: 0.25rem !important;
 }
 
 [dir="rtl"],
@@ -404,4 +549,30 @@ input[type="reset"] {
     background-color: #f9fafb;
   }
 
+}
+
+/* Final product-card image override: keep Home/Menu product images fully visible. */
+.product-card-image {
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  aspect-ratio: 4 / 3 !important;
+  overflow: hidden !important;
+  border-radius: 1rem 1rem 0 0 !important;
+  background-color: #ffffff !important;
+}
+
+.product-card-image img,
+.product-card-image img[data-nimg],
+.product-card-image > img {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  object-fit: contain !important;
+  object-position: center center !important;
+  background-color: #ffffff !important;
+  transform: none !important;
 }

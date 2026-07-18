@@ -62,12 +62,6 @@ export default function AboutSection() {
     },
   ];
 
-  const staff = [
-    { name: "Chef Amir", role: "Head Chef", image: "/amir-bhai.jpeg" },
-    { name: "Sadia", role: "Front of House Manager", image: "/team-1.jpg" },
-    { name: "Raza", role: "Sous Chef", image: "/team-2.jpg" },
-  ];
-
   const faqs = [
     { q: "Do you offer delivery?", a: "Yes — we deliver across our service areas. Choose delivery at checkout or contact us on WhatsApp." },
     { q: "Can I pick up an order?", a: "Yes — choose pickup in the order flow and collect from our store when ready." },
@@ -76,19 +70,19 @@ export default function AboutSection() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   return (
-    <section className="py-24 lg:py-32 bg-white overflow-hidden">
-      <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
+    <section className="py-16 sm:py-20 lg:py-32 bg-white overflow-hidden">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12">
         
         {/* Header */}
-        <div className="flex flex-col items-center mb-20 text-center">
+        <div className="flex flex-col items-center mb-12 sm:mb-16 lg:mb-20 text-center">
           <div className="flex items-center gap-3 mb-6">
             <div className="w-12 h-[2px] bg-brand-primary" />
-            <span className="text-brand-primary text-xs font-black tracking-[0.4em] uppercase">
+            <span className="text-brand-primary text-[10px] sm:text-xs font-black tracking-widest uppercase">
               {t("aboutTitle")}
             </span>
             <div className="w-12 h-[2px] bg-brand-primary" />
           </div>
-          <h2 className="text-4xl lg:text-6xl font-medium text-brand-dark mb-6  italic">
+          <h2 className="text-3xl sm:text-4xl lg:text-6xl font-medium text-brand-dark mb-6 italic">
             {t("aboutSubtitle")}
           </h2>
         </div>
@@ -97,13 +91,13 @@ export default function AboutSection() {
         <div className="mb-12">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center max-w-4xl mx-auto">
             <div className="flex justify-center md:justify-start">
-              <div className="w-48 h-48 md:w-64 md:h-64 rounded-full overflow-hidden shadow-lg ring-1 ring-black/5">
+              <div className="no-cut-image w-48 h-48 md:w-64 md:h-64 rounded-full overflow-hidden shadow-lg ring-1 ring-black/5">
                 <Image
                   src="/amir-bhai.jpeg"
                   alt="Mr Amir"
                   width={256}
                   height={256}
-                  className="object-cover"
+                  className="object-contain"
                 />
               </div>
             </div>
@@ -129,7 +123,7 @@ export default function AboutSection() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 lg:gap-8">
           
           {/* Card 1: Fresh Food */}
-          <div className="group relative bg-gray-50 p-8 lg:p-12 rounded-[3rem] transition-all duration-500 hover:bg-brand-primary hover:-translate-y-4 shadow-[0_20px_50px_rgba(0,0,0,0.02)]">
+          <div className="group relative bg-gray-50 p-6 sm:p-8 lg:p-12 rounded-2xl sm:rounded-[3rem] transition-all duration-500 hover:bg-brand-primary hover:-translate-y-4 shadow-[0_20px_50px_rgba(0,0,0,0.02)]">
             {/* <div className="w-20 h-20 bg-white rounded-3xl flex items-center justify-center mb-10 shadow-xl group-hover:scale-110 transition-transform duration-500">
                <span className="text-4xl">🥗</span>
             </div> */}
@@ -145,7 +139,7 @@ export default function AboutSection() {
           </div>
 
           {/* Card 2: Local Staff */}
-          <div className="group relative bg-gray-50 p-8 lg:p-12 rounded-[3rem] transition-all duration-500 hover:bg-brand-secondary hover:-translate-y-4 shadow-[0_20px_50px_rgba(0,0,0,0.02)] lg:mt-12">
+          <div className="group relative bg-gray-50 p-6 sm:p-8 lg:p-12 rounded-2xl sm:rounded-[3rem] transition-all duration-500 hover:bg-brand-secondary hover:-translate-y-4 shadow-[0_20px_50px_rgba(0,0,0,0.02)] lg:mt-12">
             {/* <div className="w-20 h-20 bg-white rounded-3xl flex items-center justify-center mb-10 shadow-xl group-hover:scale-110 transition-transform duration-500">
                <span className="text-4xl">👨‍🍳</span>
             </div> */}
@@ -160,7 +154,7 @@ export default function AboutSection() {
           </div>
 
           {/* Card 3: Authentic Desi */}
-          <div className="group relative bg-gray-50 p-8 lg:p-12 rounded-[3rem] transition-all duration-500 hover:bg-brand-dark hover:-translate-y-4 shadow-[0_20px_50px_rgba(0,0,0,0.02)]">
+          <div className="group relative bg-gray-50 p-6 sm:p-8 lg:p-12 rounded-2xl sm:rounded-[3rem] transition-all duration-500 hover:bg-brand-dark hover:-translate-y-4 shadow-[0_20px_50px_rgba(0,0,0,0.02)]">
             {/* <div className="w-20 h-20 bg-white rounded-3xl flex items-center justify-center mb-10 shadow-xl group-hover:scale-110 transition-transform duration-500">
                <span className="text-4xl">🥘</span>
             </div> */}
@@ -176,7 +170,7 @@ export default function AboutSection() {
 
         </div>
         {/* My Vision Section */}
-        <div className="mt-16 max-w-4xl mx-auto rounded-[2.5rem] border border-gray-100 bg-gradient-to-br from-brand-primary/5 via-white to-brand-secondary/5 p-8 lg:p-12 shadow-sm text-center">
+        <div className="mt-12 sm:mt-16 max-w-4xl mx-auto rounded-2xl sm:rounded-[2.5rem] border border-gray-100 bg-gradient-to-br from-brand-primary/5 via-white to-brand-secondary/5 p-6 sm:p-8 lg:p-12 shadow-sm text-center">
           <span className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.35em] text-brand-primary mb-4">
             <span className="h-px w-8 bg-brand-primary" />
             My Vision
@@ -188,10 +182,10 @@ export default function AboutSection() {
         </div>
 
         {/* Journey + Highlights */}
-        <div className="mt-20 grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 items-start">
-          <div className="rounded-[3rem] bg-[#fbfaf8] border border-gray-100 p-8 lg:p-10 shadow-sm">
-            <span className="text-brand-primary text-xs font-black tracking-[0.4em] uppercase">Our Journey</span>
-            <h3 className="mt-3 text-3xl font-medium text-brand-dark">From a family idea to a neighborhood favorite</h3>
+        <div className="mt-14 sm:mt-20 grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 items-start">
+          <div className="rounded-2xl sm:rounded-[3rem] bg-[#fbfaf8] border border-gray-100 p-6 sm:p-8 lg:p-10 shadow-sm">
+            <span className="text-brand-primary text-[10px] sm:text-xs font-black tracking-widest uppercase">Our Journey</span>
+            <h3 className="mt-3 text-2xl sm:text-3xl font-medium text-brand-dark">From a family idea to a neighborhood favorite</h3>
             <div className="mt-8 space-y-6">
               {journey.map((item) => (
                 <div key={item.year} className="flex gap-5 items-start">
@@ -207,9 +201,9 @@ export default function AboutSection() {
             </div>
           </div>
 
-          <div className="rounded-[3rem] bg-brand-dark p-8 lg:p-10 text-white shadow-2xl">
-            <span className="text-brand-primary text-xs font-medium tracking-[0.4em] uppercase">What makes us different</span>
-            <h3 className="mt-3 text-3xl font-medium">A kitchen built on trust, taste, and consistency</h3>
+          <div className="rounded-2xl sm:rounded-[3rem] bg-brand-dark p-6 sm:p-8 lg:p-10 text-white shadow-2xl">
+            <span className="text-brand-primary text-[10px] sm:text-xs font-medium tracking-widest uppercase">What makes us different</span>
+            <h3 className="mt-3 text-2xl sm:text-3xl font-medium">A kitchen built on trust, taste, and consistency</h3>
             <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
               {highlights.map((item) => (
                 <div key={item.title} className="rounded-[2rem] bg-white/5 border border-white/10 p-5 backdrop-blur-sm">
@@ -243,7 +237,7 @@ export default function AboutSection() {
             {staff.map((s) => (
               <div key={s.name} className="flex flex-col items-center gap-4 bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
                 <div className="w-28 h-28 rounded-full overflow-hidden bg-gray-100">
-                  <Image src={s.image} alt={s.name} width={112} height={112} className="object-cover" />
+                  <Image src={s.image} alt={s.name} width={112} height={112} className="object-contain" />
                 </div>
                 <div className="text-lg font-black text-brand-dark">{s.name}</div>
                 <div className="text-sm text-brand-dark/60">{s.role}</div>
@@ -274,14 +268,14 @@ export default function AboutSection() {
         </div>
 
         {/* Bottom Banner Image Section */}
-        <div className="mt-24 lg:mt-32 relative h-[500px] lg:h-[600px] rounded-[4rem] overflow-hidden group shadow-2xl">
+        <div className="no-cut-image mt-24 lg:mt-32 relative h-[360px] sm:h-[460px] lg:h-[600px] rounded-[2rem] lg:rounded-[4rem] overflow-hidden group shadow-2xl bg-brand-surface">
           <Image 
             src="/images/home/promo/hq720.jpg" 
             alt="Authentic Dining" 
             fill 
             sizes="(max-width: 1024px) 100vw, 1400px"
             loading="eager"
-            className="object-cover transition-transform duration-[10000ms] group-hover:scale-110"
+            className="object-contain"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-brand-dark via-transparent to-transparent opacity-80" />
           <div className="absolute bottom-12 left-6 lg:left-12 lg:bottom-20 max-w-2xl">

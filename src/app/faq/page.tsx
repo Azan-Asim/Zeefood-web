@@ -32,7 +32,7 @@ export default function FAQPage() {
       </div>
 
       <div className="mt-16 p-12 bg-brand-dark rounded-[48px] text-center text-white relative overflow-hidden shadow-2xl">
-        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_bottom_left,rgba(230,57,70,0.2),transparent)] pointer-events-none" />
+        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_bottom_left,rgba(248,114,5,0.2),transparent)] pointer-events-none" />
         <h3 className="text-3xl font-black mb-4 relative z-10">Still need help?</h3>
         <p className="text-white/70 mb-10 relative z-10 max-w-lg mx-auto text-lg font-medium">
           Our VIP support team is available 24/7. Reach out to us anytime.
