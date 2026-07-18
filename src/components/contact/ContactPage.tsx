@@ -1,8 +1,6 @@
 "use client";
 
 import { useState, useId } from "react";
-import Link from "next/link";
-import Image from "next/image";
 
 
 export default function ContactPage() {
@@ -23,34 +21,34 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white relative overflow-hidden flex items-center justify-center px-4 py-8">
+    <div className="min-h-screen bg-white relative overflow-hidden flex items-start justify-center px-4 pb-12 pt-28 sm:items-center sm:py-16">
       {/* Decorative Blur Backgrounds */}
       <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-[#fef2eb] to-transparent pointer-events-none" />
-      <div className="absolute top-40 -left-32 w-96 h-96 bg-[radial-gradient(circle,rgba(230,57,70,0.08)_0%,transparent_70%)] rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-20 -right-20 w-80 h-80 bg-[radial-gradient(circle,rgba(244,162,97,0.1)_0%,transparent_70%)] rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-40 -left-32 w-96 h-96 bg-[radial-gradient(circle,rgba(248,114,5,0.08)_0%,transparent_70%)] rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-20 -right-20 w-80 h-80 bg-[radial-gradient(circle,rgba(248,114,5,0.1)_0%,transparent_70%)] rounded-full blur-3xl pointer-events-none" />
 
 
       {/* Main Content */}
-      <main className="relative z-10 w-full max-w-6xl mx-auto px-6 py-16 lg:py-24">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
+      <main className="relative z-10 w-full max-w-6xl mx-auto px-0 sm:px-6 py-8 sm:py-12 lg:py-24">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 sm:gap-14 lg:gap-24 items-center">
           
           {/* Left Side: Contact Info */}
           <div>
-            <div className="inline-flex items-center gap-2 bg-[#fdf2ec] text-[#E63946] px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest mb-6">
+            <div className="inline-flex items-center gap-2 bg-[#F8FAFC] text-[#F87205] px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest mb-6">
               <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#E63946] opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-[#E63946]"></span>
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#F87205] opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-[#F87205]"></span>
               </span>
               Get in Touch
             </div>
-            <h1 className="text-4xl lg:text-6xl font-black text-[#1a0a04] tracking-tight mb-6 leading-tight">
+            <h1 className="text-3xl sm:text-4xl lg:text-6xl font-black text-[#111827] tracking-tight mb-6 leading-tight">
               Let&apos;s talk about your <span className="text-brand-primary ">Next Meal.</span>
             </h1>
-            <p className="text-[#6b5a50] text-lg font-medium max-w-md mb-12">
+            <p className="text-[#111827] text-base sm:text-lg font-medium max-w-md mb-8 sm:mb-12">
               Have questions, feedback, or want to partner with ZeeFood? We&apos;d love to hear from you. Drop us a message below.
             </p>
 
-            <div className="flex flex-col gap-8">
+            <div className="flex flex-col gap-6 sm:gap-8">
               <ContactMethod 
                 icon={
                   <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -85,9 +83,9 @@ export default function ContactPage() {
           {/* Right Side: Contact Form (Glassmorphism) */}
           <div className="relative">
             {/* Background glowing orb for form */}
-            <div className="absolute inset-0 bg-gradient-to-tr from-[#E63946] to-[#F4A261] rounded-[40px] blur-3xl opacity-10" />
+            <div className="absolute inset-0 bg-gradient-to-tr from-[#F87205] to-[#F4A261] rounded-[40px] blur-3xl opacity-10" />
             
-            <div className="relative bg-white/80 backdrop-blur-xl border border-white p-8 lg:p-10 rounded-[32px] shadow-[0_20px_60px_rgba(0,0,0,0.05)]">
+            <div className="relative bg-white/80 backdrop-blur-xl border border-white p-5 sm:p-8 lg:p-10 rounded-2xl sm:rounded-[32px] shadow-[0_20px_60px_rgba(0,0,0,0.05)]">
               {!state.isSubmitted ? (
                 <form onSubmit={handleSubmit} className="flex flex-col gap-6">
                   {/* Name Input */}
@@ -100,7 +98,7 @@ export default function ContactPage() {
                       placeholder="John Doe"
                       value={state.name}
                       onChange={(e) => setState({ ...state, name: e.target.value })}
-                      className="w-full px-5 py-4   focus:border-blaack rounded-2xl outline-none transition-all placeholder:text-[#c0a898] text-[#1a0a04] font-medium bg-gray-200"
+                      className="w-full px-4 sm:px-5 py-4 border border-transparent focus:border-brand-primary rounded-2xl outline-none transition-all placeholder:text-[#111827] text-[#111827] font-medium bg-gray-200"
                     />
                   </div>
 
@@ -114,7 +112,7 @@ export default function ContactPage() {
                       placeholder="john@example.com"
                       value={state.email}
                       onChange={(e) => setState({ ...state, email: e.target.value })}
-                      className="w-full px-5 py-4   focus:border-blaack rounded-2xl outline-none transition-all placeholder:text-[#c0a898] text-[#1a0a04] font-medium bg-gray-200"
+                      className="w-full px-4 sm:px-5 py-4 border border-transparent focus:border-brand-primary rounded-2xl outline-none transition-all placeholder:text-[#111827] text-[#111827] font-medium bg-gray-200"
                     />
                   </div>
 
@@ -128,7 +126,7 @@ export default function ContactPage() {
                       placeholder="How can we help you today?"
                       value={state.message}
                       onChange={(e) => setState({ ...state, message: e.target.value })}
-                      className="w-full px-5 py-4   focus:border-blaack rounded-2xl outline-none transition-all placeholder:text-[#c0a898] text-[#1a0a04] font-medium bg-gray-200 "
+                      className="w-full px-4 sm:px-5 py-4 border border-transparent focus:border-brand-primary rounded-2xl outline-none transition-all placeholder:text-[#111827] text-[#111827] font-medium bg-gray-200 "
                     />
                   </div>
 
@@ -150,11 +148,11 @@ export default function ContactPage() {
                       <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                     </svg>
                   </div>
-                  <h3 className="text-2xl font-black text-[#1a0a04] mb-2">Message Sent!</h3>
-                  <p className="text-[#6b5a50] font-medium max-w-sm mb-8">
+                  <h3 className="text-2xl font-black text-[#111827] mb-2">Message Sent!</h3>
+                  <p className="text-[#111827] font-medium max-w-sm mb-8">
                     Thanks for reaching out, {state.name}. Our premium support team will get back to you within 24 hours.
                   </p>
-                  <button onClick={() => setState({ name: "", email: "", message: "", isSubmitted: false })} className="text-[#E63946] font-bold hover:underline underline-offset-4">
+                  <button onClick={() => setState({ name: "", email: "", message: "", isSubmitted: false })} className="text-[#F87205] font-bold hover:underline underline-offset-4">
                     Send another message
                   </button>
                 </div>
@@ -172,13 +170,13 @@ export default function ContactPage() {
 
 function ContactMethod({ icon, title, detail }: { icon: React.ReactNode; title: string; detail: string }) {
   return (
-    <div className="flex items-start gap-5 group">
-      <div className="w-14 h-14 rounded-2xl bg-white border border-brand-primary  flex items-center justify-center text-[#E63946] transition-transform group-hover:scale-110 group-hover:bg-brand-primary group-hover:text-white duration-300">
+    <div className="flex items-start gap-4 sm:gap-5 group">
+      <div className="w-12 h-12 sm:w-14 sm:h-14 shrink-0 rounded-2xl bg-white border border-brand-primary flex items-center justify-center text-[#F87205] transition-transform group-hover:scale-110 group-hover:bg-brand-primary group-hover:text-white duration-300">
         {icon}
       </div>
-      <div className="pt-1.5">
-        <h4 className="text-brand-primary font-black text-lg mb-1">{title}</h4>
-        <p className="text-[#6b5a50] font-medium">{detail}</p>
+      <div className="min-w-0 pt-1.5">
+        <h4 className="text-brand-primary font-black text-base sm:text-lg mb-1">{title}</h4>
+        <p className="break-words text-[#111827] font-medium text-sm sm:text-base">{detail}</p>
       </div>
     </div>
   );

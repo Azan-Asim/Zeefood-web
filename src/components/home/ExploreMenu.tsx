@@ -50,17 +50,17 @@ export default function ExploreMenu() {
   }, []);
 
   return (
-    <section className="w-full bg-brand-light pb-24 pt-20 sm:pt-24">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="w-full bg-brand-light py-20 sm:py-24 lg:py-28 2xl:py-36">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 2xl:max-w-[1600px] 2xl:px-10">
         {/* Header Area */}
-        <div className="flex justify-between items-end mb-12">
+        <div className="mb-16 flex flex-col gap-7 py-4 sm:mb-20 sm:flex-row sm:items-end sm:justify-between sm:py-6 2xl:mb-24 2xl:py-8">
           <div>
             <h2 className="text-3xl lg:text-5xl font-black tracking-tighter uppercase font-sans leading-none text-brand-primary">
               {language === "UR" ? "اقسام" : "CATEGORIES"}
             </h2>
             <div className="w-24 h-1.5 bg-brand-primary mt-4 rounded-full" />
           </div>
-          <div className="flex flex-col items-end">
+          <div className="flex flex-col items-start sm:items-end">
             <Link
               href="/menu"
               className="text-sm font-bold text-brand-dark uppercase tracking-widest hover:text-brand-primary transition-colors"
@@ -72,12 +72,12 @@ export default function ExploreMenu() {
         </div>
 
         {/* Categories Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pt-6">
+        <div className="grid grid-cols-1 gap-5 pt-2 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 2xl:gap-8">
           {categories.map((cat) => (
             <Link
               key={cat.id}
               href={`/menu?category=${encodeURIComponent(cat.name)}`}
-              className="group relative overflow-hidden cursor-pointer rounded-[30px] border border-brand-primary/10 bg-white p-8 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_60px_rgba(248,114,5,0.12)]"
+              className="group relative cursor-pointer overflow-hidden rounded-[24px] border border-brand-primary/10 bg-white p-6 shadow-[0_12px_35px_rgba(17,24,39,0.045)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_60px_rgba(248,114,5,0.12)] sm:rounded-[28px] sm:p-7 2xl:p-8"
             >
               <div className="flex flex-col items-center justify-center gap-3 text-center">
                 <div className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-brand-primary/10 text-brand-primary font-black text-lg">
@@ -168,11 +168,11 @@ export default function ExploreMenu() {
 //               <Link
 //                 key={item.id}
 //                 href={`/product/${item.slug}`}
-//                 className="flex-none w-[210px] bg-brand-white pt-6 pb-6 px-5 flex flex-col items-center relative group cursor-pointer shadow-sm hover:shadow-[0_20px_40px_rgba(230,57,70,0.1)] hover:-translate-y-3 transition-all duration-300 snap-center shrink-0 border border-brand-dark/5"
+//                 className="flex-none w-[210px] bg-brand-white pt-6 pb-6 px-5 flex flex-col items-center relative group cursor-pointer shadow-sm hover:shadow-[0_20px_40px_rgba(248,114,5,0.1)] hover:-translate-y-3 transition-all duration-300 snap-center shrink-0 border border-brand-dark/5"
 //                 style={{ borderRadius: '25px 80px 25px 80px' }}
 //               >
 //                 <div className="w-32 h-32 relative mb-5 rounded-full overflow-hidden shadow-[0_10px_20px_rgba(0,0,0,0.08)] border-4 border-brand-light">
-//                   <Image src={item.image} alt={item.name} fill className="object-cover group-hover:scale-110 transition-transform duration-500" unoptimized />
+//                   <Image src={item.image} alt={item.name} fill className="object-contain transition-transform duration-500" unoptimized />
 //                 </div>
 //                 <h3 className="text-brand-dark font-black text-center text-black leading-tight uppercase tracking-wide group-hover:text-brand-primary transition-colors flex flex-col items-center">
 //                   <span>{item.name}</span>
@@ -186,7 +186,7 @@ export default function ExploreMenu() {
 
 //           <button
 //             onClick={() => scroll('right')}
-//             className="hidden md:flex absolute -right-6 z-10 w-12 h-12 rounded-full bg-brand-primary text-brand-white items-center justify-center hover:bg-[#b0222e] transition-all shadow-lg hover:scale-110 cursor-pointer"
+//             className="hidden md:flex absolute -right-6 z-10 w-12 h-12 rounded-full bg-brand-primary text-brand-white items-center justify-center hover:bg-[#F87205] transition-all shadow-lg hover:scale-110 cursor-pointer"
 //           >
 //             <svg className="w-6 h-6 ml-[2px]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" /></svg>
 //           </button>

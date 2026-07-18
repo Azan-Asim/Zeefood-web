@@ -49,7 +49,7 @@ export default function PrivacyPolicyPage() {
           </p>
         </section>
 
-        <div className="mt-12 p-8 bg-[#fdf8f5] rounded-[32px] border border-brand-primary/10">
+        <div className="mt-12 p-8 bg-[#F8FAFC] rounded-[32px] border border-brand-primary/10">
           <h3 className="text-xl font-black text-brand-primary mb-2">Questions?</h3>
           <p className="text-brand-dark/70 m-0 font-bold">
             If you have any questions about this privacy policy, please contact our Data Privacy Manager at <strong className="text-brand-dark underline decoration-brand-primary/30 underline-offset-4">privacy@zeefood.pk</strong>.

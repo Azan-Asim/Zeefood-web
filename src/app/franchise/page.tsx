@@ -23,7 +23,7 @@ export default function FranchisePage() {
         </section>
 
         <section className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="bg-[#fdf8f5] p-10 rounded-[32px] border border-brand-primary/5 shadow-sm">
+          <div className="bg-[#F8FAFC] p-10 rounded-[32px] border border-brand-primary/5 shadow-sm">
             <h3 className="text-xl font-black mb-6 text-brand-primary uppercase tracking-[0.2em] text-sm">Requirements</h3>
             <ul className="space-y-5">
               {[
@@ -52,13 +52,13 @@ export default function FranchisePage() {
           </div>
         </section>
 
-        <div className="mt-12 p-10 bg-gradient-to-br from-brand-dark to-[#1a0a04] rounded-[40px] text-center relative overflow-hidden group">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(230,57,70,0.15),transparent)] pointer-events-none" />
+        <div className="mt-12 p-10 bg-gradient-to-br from-brand-dark to-[#111827] rounded-[40px] text-center relative overflow-hidden group">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(248,114,5,0.15),transparent)] pointer-events-none" />
           <h3 className="text-3xl lg:text-4xl font-black text-white mb-4 relative z-10">Ready to start?</h3>
           <p className="text-white/60 mb-10 max-w-md mx-auto relative z-10 text-lg">
             Submit your proposal to our franchise development team and we&apos;ll get back to you within 48 hours.
           </p>
-          <Link href="/contact" className="inline-flex items-center gap-3 px-10 py-4 bg-brand-primary hover:bg-[#d42e3a] text-white font-black uppercase tracking-widest text-sm rounded-full transition-all duration-300 shadow-[0_15px_35px_rgba(230,57,70,0.4)] hover:-translate-y-1 relative z-10">
+          <Link href="/contact" className="inline-flex items-center gap-3 px-10 py-4 bg-brand-primary hover:bg-[#F87205] text-white font-black uppercase tracking-widest text-sm rounded-full transition-all duration-300 shadow-[0_15px_35px_rgba(248,114,5,0.4)] hover:-translate-y-1 relative z-10">
             Apply Now
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />

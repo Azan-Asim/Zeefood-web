@@ -2,14 +2,13 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useLanguage } from "@/context/LanguageContext";
 import { useCart } from "@/context/CartContext";
 
 // ── Redux / Custom hooks ──────────────────────────────────────────────────────
 import { useProducts, useProductFilters } from "@/hooks/useProducts";
-import type { Product } from "@/lib/store";
+import type { Product, ProductVariant } from "@/lib/store";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Image helper — DRM images are served from a relative path
@@ -25,13 +24,6 @@ function productImageUrl(image: string | null): string {
 // ─────────────────────────────────────────────────────────────────────────────
 // Pastel card themes (cycled by index)
 // ─────────────────────────────────────────────────────────────────────────────
-const CARD_THEMES = [
-  { bg: "bg-[#fecaca]", border: "border-red-300" },
-  { bg: "bg-[#ffdec1]", border: "border-orange-300" },
-  { bg: "bg-[#bbf7d0]", border: "border-emerald-300" },
-  { bg: "bg-[#fef08a]", border: "border-amber-300" },
-] as const;
-
 // ─────────────────────────────────────────────────────────────────────────────
 // ProductCard
 // ─────────────────────────────────────────────────────────────────────────────
@@ -74,8 +66,7 @@ const CARD_THEMES = [
 //             src={productImageUrl(product.image)}
 //             alt={product.name}
 //             fill
-//             // className="object-cover scale-100 group-hover:scale-110 transition-transform duration-700"
-//             className="object-cover group-hover:scale-110 transition-transform duration-500"
+//             className="object-contain transition-transform duration-500"
 //             unoptimized
 //           />
 //         </div>
@@ -149,6 +140,8 @@ const CARD_THEMES = [
 // }
 
 
+// Retained temporarily as the previous card implementation for quick rollback.
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function ProductCard({
   product,
   index,
@@ -188,48 +181,21 @@ function ProductCard({
 
   return (
     <article
-      className={` relative grid h-[400px] md:h-[480px] w-full grid-rows-[200px_200px] md:grid-rows-[230px_250px] overflow-hidden rounded-[24px] md-rounded-[30px] border ${theme.border} bg-gray-50 shadow-sm transition-all duration-300 hover:shadow-2xl group
+      className={` relative flex min-h-[500px] w-full flex-col !overflow-hidden rounded-2xl border ${theme.border} bg-white shadow-sm transition-all duration-300 hover:shadow-2xl group
       `}
     >
       {/* IMAGE SECTION */}
-      <div className="relative min-h-0 w-full bg-gray-50">
-        {/*
-          Important:
-          The nested relative container creates a real inner frame.
-          Next/Image fills this inner frame instead of ignoring the padding.
-        */}
-        {/* <div className="absolute inset-4">
+      <div className="relative w-full">
+        <div className="product-card-image relative flex h-56 w-full shrink-0 items-center justify-center overflow-hidden rounded-t-2xl bg-white sm:h-64 md:h-72">
           <Image
             src={productImageUrl(product.image)}
             alt={product.name}
             fill
-            sizes="
-              (max-width: 640px) 100vw,
-              (max-width: 1024px) 50vw,
-              33vw
-            "
-            className="object-contain object-center"
-            style={{
-              objectFit: "contain",
-              objectPosition: "center",
-            }}
+            className="h-full w-full object-cover object-center"
+            sizes="(max-width: 768px) 100vw, 33vw"
             unoptimized
           />
-        </div> */}
-
-        {/* IMAGE SECTION */}
-<div className="relative h-full w-full overflow-hidden bg-gray-50  ">
-  <Image
-    src={productImageUrl(product.image)}
-    alt={product.name}
-    fill
-    sizes=" (max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-    
-    className=" object-cover object-center transition-transform duration-500 ease-out group-hover:scale-[1.03]"
-    
-    unoptimized
-  />
-</div>
+        </div>
       </div>
 
 
@@ -426,6 +392,217 @@ function ProductCard({
 // ─────────────────────────────────────────────────────────────────────────────
 // Skeleton Card — shown while loading
 // ─────────────────────────────────────────────────────────────────────────────
+export function VariantProductCard({
+  product,
+  onAddToCart,
+}: {
+  product: Product;
+  onAddToCart: (product: Product, variant?: ProductVariant) => void;
+}) {
+  const [expanded, setExpanded] = useState(false);
+  const [detailsOpen, setDetailsOpen] = useState(false);
+  const [selectedKey, setSelectedKey] = useState<string | null>(null);
+  const variants = product.variants ?? [];
+  const visibleVariants = expanded ? variants : variants.slice(0, 3);
+  const hasManyVariants = variants.length > 3;
+  const basePrice = product.price > 0 ? product.price : variants[0]?.price ?? 0;
+  const displayPrice = basePrice > 0 ? `Rs. ${basePrice.toLocaleString()}` : "Ask";
+  const isActive = product.status ? product.status === "ACTIVE" : true;
+  const defaultVariant =
+    variants.length > 0
+      ? variants.reduce((lowest, option) => (option.price < lowest.price ? option : lowest), variants[0])
+      : undefined;
+  const hasDetails = variants.length > 0 || Boolean(product.category?.CategoryName) || product.inStock !== undefined;
+
+  const handleSelect = (variant?: ProductVariant) => {
+    if (!isActive) return;
+
+    const key = variant?.id ?? "base";
+    setSelectedKey(key);
+    onAddToCart(product, variant);
+    window.setTimeout(() => setSelectedKey(null), 650);
+  };
+
+  return (
+    <article className="group relative flex h-full min-h-[480px] w-full flex-col !overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-[0_10px_34px_rgba(17,24,39,0.055)] transition-all duration-300 hover:-translate-y-1.5 hover:border-brand-primary/20 hover:shadow-[0_24px_68px_rgba(17,24,39,0.12)] sm:min-h-[500px]">
+      <div className="pointer-events-none absolute inset-x-5 top-0 z-20 h-1 rounded-b-full bg-brand-primary opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+      <div className="product-card-image !relative flex !w-full shrink-0 items-center justify-center !overflow-hidden !rounded-t-2xl !bg-white">
+        <Image
+          src={productImageUrl(product.image)}
+          alt={product.name}
+          width={900}
+          height={700}
+          className="!h-full !w-full !object-cover !object-center"
+          style={{
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            objectPosition: "center",
+          }}
+          unoptimized
+        />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-brand-dark/10 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+      </div>
+
+      <div className="relative z-10 flex flex-1 flex-col border-t border-gray-100 bg-white p-4 sm:p-5">
+        <div className="mb-2 flex items-center justify-between gap-3">
+          <span className="min-w-0 break-words text-[9px] font-black uppercase tracking-widest text-brand-primary">
+            {product.category?.CategoryName ?? "Featured"}
+          </span>
+          <span className="shrink-0 text-[9px] font-black uppercase tracking-widest text-brand-dark/40">
+            20-30 min
+          </span>
+        </div>
+
+        <h3
+          className="mb-3 min-h-[46px] break-words text-lg font-black uppercase leading-[1.2] text-brand-dark transition-colors group-hover:text-brand-primary"
+          title={product.name}
+        >
+          {product.name}
+        </h3>
+
+        <div className="mb-3 min-h-[76px]">
+          {variants.length > 0 ? (
+            <div className="flex flex-wrap gap-2">
+              {visibleVariants.map((variant) => {
+                const isSelected = selectedKey === variant.id;
+
+                return (
+                  <button
+                    key={variant.id}
+                    type="button"
+                    disabled={!isActive || isSelected}
+                    onClick={() => handleSelect(variant)}
+                    className={`min-h-[42px] min-w-[72px] flex-1 basis-[calc(50%-0.25rem)] rounded-[14px] border px-3 py-1.5 text-left text-[9px] font-black uppercase tracking-wider transition-all duration-300 sm:flex-none sm:basis-auto ${
+                      isSelected
+                        ? "border-brand-primary bg-brand-primary text-white"
+                        : "border-gray-200 bg-gray-50 text-brand-dark hover:border-brand-primary hover:bg-brand-primary/5 hover:text-brand-primary"
+                    } disabled:cursor-not-allowed disabled:opacity-80`}
+                  >
+                    <span className="flex items-center gap-1 break-words">
+                      {isSelected && (
+                        <span className="inline-block h-2 w-2 rounded-full bg-white shadow-[0_0_0_3px_rgba(255,255,255,0.2)]" />
+                      )}
+                      {isSelected ? "Added" : variant.name}
+                    </span>
+                    <span className="block text-[8px] opacity-70">
+                      Rs. {variant.price.toLocaleString()}
+                    </span>
+                  </button>
+                );
+              })}
+
+            </div>
+          ) : (
+            <button
+              type="button"
+              disabled={!isActive || selectedKey === "base"}
+              onClick={() => handleSelect()}
+              className={`group/standard flex min-h-[76px] w-full items-center justify-between gap-3 rounded-[16px] border px-3.5 py-3 text-left transition-all duration-300 ${
+                selectedKey === "base"
+                  ? "border-brand-primary bg-brand-primary text-white"
+                  : "border-gray-200 bg-gray-50 text-brand-dark hover:border-brand-primary hover:bg-brand-primary/5"
+              }`}
+            >
+              <span>
+                <span className="block text-[9px] font-black uppercase tracking-widest opacity-60">
+                  Standard
+                </span>
+                <span className="mt-1 flex items-center gap-2 text-xs font-black uppercase tracking-wider">
+                  {selectedKey === "base" && <span className="inline-block h-2 w-2 rounded-full bg-white" />}
+                  {selectedKey === "base" ? "Added to cart" : "Single serving"}
+                </span>
+              </span>
+              <span
+                className={`shrink-0 rounded-full px-3 py-1 text-[9px] font-black uppercase tracking-wider ${
+                  selectedKey === "base"
+                    ? "bg-white/20 text-white"
+                    : "bg-white text-brand-primary shadow-sm group-hover/standard:bg-brand-primary group-hover/standard:text-white"
+                }`}
+              >
+                Add
+              </span>
+            </button>
+          )}
+        </div>
+
+        <div className="mt-auto space-y-2.5">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <span className="break-words text-xl font-black text-brand-primary sm:text-2xl">{displayPrice}</span>
+            <span
+              className={`text-right text-[9px] font-black uppercase tracking-widest ${
+                isActive ? "text-brand-dark/40" : "text-red-500"
+              }`}
+            >
+              {isActive ? "Tap option to add" : "Unavailable"}
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-[minmax(0,1fr)_auto]">
+            <button
+              type="button"
+              disabled={!isActive || selectedKey === (defaultVariant?.id ?? "base")}
+              onClick={() => handleSelect(defaultVariant)}
+              className={`inline-flex min-h-10 items-center justify-center rounded-[18px] px-5 py-2.5 text-[11px] font-black uppercase tracking-widest text-white transition-all duration-300 ${
+                selectedKey === (defaultVariant?.id ?? "base")
+                  ? "bg-brand-primary"
+                  : "bg-brand-primary hover:-translate-y-0.5 hover:bg-brand-primary/90 hover:shadow-[0_14px_30px_rgba(248,114,5,0.24)]"
+              } disabled:cursor-not-allowed disabled:opacity-80`}
+            >
+              {selectedKey === (defaultVariant?.id ?? "base") ? "Added" : "Order"}
+            </button>
+
+            {hasManyVariants && (
+              <button
+                type="button"
+                onClick={() => setExpanded((value) => !value)}
+                className="inline-flex min-h-10 items-center justify-center rounded-[18px] border border-gray-200 bg-white px-4 py-2.5 text-[11px] font-black uppercase tracking-widest text-brand-dark transition-all hover:border-brand-primary hover:text-brand-primary"
+              >
+                {expanded ? "Less" : "More Info"}
+              </button>
+            )}
+          </div>
+
+          {hasDetails && (
+            <div className="rounded-2xl border border-gray-100 bg-brand-surface">
+              <button
+                type="button"
+                onClick={() => setDetailsOpen((value) => !value)}
+                className="flex w-full items-center justify-between gap-3 rounded-2xl px-4 py-3 text-left text-[10px] font-black uppercase tracking-widest text-brand-dark transition-colors hover:text-brand-primary"
+                aria-expanded={detailsOpen}
+              >
+                <span>Details</span>
+                <span className="text-brand-primary">{detailsOpen ? "Less" : "More"}</span>
+              </button>
+
+              {detailsOpen && (
+                <div className="border-t border-gray-200 px-4 py-3">
+                  <div className="grid grid-cols-2 gap-2 text-[10px] font-bold uppercase tracking-wider text-brand-dark/55">
+                    <span>Category: {product.category?.CategoryName ?? "General"}</span>
+                    <span>Status: {isActive ? "Available" : "Unavailable"}</span>
+                  </div>
+                  {variants.length > 0 && (
+                    <div className="mt-3 flex flex-wrap gap-1.5">
+                      {variants.map((variant) => (
+                        <span
+                          key={variant.id}
+                          className="rounded-xl border border-gray-200 bg-white px-2 py-1 text-[9px] font-black uppercase tracking-wider text-brand-dark/55"
+                        >
+                          {variant.name} - Rs. {variant.price.toLocaleString()}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+    </article>
+  );
+}
+
 function SkeletonCard() {
   return (
     <div className="relative flex flex-col items-center text-center p-6 rounded-[35px] bg-gray-100 border-2 border-gray-200 animate-pulse">
@@ -442,11 +619,12 @@ function SkeletonCard() {
 // ─────────────────────────────────────────────────────────────────────────────
 // CartItem adapter — map DRM Product → legacy CartContext shape
 // ─────────────────────────────────────────────────────────────────────────────
-function toCartItem(product: Product) {
+function toCartItem(product: Product, variant?: ProductVariant) {
   const price =
-    product.variants.length > 0
-      ? Math.min(...product.variants.map((v) => v.price))
-      : product.price;
+    variant?.price ??
+    (product.variants.length > 0
+      ? Math.min(...product.variants.map((option) => option.price))
+      : product.price);
 
   return {
     id: product.id,
@@ -459,6 +637,14 @@ function toCartItem(product: Product) {
     descriptionUr: "",
     slug: product.id,
     popular: false,
+    unitPrice: price,
+    variants: product.variants.map((option) => ({
+      id: option.id,
+      name: option.name,
+      price: option.price,
+    })),
+    selectedVariantId: variant?.id,
+    selectedVariantName: variant?.name,
     details: { prepTime: "20-30 min", prepTimeUr: "20-30 منٹ" },
   };
 }
@@ -468,7 +654,7 @@ function toCartItem(product: Product) {
 // ─────────────────────────────────────────────────────────────────────────────
 export default function OrderPage() {
   const { t, language } = useLanguage();
-  const { cart, addToCart, updateQuantity, cartTotal } = useCart();
+  const { cart, addToCart, updateQuantity, updateVariant, cartTotal } = useCart();
   const searchParams = useSearchParams();
 
   const [userLocation] = useState<{ area: string; city: string; orderType: string } | null>(() => {
@@ -519,8 +705,8 @@ export default function OrderPage() {
   const totalAmount = cartTotal + deliveryFee;
 
   const handleAddToCart = useCallback(
-    (product: Product) => {
-      addToCart(toCartItem(product));
+    (product: Product, variant?: ProductVariant) => {
+      addToCart(toCartItem(product, variant));
       if (cart.length === 0) setIsMobileCartOpen(true);
     },
     [addToCart, cart.length]
@@ -533,7 +719,8 @@ export default function OrderPage() {
     msg += `*Order Type:* ${loc.orderType === "delivery" ? "🚀 Delivery" : "🛍️ Pick-Up"}\n`;
     msg += `*Location:* ${loc.area}, ${loc.city}\n\n*ITEMS:*\n`;
     cart.forEach((c) => {
-      msg += `- ${c.item.name} (x${c.quantity}) - ${c.item.price}\n`;
+      const variantLabel = c.item.selectedVariantName ? ` - ${c.item.selectedVariantName}` : "";
+      msg += `- ${c.item.name}${variantLabel} (x${c.quantity}) - ${c.item.price}\n`;
     });
     msg += `\n*Subtotal:* Rs. ${cartTotal.toLocaleString()}\n`;
     msg += `*Delivery:* Rs. ${deliveryFee}\n`;
@@ -545,18 +732,18 @@ export default function OrderPage() {
   // Render
   // ─────────────────────────────────────────────────────────────────────────
   return (
-    <div className="h-[calc(100vh-90px)] bg-white flex flex-col font-sans overflow-hidden mt-[90px]">
-      <div className="flex-1 max-w-[1600px] mx-auto w-full flex flex-col md:flex-row relative overflow-hidden">
+    <div className="mt-20 flex min-h-[calc(100svh-80px)] flex-col bg-white font-sans lg:h-[calc(100vh-80px)] lg:overflow-hidden">
+      <div className="relative mx-auto flex w-full max-w-[1800px] flex-1 flex-col lg:overflow-hidden lg:flex-row 2xl:max-w-[1920px]">
 
         {/* ── Main Menu Panel ── */}
-        <div className="flex-1 px-4 sm:px-6 pt-10 pb-32 md:pb-8 md:pr-8 md:border-r border-black/5 overflow-y-auto no-scrollbar">
+        <div className="flex-1 overflow-y-auto border-black/5 px-4 pb-32 pt-7 no-scrollbar sm:px-6 sm:pt-8 lg:border-r lg:pb-8 lg:pr-8 lg:pt-10 2xl:px-12">
 
           {/* Header */}
-          <div className="mb-10">
-            <h1 className={`text-2xl lg:text-3xl font-black text-[#1a0a04] tracking-tight mb-1 ${language === "UR" ? "text-right" : ""}`}>
+          <div className="mb-12 py-3 sm:mb-16 sm:py-4 2xl:mb-20 2xl:py-6">
+            <h1 className={`mb-1 text-2xl font-black tracking-tight text-[#111827] lg:text-3xl 2xl:text-4xl ${language === "UR" ? "text-right" : ""}`}>
               {t("orderDelivery")}
             </h1>
-            <p className={`text-[#6b5a50] font-medium text-xs lg:text-sm mb-6 ${language === "UR" ? "text-right" : ""}`}>
+            <p className={`text-[#111827] font-medium text-xs lg:text-sm mb-6 ${language === "UR" ? "text-right" : ""}`}>
               {t("exclusiveChefMeals")}
             </p>
 
@@ -570,7 +757,7 @@ export default function OrderPage() {
                 placeholder="Search dishes…"
                 defaultValue={searchQuery}
                 onChange={(e) => handleSearchChange(e.target.value)}
-                className="w-full pl-11 pr-4 py-3.5 rounded-2xl border border-gray-100 bg-gray-50 text-sm font-bold text-brand-dark placeholder:text-brand-dark/30 outline-none focus:border-brand-primary/40 focus:ring-2 focus:ring-brand-primary/10 transition-all"
+                className="w-full rounded-2xl border border-gray-100 bg-gray-50 py-3.5 pl-11 pr-4 text-sm font-bold text-brand-dark outline-none transition-all placeholder:text-brand-dark/30 focus:border-brand-primary/40 focus:ring-2 focus:ring-brand-primary/10 2xl:py-4"
               />
             </div>
 
@@ -580,9 +767,9 @@ export default function OrderPage() {
                 <button
                   key={cat}
                   onClick={() => changeCategory(cat)}
-                  className={`whitespace-nowrap px-5 py-2.5 rounded-full text-xs font-black uppercase tracking-widest transition-all duration-300 ${activeCategory === cat
+                  className={`whitespace-nowrap rounded-full px-4 py-2 text-xs font-black uppercase tracking-widest transition-all duration-300 sm:px-5 sm:py-2.5 ${activeCategory === cat
                     ? "bg-brand-primary text-white "
-                    : "bg-white text-[#6b5a50] border border-[#f0e4dc] hover:border-brand-primary/30 hover:text-brand-primary"
+                    : "bg-white text-[#111827] border border-[#E5E7EB] hover:border-brand-primary/30 hover:text-brand-primary"
                     }`}
                 >
                   {cat}
@@ -604,7 +791,7 @@ export default function OrderPage() {
                 <p className="text-brand-dark/50 text-sm mb-6">{error}</p>
                 <button
                   onClick={() => refetch()}
-                  className="px-8 py-3.5 bg-brand-primary text-white font-black text-xs uppercase tracking-widest rounded-2xl shadow-lg hover:shadow-[0_15px_30px_rgba(230,57,70,0.35)] hover:-translate-y-0.5 transition-all"
+                  className="px-8 py-3.5 bg-brand-primary text-white font-black text-xs uppercase tracking-widest rounded-2xl shadow-lg hover:shadow-[0_15px_30px_rgba(248,114,5,0.35)] hover:-translate-y-0.5 transition-all"
                 >
                   Try Again
                 </button>
@@ -622,14 +809,13 @@ export default function OrderPage() {
           )}
 
           {/* Product Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-y-28 gap-x-8 pt-16">
+          <div className="grid grid-cols-1 items-stretch gap-6 pt-10 sm:grid-cols-2 sm:gap-8 lg:gap-10 lg:pt-14 xl:grid-cols-3 2xl:grid-cols-4 2xl:gap-12">
             {isLoading
               ? Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)
-              : filteredProducts.map((product, index) => (
-                <ProductCard
+              : filteredProducts.map((product) => (
+                <VariantProductCard
                   key={product.id}
                   product={product}
-                  index={index}
                   onAddToCart={handleAddToCart}
                 />
               ))}
@@ -637,7 +823,7 @@ export default function OrderPage() {
         </div>
 
         {/* ── Desktop Cart Sidebar ── */}
-        <div className="hidden md:flex w-[380px] lg:w-[420px] flex-col h-full bg-[#faf8f5] border-l border-[#ebe3d9] shadow-[-10px_0_40px_rgba(0,0,0,0.03)] overflow-hidden">
+        <div className="hidden h-full w-[400px] flex-col overflow-hidden border-l border-[#E5E7EB] bg-[#F8FAFC] shadow-[-10px_0_40px_rgba(0,0,0,0.03)] lg:flex 2xl:w-[460px]">
           <CartContent
             cart={cart}
             cartTotal={cartTotal}
@@ -646,13 +832,14 @@ export default function OrderPage() {
             language={language}
             t={t}
             updateQuantity={updateQuantity}
+            updateVariant={updateVariant}
             onCheckout={handleCheckout}
           />
         </div>
 
         {/* ── Mobile Floating Cart Bar ── */}
         {cart.length > 0 && !isMobileCartOpen && (
-          <div className="md:hidden fixed bottom-6 left-4 right-4 z-[90] animate-in fade-in slide-in-from-bottom-10">
+          <div className="fixed bottom-4 left-4 right-4 z-[90] animate-in fade-in slide-in-from-bottom-10 sm:bottom-6 lg:hidden">
             <button
               onClick={() => setIsMobileCartOpen(true)}
               className="w-full bg-brand-primary text-white p-4 rounded-[20px] shadow-2xl flex items-center justify-between font-medium uppercase tracking-widest text-sm"
@@ -669,9 +856,9 @@ export default function OrderPage() {
         )}
 
         {/* ── Mobile Cart Drawer ── */}
-        <div className={`md:hidden fixed inset-0 z-[200] transition-transform duration-500 ${isMobileCartOpen ? "translate-y-0" : "translate-y-full"}`}>
+        <div className={`fixed inset-0 z-[200] transition-transform duration-500 lg:hidden ${isMobileCartOpen ? "translate-y-0" : "translate-y-full"}`}>
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setIsMobileCartOpen(false)} />
-          <div className="absolute bottom-0 left-0 right-0 h-[85vh] bg-white rounded-t-[40px] flex flex-col overflow-hidden shadow-2xl">
+          <div className="absolute bottom-0 left-0 right-0 h-[88svh] bg-white rounded-t-[28px] sm:rounded-t-[40px] flex flex-col overflow-hidden shadow-2xl">
             <div className="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mt-4 mb-2" onClick={() => setIsMobileCartOpen(false)} />
             <div className="px-6 py-4 flex justify-between items-center border-b border-gray-100">
               <h2 className="text-xl font-black text-brand-dark uppercase tracking-tight">{t("yourOrder")}</h2>
@@ -688,6 +875,7 @@ export default function OrderPage() {
                 language={language}
                 t={t}
                 updateQuantity={updateQuantity}
+                updateVariant={updateVariant}
                 onCheckout={() => { handleCheckout(); setIsMobileCartOpen(false); }}
               />
             </div>
@@ -702,6 +890,16 @@ export default function OrderPage() {
 // ─────────────────────────────────────────────────────────────────────────────
 // CartContent — shared between sidebar & drawer
 // ─────────────────────────────────────────────────────────────────────────────
+function numericCartPrice(item: ReturnType<typeof useCart>["cart"][number]["item"]) {
+  if (typeof item.unitPrice === "number") return item.unitPrice;
+  if (typeof item.price === "number") return item.price;
+  return Number.parseInt(String(item.price).replace(/[^0-9]/g, ""), 10) || 0;
+}
+
+function money(value: number) {
+  return `Rs. ${value.toLocaleString()}`;
+}
+
 function CartContent({
   cart,
   cartTotal,
@@ -710,6 +908,7 @@ function CartContent({
   language,
   t,
   updateQuantity,
+  updateVariant,
   onCheckout,
 }: {
   cart: ReturnType<typeof useCart>["cart"];
@@ -718,72 +917,182 @@ function CartContent({
   totalAmount: number;
   language: string;
   t: (key: string) => string;
-  updateQuantity: (id: string | number, delta: number) => void;
+  updateQuantity: (id: string | number, delta: number, variantId?: string) => void;
+  updateVariant: ReturnType<typeof useCart>["updateVariant"];
   onCheckout: () => void;
 }) {
+  const [openDetailKey, setOpenDetailKey] = useState<string | null>(null);
+
   return (
-    <div className="flex flex-col h-full overflow-hidden">
-      <div className="hidden md:flex px-8 py-5 border-b border-[#ebe3d9] bg-white/50 backdrop-blur-md">
-        <h2 className={`text-xl font-black text-[#1a0a04] tracking-tight flex items-center gap-3 ${language === "UR" ? "flex-row-reverse" : ""}`}>
-          <span className="w-8 h-px bg-brand-primary" />
+    <div className="flex h-full flex-col overflow-hidden bg-brand-surface">
+      <div className="hidden border-b border-gray-200 bg-white px-6 py-6 md:block 2xl:px-8">
+        <h2 className={`flex items-center gap-3 text-xl font-black tracking-tight text-brand-dark ${language === "UR" ? "flex-row-reverse text-right" : ""}`}>
+          <span className="h-px w-8 bg-brand-primary" />
           {t("yourOrder")}
         </h2>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-6 md:px-8 py-6 flex flex-col gap-5 no-scrollbar">
+      <div className="flex flex-1 flex-col gap-4 overflow-y-auto px-4 py-5 no-scrollbar sm:px-6 md:px-6 2xl:px-8">
         {cart.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full text-[#a09080] opacity-70">
-            <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-sm mb-5">
-              <svg className="w-8 h-8 text-[#d4a898]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div className="flex h-full flex-col items-center justify-center px-4 text-center text-brand-dark/70">
+            <div className="mb-5 flex h-20 w-20 items-center justify-center rounded-2xl border border-gray-100 bg-white shadow-sm">
+              <svg className="h-8 w-8 text-brand-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
               </svg>
             </div>
-            <p className="font-bold text-lg text-[#3d2414] mb-1">{t("emptyCart")}</p>
-            <p className="text-sm font-medium">Start adding items to your meal.</p>
+            <p className="mb-1 text-lg font-black text-brand-dark">{t("emptyCart")}</p>
+            <p className="max-w-xs text-sm font-medium leading-6">Choose a dish and tap an option to build your order.</p>
           </div>
         ) : (
-          cart.map((c, i) => (
-            <div key={i} className={`flex gap-4 items-center group ${language === "UR" ? "flex-row-reverse" : ""}`}>
-              <div className="w-16 h-16 bg-white border border-[#ebe3d9] shadow-sm rounded-2xl flex items-center justify-center relative overflow-hidden shrink-0 group-hover:scale-105 transition-transform duration-300">
-                <Image src={c.item.image || "/images/placeholder-food.png"} alt={c.item.name || "Cart item"} fill className="object-cover" unoptimized />
-              </div>
-              <div className={`flex-1 min-w-0 ${language === "UR" ? "text-right" : ""}`}>
-                <h4 className="font-bold text-[#1a0a04] text-sm leading-tight mb-1 truncate">{c.item.name}</h4>
-                <span className="text-brand-primary font-black text-xs">{c.item.price}</span>
-              </div>
-              <div className={`flex items-center gap-1.5 bg-white border border-[#ebe3d9] rounded-full p-1 shrink-0 ${language === "UR" ? "flex-row-reverse" : ""}`}>
-                <button onClick={() => updateQuantity(c.item.id, -1)} className="w-6 h-6 rounded-full flex items-center justify-center text-[#a09080] hover:bg-[#fdf2ec] hover:text-brand-primary">
-                  <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M20 12H4" /></svg>
-                </button>
-                <span className="text-sm font-black text-[#1a0a04] w-4 text-center">{c.quantity}</span>
-                <button onClick={() => updateQuantity(c.item.id, 1)} className="w-6 h-6 rounded-full flex items-center justify-center text-[#a09080] hover:bg-[#fdf2ec] hover:text-brand-primary">
-                  <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" /></svg>
-                </button>
-              </div>
-            </div>
-          ))
+          <div className="flex flex-col gap-3">
+            {cart.map((c, i) => {
+              const cartKey = `${c.item.id}-${c.item.selectedVariantId ?? "base"}-${i}`;
+              const unitPrice = numericCartPrice(c.item);
+              const lineTotal = unitPrice * c.quantity;
+              const selectedVariant =
+                c.item.selectedVariantName ||
+                c.item.variants?.find((variant) => variant.id === c.item.selectedVariantId)?.name ||
+                "Standard";
+              const hasCartDetails = Boolean(c.item.details?.prepTime) || Boolean(c.item.category) || Boolean(c.item.variants?.length);
+              const cartDetailsOpen = openDetailKey === cartKey;
+
+              return (
+                <div
+                  key={cartKey}
+                  className={`rounded-2xl border border-gray-200 bg-white p-3 shadow-[0_12px_32px_rgba(17,24,39,0.045)] transition-all duration-300 hover:border-brand-primary/20 ${language === "UR" ? "text-right" : ""}`}
+                >
+                  <div className={`grid grid-cols-[64px_minmax(0,1fr)] gap-3 sm:grid-cols-[72px_minmax(0,1fr)] ${language === "UR" ? "direction-rtl" : ""}`}>
+                    <div className="cart-item-image relative flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-gray-100 bg-brand-surface sm:h-[72px] sm:w-[72px]">
+                      <Image
+                        src={c.item.image || "/images/placeholder-food.png"}
+                        alt={c.item.name || "Cart item"}
+                        fill
+                        className="!h-full !w-full !object-contain !object-center"
+                        style={{ objectFit: "contain", objectPosition: "center" }}
+                        unoptimized
+                      />
+                    </div>
+
+                    <div className="min-w-0 flex-1">
+                      <div className={`flex items-start justify-between gap-2 ${language === "UR" ? "flex-row-reverse" : ""}`}>
+                        <div className="min-w-0">
+                          <h4 className="line-clamp-2 text-sm font-black leading-tight text-brand-dark">
+                            {c.item.name}
+                          </h4>
+                          <p className="mt-1 text-[10px] font-black uppercase tracking-widest text-brand-primary">
+                            {selectedVariant}
+                          </p>
+                        </div>
+                        <span className="shrink-0 rounded-xl bg-brand-primary/10 px-2 py-1 text-[10px] font-black text-brand-primary">
+                          x{c.quantity}
+                        </span>
+                      </div>
+
+                      {hasCartDetails && (
+                        <button
+                          type="button"
+                          onClick={() => setOpenDetailKey(cartDetailsOpen ? null : cartKey)}
+                          className="mt-2 rounded-xl border border-gray-200 bg-white px-2.5 py-1 text-[8px] font-black uppercase tracking-widest text-brand-dark/55 transition-colors hover:border-brand-primary hover:text-brand-primary"
+                          aria-expanded={cartDetailsOpen}
+                        >
+                          {cartDetailsOpen ? "Hide details" : "Details"}
+                        </button>
+                      )}
+
+                      {c.item.variants && c.item.variants.length > 0 && (
+                        <div className={`mt-2 flex flex-wrap items-center gap-1.5 ${language === "UR" ? "justify-end" : ""}`}>
+                          {c.item.variants.slice(0, 4).map((variant) => (
+                              <button
+                                key={variant.id}
+                                type="button"
+                                onClick={() => updateVariant(c.item.id, variant, c.item.selectedVariantId)}
+                                className={`rounded-xl border px-2 py-1 text-[8px] font-black uppercase tracking-wider transition-all ${
+                                  c.item.selectedVariantId === variant.id
+                                    ? "border-brand-primary bg-brand-primary text-white"
+                                    : "border-gray-200 bg-brand-surface text-brand-dark/55 hover:border-brand-primary hover:bg-white hover:text-brand-primary"
+                                }`}
+                                title={`Switch to ${variant.name}`}
+                              >
+                                {variant.name}
+                              </button>
+                            ))}
+                        </div>
+                      )}
+
+                      <div className="mt-3 grid grid-cols-1 items-stretch gap-2 rounded-2xl bg-brand-surface p-2 min-[420px]:grid-cols-[1fr_auto_1fr] min-[420px]:items-center">
+                        <div>
+                          <span className="block text-[8px] font-black uppercase tracking-widest text-brand-dark/40">Price</span>
+                          <span className="block text-xs font-black text-brand-dark">{money(unitPrice)}</span>
+                        </div>
+
+                        <div className={`flex items-center justify-center gap-1 rounded-xl bg-white p-1 ${language === "UR" ? "flex-row-reverse" : ""}`}>
+                          <button
+                            onClick={() => updateQuantity(c.item.id, -1, c.item.selectedVariantId)}
+                            className="flex h-6 w-6 items-center justify-center rounded-xl text-brand-dark transition-colors hover:bg-brand-surface hover:text-brand-primary"
+                            aria-label="Decrease quantity"
+                          >
+                            <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M20 12H4" />
+                            </svg>
+                          </button>
+                          <span className="w-5 text-center text-sm font-black text-brand-dark">{c.quantity}</span>
+                          <button
+                            onClick={() => updateQuantity(c.item.id, 1, c.item.selectedVariantId)}
+                            className="flex h-6 w-6 items-center justify-center rounded-xl text-brand-dark transition-colors hover:bg-brand-surface hover:text-brand-primary"
+                            aria-label="Increase quantity"
+                          >
+                            <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+                            </svg>
+                          </button>
+                        </div>
+
+                        <div className="min-[420px]:text-right">
+                          <span className="block text-[8px] font-black uppercase tracking-widest text-brand-dark/40">Total</span>
+                          <span className="block text-xs font-black text-brand-primary">{money(lineTotal)}</span>
+                        </div>
+                      </div>
+
+                      {cartDetailsOpen && (
+                        <div className="mt-2 rounded-2xl border border-gray-200 bg-white p-3 text-[10px] font-bold leading-5 text-brand-dark/60">
+                          <div className="grid gap-1">
+                            {Boolean(c.item.category) && <span>Category: {String(c.item.category)}</span>}
+                            {c.item.details?.prepTime && <span>Prep time: {c.item.details.prepTime}</span>}
+                            <span>Selected: {selectedVariant}</span>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         )}
       </div>
 
-      <div className="px-6 md:px-8 py-7 bg-white border-t border-[#ebe3d9]">
-        {[
-          { label: t("subtotal"), value: `Rs. ${cartTotal.toLocaleString()}` },
-          { label: t("deliveryFee"), value: `Rs. ${deliveryFee}` },
-        ].map(({ label, value }) => (
-          <div key={label} className={`flex justify-between items-center mb-3 ${language === "UR" ? "flex-row-reverse" : ""}`}>
-            <span className="text-[#6b5a50] font-medium text-xs tracking-wide uppercase">{label}</span>
-            <span className="text-[#1a0a04] font-black text-sm">{value}</span>
+      <div className="border-t border-gray-200 bg-white px-4 py-5 sm:px-6 md:px-6 2xl:px-8">
+        <div className="rounded-2xl border border-gray-200 bg-brand-surface p-4">
+          {[
+            { label: t("subtotal"), value: `Rs. ${cartTotal.toLocaleString()}` },
+            { label: t("deliveryFee"), value: `Rs. ${deliveryFee}` },
+          ].map(({ label, value }) => (
+            <div key={label} className={`mb-3 flex items-center justify-between gap-4 ${language === "UR" ? "flex-row-reverse" : ""}`}>
+              <span className="text-xs font-bold uppercase tracking-wide text-brand-dark/55">{label}</span>
+              <span className="text-sm font-black text-brand-dark">{value}</span>
+            </div>
+          ))}
+          <div className="mb-4 h-px w-full border-t border-dashed border-brand-primary/50" />
+          <div className={`flex items-end justify-between gap-4 ${language === "UR" ? "flex-row-reverse" : ""}`}>
+            <span className="text-lg font-black text-brand-dark">{t("total")}</span>
+            <span className="text-2xl font-black text-brand-primary sm:text-3xl">Rs. {totalAmount.toLocaleString()}</span>
           </div>
-        ))}
-        <div className="w-full h-px border-t border-dashed border-[#d4a898] mb-5" />
-        <div className={`flex justify-between items-center mb-8 ${language === "UR" ? "flex-row-reverse" : ""}`}>
-          <span className="text-[#1a0a04] font-black text-xl">{t("total")}</span>
-          <span className="text-brand-primary font-black text-3xl">Rs. {totalAmount.toLocaleString()}</span>
         </div>
+
         <button
           disabled={cart.length === 0}
           onClick={onCheckout}
-          className="w-full py-4 rounded-2xl font-black text-white text-base bg-brand-primary shadow-xl shadow-brand-primary/20 disabled:opacity-50 active:scale-95 transition-all hover:shadow-[0_20px_40px_rgba(230,57,70,0.4)] hover:-translate-y-0.5"
+          className="mt-4 flex w-full items-center justify-center rounded-2xl bg-brand-primary px-5 py-4 text-sm font-black uppercase tracking-widest text-white shadow-xl shadow-brand-primary/20 transition-all hover:-translate-y-0.5 hover:shadow-[0_20px_40px_rgba(248,114,5,0.32)] active:scale-95 disabled:cursor-not-allowed disabled:opacity-45 disabled:hover:translate-y-0"
         >
           {t("checkout")}
         </button>
