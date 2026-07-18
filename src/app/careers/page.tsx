@@ -30,7 +30,7 @@ export default function CareersPage() {
             ))}
           </div>
           <p className="text-xl leading-relaxed text-brand-dark/80 mt-12">
-            ZeeFood is Pakistan's premier destination for authentic, high-quality desi cuisine. Our kitchen is the beating heart of our brand, where tradition meets culinary excellence. Whether you are an expert chef, a line cook, or a delivery rider, you play a vital role in the ZeeFood experience.
+            ZeeFood is Pakistan&apos;s premier destination for authentic, high-quality desi cuisine. Our kitchen is the beating heart of our brand, where tradition meets culinary excellence. Whether you are an expert chef, a line cook, or a delivery rider, you play a vital role in the ZeeFood experience.
           </p>
         </section>
         
@@ -64,7 +64,7 @@ export default function CareersPage() {
         </section>
 
         <div className="mt-20 p-10 bg-[#fdf8f5] rounded-[40px] border border-brand-primary/10 text-center">
-          <h3 className="text-2xl font-black text-brand-primary mb-3">Don't see a fit?</h3>
+          <h3 className="text-2xl font-black text-brand-primary mb-3">Don&apos;t see a fit?</h3>
           <p className="text-brand-dark/80 font-bold text-lg m-0">
             We are always hiring great talent! Drop your resume at <strong className="text-brand-dark underline decoration-brand-primary underline-offset-4">jobs@zeefood.pk</strong>
           </p>

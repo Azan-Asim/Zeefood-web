@@ -9,18 +9,39 @@ import { useRouter } from "next/navigation";
 type RemoteProduct = {
   id: string;
   name: string;
+  slug?: string;
   image?: string;
   status?: string;
   category?: { CategoryName?: string };
   price?: number;
-  variants?: { id?: string; name?: string; price?: number }[];
+  variants?: ProductVariant[];
+};
+
+type ProductVariant = {
+  id?: string;
+  name?: string;
+  price?: number;
+};
+
+type SignatureItem = {
+  id: string;
+  name: string;
+  nameUr: string;
+  description: string;
+  descriptionUr: string;
+  price: number;
+  image: string;
+  slug: string;
+  status?: string;
+  category: string;
+  variants: ProductVariant[];
 };
 
 export default function SignatureDesi() {
   const { t, language } = useLanguage();
   const { addToCart } = useCart();
   const router = useRouter();
-  const [desiItems, setDesiItems] = useState<Array<any>>([]);
+  const [desiItems, setDesiItems] = useState<SignatureItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -30,9 +51,7 @@ export default function SignatureDesi() {
       setLoading(true);
       setError(null);
       try {
-        const res = await fetch(
-          "https://drm.devsinntechnologies.com/public/products?businessId=5707b450-9723-4794-9ba4-ee03890cf504&page=1&limit=50"
-        );
+        const res = await fetch("/api/products?page=1&limit=50");
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const json = await res.json();
         const data: RemoteProduct[] = json.data || [];
@@ -46,7 +65,7 @@ export default function SignatureDesi() {
               ? `https://drm.devsinntechnologies.com/${p.image}`
               : "/images/home/menu/placeholder.png";
 
-            const variantPrices = (p.variants || []).map((v: any) => Number(v.price || 0)).filter(Boolean);
+            const variantPrices = (p.variants || []).map((v) => Number(v.price || 0)).filter(Boolean);
             const price = variantPrices.length > 0 ? Math.min(...variantPrices) : (p.price || 0);
 
             return {
@@ -57,17 +76,17 @@ export default function SignatureDesi() {
               descriptionUr: "",
               price,
               image: imageUrl,
-              slug: (p as any).slug ?? p.id,
+              slug: p.slug ?? p.id,
               status: p.status,
               category: p.category?.CategoryName ?? "Desi",
               variants: p.variants || [],
-              raw: p,
             };
           });
 
         if (mounted) setDesiItems(filtered);
-      } catch (err: any) {
-        if (mounted) setError(err.message || "Failed to load products");
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : "Failed to load products";
+        if (mounted) setError(message);
       } finally {
         if (mounted) setLoading(false);
       }
@@ -137,7 +156,7 @@ export default function SignatureDesi() {
                 </p>
                 {item.variants?.length > 0 && (
                   <div className="mb-5 flex flex-wrap items-center justify-center gap-2">
-                    {item.variants.slice(0, 4).map((variant: any) => (
+                    {item.variants.slice(0, 4).map((variant) => (
                       <span
                         key={variant.id ?? `${item.id}-${variant.name}`}
                         className="px-3 py-1.5 rounded-full bg-white/80 border border-white text-[10px] font-black uppercase tracking-widest text-brand-dark/70 shadow-sm"
@@ -156,7 +175,7 @@ export default function SignatureDesi() {
                       if (!isActive) return;
 
                       const lowestVariantPrice = item.variants && item.variants.length > 0
-                        ? Math.min(...item.variants.map((v: any) => Number(v.price || 0)))
+                        ? Math.min(...item.variants.map((v) => Number(v.price || 0)))
                         : item.price || 0;
 
                       const cartItem = {

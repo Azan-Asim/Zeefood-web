@@ -54,7 +54,7 @@ export default function Navbar() {
               <Link
                 key={link.name}
                 href={link.href}
-                className={`border-0 outline-none ring-0 no-underline before:hidden after:hidden hover:no-underline focus:border-0 focus:outline-none focus:ring-0 focus-visible:border-0 focus-visible:outline-none focus-visible:ring-0 ${pathname === link.href ? "text-brand-primary font-semibold" : "font-medium text-brand-dark"} hover:text-brand-primary transition-colors duration-300 tracking-[0.1em]`}
+                className={`!border-0 !border-l-0 !outline-none !ring-0 no-underline before:content-none before:hidden after:content-none after:hidden hover:no-underline focus:!border-0 focus:!border-l-0 focus:!outline-none focus:!ring-0 focus-visible:!border-0 focus-visible:!border-l-0 focus-visible:!outline-none focus-visible:!ring-0 ${pathname === link.href ? "text-brand-primary font-semibold" : "font-medium text-brand-dark"} hover:text-brand-primary transition-colors duration-300 tracking-[0.1em]`}
               >
                 {link.name}
               </Link>
@@ -118,7 +118,7 @@ export default function Navbar() {
                 key={link.name}
                 href={link.href}
                 onClick={() => setIsMobileMenuOpen(false)}
-                className={`text-xl border-0 outline-none ring-0 no-underline before:hidden after:hidden hover:no-underline focus:border-0 focus:outline-none focus:ring-0 focus-visible:border-0 focus-visible:outline-none focus-visible:ring-0 ${pathname === link.href ? "font-black text-brand-primary" : "font-medium text-brand-dark"} transition-colors duration-300 tracking-[0.1em] hover:text-brand-primary`}
+                className={`text-xl !border-0 !border-l-0 !outline-none !ring-0 no-underline before:content-none before:hidden after:content-none after:hidden hover:no-underline focus:!border-0 focus:!border-l-0 focus:!outline-none focus:!ring-0 focus-visible:!border-0 focus-visible:!border-l-0 focus-visible:!outline-none focus-visible:!ring-0 ${pathname === link.href ? "font-black text-brand-primary" : "font-medium text-brand-dark"} transition-colors duration-300 tracking-[0.1em] hover:text-brand-primary`}
               >
                 {link.name}
               </Link>

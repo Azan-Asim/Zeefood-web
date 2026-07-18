@@ -5,22 +5,15 @@ import Image from "next/image";
 import { useLanguage } from "@/context/LanguageContext";
 import { useCart } from "@/context/CartContext";
 import { allMenuItems } from "@/data/menuData";
-import { useEffect, useState } from "react";
 import Link from "next/link";
 
 export default function ProductDetailPage() {
-  const { slug } = useParams();
+  const params = useParams<{ slug: string }>();
+  const slug = params.slug;
   const router = useRouter();
   const { t, language } = useLanguage();
   const { addToCart } = useCart();
-  const [item, setItem] = useState<any>(null);
-
-  useEffect(() => {
-    const foundItem = allMenuItems.find((m) => m.slug === slug);
-    if (foundItem) {
-      setItem(foundItem);
-    }
-  }, [slug]);
+  const item = allMenuItems.find((menuItem) => menuItem.slug === slug);
 
   if (!item) {
     return (
@@ -125,7 +118,7 @@ export default function ProductDetailPage() {
               </h4>
               <div className="bg-white/50 rounded-[2rem] p-8 border border-gray-100 shadow-sm space-y-6">
                 <p className="text-lg text-brand-dark/70 font-medium leading-relaxed italic relative">
-                  <span className="absolute -left-4 top-0 text-4xl text-brand-primary/10 font-serif">"</span>
+                  <span className="absolute -left-4 top-0 text-4xl text-brand-primary/10 font-serif">&quot;</span>
                   {item.details.recipe}
                 </p>
                 <div className="w-20 h-[1px] bg-gray-100 mx-auto" />

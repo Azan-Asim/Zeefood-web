@@ -14,7 +14,7 @@ export default function TermsConditionsPage() {
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-primary to-brand-secondary">1. Acceptance of Terms</span>
           </h2>
           <p className="text-brand-dark/80 leading-relaxed text-lg">
-            By accessing and using the ZeeFood website and mobile applications (the "Service"), you accept and agree to be bound by the terms and provision of this agreement. In addition, when using these particular services, you shall be subject to any posted guidelines or rules applicable to such services.
+            By accessing and using the ZeeFood website and mobile applications (the &quot;Service&quot;), you accept and agree to be bound by the terms and provision of this agreement. In addition, when using these particular services, you shall be subject to any posted guidelines or rules applicable to such services.
           </p>
         </section>
 

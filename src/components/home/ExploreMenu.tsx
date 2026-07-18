@@ -3,23 +3,40 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useLanguage } from "@/context/LanguageContext";
 
+type Category = {
+  id: string;
+  name: string;
+  nameUr?: string;
+};
+
+type RemoteProduct = {
+  category?: {
+    id?: string;
+    CategoryName?: string;
+    CategoryNameUr?: string;
+  };
+};
 
 export default function ExploreMenu() {
-  const { t, language } = useLanguage();
-  const [categories, setCategories] = useState<Array<{ id: string; name: string; nameUr?: string }>>([]);
+  const { language } = useLanguage();
+  const [categories, setCategories] = useState<Category[]>([]);
 
   // Fetch categories from API
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await fetch("https://drm.devsinntechnologies.com/public/products?businessId=5707b450-9723-4794-9ba4-ee03890cf504&page=1&limit=50");
+        const res = await fetch("/api/products?page=1&limit=50");
+        if (!res.ok) {
+          throw new Error(`Products API error: ${res.status}`);
+        }
+
         const json = await res.json();
         if (json.success && Array.isArray(json.data)) {
           // Extract unique categories
-          const catMap = new Map();
-          json.data.forEach((item: any) => {
+          const catMap = new Map<string, Category>();
+          json.data.forEach((item: RemoteProduct) => {
             const cat = item.category;
-            if (cat && !catMap.has(cat.id)) {
+            if (cat?.id && cat.CategoryName && !catMap.has(cat.id)) {
               catMap.set(cat.id, { id: cat.id, name: cat.CategoryName, nameUr: cat.CategoryNameUr || undefined });
             }
           });

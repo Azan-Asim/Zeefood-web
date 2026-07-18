@@ -471,7 +471,12 @@ export default function OrderPage() {
   const { cart, addToCart, updateQuantity, cartTotal } = useCart();
   const searchParams = useSearchParams();
 
-  const [userLocation, setUserLocation] = useState<{ area: string; city: string; orderType: string } | null>(null);
+  const [userLocation] = useState<{ area: string; city: string; orderType: string } | null>(() => {
+    if (typeof window === "undefined") return null;
+
+    const loc = window.sessionStorage.getItem("userLocation");
+    return loc ? JSON.parse(loc) : null;
+  });
   const [isMobileCartOpen, setIsMobileCartOpen] = useState(false);
 
   // ── Redux hooks ─────────────────────────────────────────────────────────
@@ -504,8 +509,6 @@ export default function OrderPage() {
   );
 
   useEffect(() => {
-    const loc = sessionStorage.getItem("userLocation");
-    if (loc) setUserLocation(JSON.parse(loc));
     return () => {
       if (searchTimer.current) clearTimeout(searchTimer.current);
     };
@@ -709,13 +712,13 @@ function CartContent({
   updateQuantity,
   onCheckout,
 }: {
-  cart: { item: ReturnType<typeof toCartItem>; quantity: number }[];
+  cart: ReturnType<typeof useCart>["cart"];
   cartTotal: number;
   deliveryFee: number;
   totalAmount: number;
   language: string;
   t: (key: string) => string;
-  updateQuantity: (id: string, delta: number) => void;
+  updateQuantity: (id: string | number, delta: number) => void;
   onCheckout: () => void;
 }) {
   return (
@@ -742,7 +745,7 @@ function CartContent({
           cart.map((c, i) => (
             <div key={i} className={`flex gap-4 items-center group ${language === "UR" ? "flex-row-reverse" : ""}`}>
               <div className="w-16 h-16 bg-white border border-[#ebe3d9] shadow-sm rounded-2xl flex items-center justify-center relative overflow-hidden shrink-0 group-hover:scale-105 transition-transform duration-300">
-                <Image src={c.item.image} alt={c.item.name} fill className="object-cover" unoptimized />
+                <Image src={c.item.image || "/images/placeholder-food.png"} alt={c.item.name || "Cart item"} fill className="object-cover" unoptimized />
               </div>
               <div className={`flex-1 min-w-0 ${language === "UR" ? "text-right" : ""}`}>
                 <h4 className="font-bold text-[#1a0a04] text-sm leading-tight mb-1 truncate">{c.item.name}</h4>

@@ -1,18 +1,9 @@
-"use client";
-
-import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
+const HERO_BIRYANI_IMAGE = "/images/home/desi/biryani_no_bg.png";
+
 export default function Hero() {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) return null;
-
   return (
     <section className="relative flex min-h-screen items-center overflow-hidden bg-gray-50 pb-16 pt-28 sm:pt-32">
 
@@ -50,16 +41,16 @@ export default function Hero() {
         </div>
 
         {/* Right side - image */}
-        <div className="lg:w-1/2 w-full relative flex justify-center items-center">
-
-          {/* Glow Behind Image */}
-          <div className="relative w-full max-w-[550px] aspect-square">
+        <div className="relative flex w-full justify-center lg:w-1/2 lg:justify-end">
+          <div className="relative aspect-square w-[min(84vw,540px)]">
             <Image
-              src="/fiery-wok.png"
-              alt="Freshly prepared food"
+              src={HERO_BIRYANI_IMAGE}
+              alt="Chicken biryani plate"
               fill
-              className="object-contain drop-shadow-2xl"
+              sizes="(max-width: 1024px) 82vw, 520px"
+              className="object-contain !m-0 !border-0 !bg-transparent !p-0 !shadow-none !outline-none !ring-0"
               priority
+              unoptimized
             />
           </div>
         </div>
