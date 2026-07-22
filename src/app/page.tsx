@@ -5,6 +5,7 @@ import Hero from "@/components/home/Hero";
 import CulinarySecrets from "@/components/home/CulinarySecrets";
 // import PromoBanners from "@/components/home/PromoBanners";
 
+
 export default function Home() {
   return (
     <main className="min-h-screen bg-[#fbf7f2] relative overflow-x-hidden">
