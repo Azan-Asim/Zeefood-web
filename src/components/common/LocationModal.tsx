@@ -1,175 +1,227 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 import Image from "next/image";
-import { useLanguage } from "@/context/LanguageContext";
+import { Check, ChevronDown, LocateFixed, X } from "lucide-react";
+
+type OrderType = "delivery" | "pickup";
+
+const PICKUP_ADDRESS = "464-Sirhindi Road, Near Gourmet Bakers, First Round About, Samanabad, Lahore";
 
 export default function LocationModal() {
-  const { t } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
-  const [orderType, setOrderType] = useState("delivery");
-  const city = "Lahore";
-  const [area, setArea] = useState("");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
-
-  const lahoreAreas = [
-    "Allama Iqbal Town",
-    "Samnabad",
-    "Chauburji",
-    "Gulshan E Ravi",
-
-  ].sort();
-
-  const filteredAreas = lahoreAreas.filter(loc => 
-    loc.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const [orderType, setOrderType] = useState<OrderType>("delivery");
+  const [location, setLocation] = useState("");
+  const [isSelectorOpen, setIsSelectorOpen] = useState(false);
 
   useEffect(() => {
-    const savedLocation = sessionStorage.getItem("userLocation");
-    let openTimer: ReturnType<typeof setTimeout> | undefined;
-
-    if (!savedLocation) {
-      openTimer = setTimeout(() => setIsOpen(true), 500);
-    }
-
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsDropdownOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      if (openTimer) clearTimeout(openTimer);
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    const openTimer = setTimeout(() => setIsOpen(true), 500);
+    return () => clearTimeout(openTimer);
   }, []);
 
-  const handleSelect = () => {
-    if (orderType === "pickup") {
-      sessionStorage.setItem("userLocation", JSON.stringify({ orderType, city: null, area: null, timestamp: new Date().toISOString() }));
-      setIsOpen(false);
-      return;
-    }
+  const handleOrderChoice = (type: OrderType) => {
+    setOrderType(type);
+    setLocation("");
+    setIsSelectorOpen(false);
+  };
 
-    if (city && area) {
-      sessionStorage.setItem("userLocation", JSON.stringify({ orderType, city, area, timestamp: new Date().toISOString() }));
-      setIsOpen(false);
-    }
+  const handleUseCurrentLocation = () => {
+    setLocation(orderType === "pickup" ? "Zee Food Gallery - Samanabad" : "Samanabad");
+    setIsSelectorOpen(false);
+  };
+
+  const handleSelect = () => {
+    if (!location) return;
+
+    sessionStorage.setItem(
+      "userLocation",
+      JSON.stringify({
+        orderType,
+        city: "Lahore",
+        area: orderType === "delivery" ? location : "Samanabad",
+        branch: orderType === "pickup" ? location : undefined,
+        address: orderType === "pickup" ? PICKUP_ADDRESS : undefined,
+        timestamp: new Date().toISOString(),
+      }),
+    );
+    setIsOpen(false);
   };
 
   if (!isOpen) return null;
 
+  const isPickup = orderType === "pickup";
+  const options = isPickup ? ["Zee Food Gallery - Samanabad"] : ["Samanabad"];
+
   return (
-    <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4 overflow-hidden">
-      {/* Backdrop */}
-      <div className="absolute inset-0 bg-brand-dark/70 backdrop-blur-[12px] animate-in fade-in duration-500" onClick={() => setIsDropdownOpen(false)} />
+    <div className="fixed inset-0 z-[1000] flex items-center justify-center overflow-hidden bg-brand-dark/70 p-4 backdrop-blur-[8px] animate-in fade-in duration-300 ease-in-out">
+      <div className="relative w-full max-w-[440px] overflow-hidden rounded-2xl border border-white/80 bg-gradient-to-br from-white via-orange-50/80 to-brand-surface px-5 py-5 shadow-[0_30px_100px_rgba(0,0,0,0.20),0_8px_28px_rgba(248,114,5,0.10)] animate-in zoom-in-95 duration-300 ease-in-out sm:px-7">
+        <div className="absolute inset-0 bg-[linear-gradient(125deg,rgba(248,114,5,0.12),rgba(255,255,255,0.72)_44%,rgba(248,114,5,0.08)),radial-gradient(circle_at_80%_35%,rgba(248,114,5,0.16),transparent_34%),radial-gradient(circle_at_10%_18%,rgba(17,24,39,0.06),transparent_28%)]" />
 
-      {/* Modal Content */}
-      <div className="relative bg-white w-full max-w-[460px] rounded-[2.5rem] shadow-[0_50px_100px_-20px_rgba(0,0,0,0.6)] border border-white/20 overflow-visible animate-in zoom-in-95 slide-in-from-bottom-10 duration-700">
-        
-        {/* Top accent bar */}
-        {/* <div className="h-2 w-full bg-gradient-to-r from-brand-primary via-brand-secondary to-brand-primary" /> */}
+        <button
+          type="button"
+          aria-label="Close order modal"
+          onClick={() => setIsOpen(false)}
+          className="absolute right-4 top-4 z-20 flex h-8 w-8 items-center justify-center rounded-full text-brand-dark/65 transition-all duration-300 hover:bg-brand-primary/10 hover:text-brand-primary"
+        >
+          <X className="h-5 w-5" strokeWidth={2.1} />
+        </button>
 
-        <div className="p-8 lg:p-10 flex flex-col items-center">
-          
-          {/* Logo & Title */}
-          <div className="w-full flex items-center gap-6 mb-8 bg-gray-50 p-5 rounded-[2rem] border border-gray-100">
-            <div className="relative w-16 h-16 shrink-0">
-              <Image src="/fiery-wok.png" alt="ZeeFood" fill className="object-contain" priority />
-            </div>
-            <div className="flex flex-col">
-              <h2 className="text-xl text-black font-bold">
-               Order Type
-              </h2>
-              <p className="text-[11px] text-black mt-2">Where should we send your food?</p>
-            </div>
-          </div>
-
-          {/* Order Type Toggle */}
-          <div className="flex bg-gray-100 p-1.5 rounded-full mb-8 w-full shadow-inner border border-gray-200">
-            <button onClick={() => setOrderType("delivery")} className={`flex-1 py-3 px-6 rounded-full text-[11px] font-black transition-all duration-500 uppercase tracking-widest ${orderType === "delivery" ? "bg-brand-primary text-white shadow-lg" : "text-brand-dark/40"}`}>{t("delivery")}</button>
-            <button onClick={() => setOrderType("pickup")} className={`flex-1 py-3 px-6 rounded-full text-[11px] font-black transition-all duration-500 uppercase tracking-widest ${orderType === "pickup" ? "bg-brand-primary text-white shadow-lg" : "text-brand-dark/40"}`}>{t("pickup")}</button>
-          </div>
-
-          {/* Location Section (only for delivery) */}
-          {orderType === "delivery" && (
-            <div className="w-full">
-            <div className="flex items-center gap-4 mb-6">
-               <span className="h-px flex-1 bg-gray-200" />
-               <span className="text-[11px] font-medium text-black ">{t("yourLocation")}</span>
-               <span className="h-px flex-1 bg-gray-200" />
-            </div>
-
-            <div className="space-y-4">
-              <div className="w-full py-4 px-6 bg-gray-50 border-2 border-gray-100 rounded-2xl text-sm font-medium text-black flex items-center justify-between shadow-sm">
-                <span>Lahore</span>
-                <div className="flex items-center gap-2 text-brand-primary">
-                  <span className="text-[10px] font-bold uppercase tracking-widest">Active City</span>
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={4}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+        <div className="relative z-10">
+          <header className="flex flex-col items-center text-center">
+            <div className="flex items-center justify-center gap-3">
+              <div className="relative flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-brand-primary/20 bg-white/95 shadow-[inset_0_0_0_7px_rgba(248,114,5,0.08),0_14px_28px_rgba(248,114,5,0.16)]">
+                <div className="relative h-12 w-12">
+                  <Image src="/fiery-wok.png" alt="Ama G Ka Dhaba logo" fill className="object-contain" priority />
                 </div>
               </div>
-
-              {/* Custom Area Selection with SEARCH */}
-              <div className="relative" ref={dropdownRef}>
-                <button 
-                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                  className="w-full py-4 px-6 bg-white border-2 border-gray-100 rounded-2xl text-sm font-medium text-black flex items-center justify-between hover:border-brand-primary/40 transition-all shadow-sm"
-                >
-                  <span>{area || t("selectArea")}</span>
-                  <svg className={`w-4 h-4 text-brand-dark/20 transition-transform duration-300 ${isDropdownOpen ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={4}><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" /></svg>
-                </button>
-
-                {isDropdownOpen && (
-                  <div className="absolute top-full left-0 right-0 mt-2 bg-white border-2 border-gray-100 rounded-2xl shadow-2xl z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 flex flex-col">
-                    {/* Search Input inside dropdown */}
-                    <div className="px-4 py-3 border-b border-gray-100 bg-gray-50/50">
-                      <div className="relative">
-                        <input 
-                          autoFocus
-                          type="text"
-                          placeholder="Search your area..."
-                          value={searchQuery}
-                          onChange={(e) => setSearchQuery(e.target.value)}
-                          className="w-full py-2 pl-9 pr-4 bg-white border border-gray-200 rounded-xl text-xs font-medium text-black focus:outline-none focus:border-brand-primary/40 transition-all"
-                        />
-                        <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-                      </div>
-                    </div>
-                    
-                    <div className="max-h-[180px] overflow-y-auto no-scrollbar py-2" style={{ WebkitOverflowScrolling: "touch" }}>
-                      {filteredAreas.length > 0 ? (
-                        filteredAreas.map((loc) => (
-                          <button
-                            key={loc}
-                            onClick={() => { setArea(loc); setIsDropdownOpen(false); setSearchQuery(""); }}
-                            className={`w-full text-left px-6 py-3 text-[10px] font-medium text-black transition-colors ${area === loc ? "bg-brand-primary text-white" : "text-brand-dark/70 hover:bg-gray-50"}`}
-                          >
-                            {loc}
-                          </button>
-                        ))
-                      ) : (
-                        <div className="px-6 py-4 text-center text-[10px] font-bold text-gray-400 uppercase tracking-widest">No area found</div>
-                      )}
-                    </div>
-                  </div>
-                )}
+              <div className="min-w-0 text-left">
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-brand-dark/45">Zee Food Gallery</p>
+                <h2 lang="ur" dir="rtl" className="font-ama-dhaba text-[30px] font-bold leading-tight text-brand-primary">
+                  اماں جی کا ڈھابہ
+                </h2>
               </div>
             </div>
-            </div>
-          )}
+          </header>
 
-          <button 
-            disabled={orderType === "delivery" ? !area : false} 
-            onClick={handleSelect}
-            className={`w-full mt-10 py-5 rounded-2xl font-medium text-md transition-all duration-500 ${orderType === "delivery" ? (area ? "bg-brand-primary text-white shadow-xl hover:-translate-y-1" : "bg-gray-100 text-gray-300") : "bg-brand-primary text-white shadow-xl hover:-translate-y-1"}`}
-          >
-            {t("startOrdering")}
-          </button>
-          <p className="mt-8 text-[10px]  text-black">Zee Food Gallery Premium</p>
+          <section className="mt-5">
+            <div className="flex justify-center">
+              <div className="inline-grid grid-cols-2 gap-1.5 rounded-full border border-brand-primary/15 bg-white/90 p-1 shadow-[0_10px_24px_rgba(17,24,39,0.06)]">
+                <OrderPill active={orderType === "delivery"} onClick={() => handleOrderChoice("delivery")}>
+                  Delivery
+                </OrderPill>
+                <OrderPill active={orderType === "pickup"} onClick={() => handleOrderChoice("pickup")}>
+                  Pick-Up
+                </OrderPill>
+              </div>
+            </div>
+
+            <div className="mt-5 text-center">
+              <p className="text-base font-black text-brand-dark">Please select your {isPickup ? "branch" : "area"}</p>
+              <button
+                type="button"
+                onClick={handleUseCurrentLocation}
+                className="mt-3 inline-flex min-h-10 items-center justify-center gap-2 rounded-full border border-brand-primary/15 bg-white/90 px-6 text-sm font-bold text-brand-dark shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-brand-primary/35 hover:bg-brand-primary/10"
+              >
+                <LocateFixed className="h-4 w-4" />
+                Use Current Location
+              </button>
+            </div>
+
+            <div className="mt-4">
+              <SelectorField
+                label={isPickup ? "Select Branch" : "Select Area / Sub Region"}
+                value={location}
+                placeholder={isPickup ? "Select Branch" : "Select Area / Sub Region"}
+                open={isSelectorOpen}
+                options={options}
+                onToggle={() => setIsSelectorOpen((open) => !open)}
+                onChange={(value) => {
+                  setLocation(value);
+                  setIsSelectorOpen(false);
+                }}
+              />
+            </div>
+
+            <button
+              disabled={!location}
+              onClick={handleSelect}
+              className={`mt-5 inline-flex min-h-12 w-full items-center justify-center rounded-full px-7 text-sm font-black transition-all duration-300 ease-in-out ${
+                location
+                  ? "bg-brand-primary text-white shadow-[0_16px_32px_rgba(248,114,5,0.24)] hover:-translate-y-0.5 hover:bg-brand-primary/90 hover:shadow-[0_18px_34px_rgba(248,114,5,0.30)]"
+                  : "bg-[#cfcfcf] text-brand-dark/35"
+              }`}
+            >
+              {isPickup ? "Confirm Pickup" : "Select"}
+            </button>
+          </section>
+
+          <footer className="mt-5 flex items-center justify-center gap-2 rounded-full border border-brand-primary/15 bg-white/90 px-4 py-2 shadow-[0_10px_24px_rgba(17,24,39,0.06)]">
+            <span className="text-[10px] font-black uppercase tracking-[0.22em] text-brand-dark/45">Powered by</span>
+            <span className="relative h-5 w-20">
+              <Image src="/devsinnlogo0.svg" alt="Devsinn Technologies" fill className="object-contain" />
+            </span>
+          </footer>
         </div>
       </div>
     </div>
+  );
+}
+
+function SelectorField({
+  label,
+  value,
+  placeholder,
+  open,
+  options,
+  onToggle,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  placeholder: string;
+  open: boolean;
+  options: string[];
+  onToggle: () => void;
+  onChange: (value: string) => void;
+}) {
+  return (
+    <div className={`text-center transition-all duration-200 ${open ? "relative z-20" : "relative z-10"}`}>
+      <span className="mb-1.5 block text-sm font-black text-brand-dark">{label}</span>
+      <div className="relative mx-auto w-full max-w-[330px]">
+        <button
+          type="button"
+          aria-expanded={open}
+          onClick={onToggle}
+          className={`mx-auto inline-flex min-h-11 w-full items-center justify-center gap-3 rounded-full border bg-white/95 px-5 text-center text-sm font-black shadow-sm transition-all duration-300 ${
+            open
+              ? "border-brand-primary text-brand-primary shadow-[0_14px_26px_rgba(248,114,5,0.14)]"
+              : "border-brand-primary/15 text-brand-dark/75 hover:border-brand-primary/35 hover:text-brand-primary"
+          }`}
+        >
+          <span>{value || placeholder}</span>
+          <ChevronDown className={`h-4 w-4 transition-transform duration-300 ${open ? "rotate-180" : ""}`} />
+        </button>
+
+        {open && (
+          <div className="mx-auto mt-2 w-[88%] overflow-hidden rounded-2xl border border-brand-primary/15 bg-white shadow-[0_12px_24px_rgba(17,24,39,0.08)] animate-in fade-in slide-in-from-top-1 duration-150">
+            {options.map((option) => (
+              <button
+                key={option}
+                type="button"
+                onClick={() => onChange(option)}
+                className="relative flex min-h-10 w-full items-center justify-center px-5 text-center text-sm font-bold text-brand-dark transition-colors duration-200 hover:bg-brand-primary/10 hover:text-brand-primary"
+              >
+                <span>{option}</span>
+                {value === option && <Check className="absolute right-5 h-4 w-4 text-brand-primary" strokeWidth={2.4} />}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function OrderPill({
+  active,
+  children,
+  onClick,
+}: {
+  active: boolean;
+  children: ReactNode;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`min-h-10 min-w-28 rounded-full border px-6 text-sm font-bold transition-all duration-300 ${
+        active
+          ? "border-brand-primary bg-brand-primary text-white shadow-[0_10px_22px_rgba(248,114,5,0.24)]"
+          : "border-transparent bg-transparent text-brand-dark/70 hover:bg-brand-primary/10 hover:text-brand-primary"
+      }`}
+    >
+      {children}
+    </button>
   );
 }

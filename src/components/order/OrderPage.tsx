@@ -22,6 +22,29 @@ function productImageUrl(image: string | null): string {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Category display helpers
+// ─────────────────────────────────────────────────────────────────────────────
+const CATEGORY_IMAGE_MAP: Record<string, string> = {
+  Desi: "/desi_compressed.webp",
+  دیسی: "/desi_compressed.webp",
+  Mashrobat: "/drinks_compressed.webp",
+  مشروبات: "/drinks_compressed.webp",
+  "Azafi Ashia": "/extra_items_compressed.webp",
+  "اضافی اشیاء": "/extra_items_compressed.webp",
+  Chat: "/chaat_compressed.webp",
+  چاٹ: "/chaat_compressed.webp",
+  Achar: "/achar_compressed.webp",
+  اچار: "/achar_compressed.webp",
+  Frozen: "/frozen_compressed.webp",
+  فروزن: "/frozen_compressed.webp",
+};
+
+const CATEGORY_DISPLAY_MAP: Record<string, string> = {
+  Desi: "دیسی",
+  دیسی: "دیسی",
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Pastel card themes (cycled by index)
 // ─────────────────────────────────────────────────────────────────────────────
 // ─────────────────────────────────────────────────────────────────────────────
@@ -412,8 +435,6 @@ export function VariantProductCard({
     variants.length > 0
       ? variants.reduce((lowest, option) => (option.price < lowest.price ? option : lowest), variants[0])
       : undefined;
-  const hasDetails = variants.length > 0 || Boolean(product.category?.CategoryName) || product.inStock !== undefined;
-
   const handleSelect = (variant?: ProductVariant) => {
     if (!isActive) return;
 
@@ -424,46 +445,38 @@ export function VariantProductCard({
   };
 
   return (
-    <article className="group relative flex h-full min-h-[480px] w-full flex-col !overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-[0_10px_34px_rgba(17,24,39,0.055)] transition-all duration-300 hover:-translate-y-1.5 hover:border-brand-primary/20 hover:shadow-[0_24px_68px_rgba(17,24,39,0.12)] sm:min-h-[500px]">
-      <div className="pointer-events-none absolute inset-x-5 top-0 z-20 h-1 rounded-b-full bg-brand-primary opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-      <div className="product-card-image !relative flex !w-full shrink-0 items-center justify-center !overflow-hidden !rounded-t-2xl !bg-white">
-        <Image
-          src={productImageUrl(product.image)}
-          alt={product.name}
-          width={900}
-          height={700}
-          className="!h-full !w-full !object-cover !object-center"
-          style={{
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-            objectPosition: "center",
-          }}
-          unoptimized
-        />
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-brand-dark/10 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-      </div>
+    <article
+      className="group relative h-[370px] w-full overflow-hidden rounded-[20px] bg-white shadow-[0_12px_30px_rgba(17,24,39,0.08)] ring-1 ring-brand-primary/10 transition-all duration-300 hover:-translate-y-1 hover:ring-brand-primary/25 hover:shadow-[0_18px_42px_rgba(248,114,5,0.14)] sm:h-[400px] xl:h-[425px]"
+      style={{
+        backgroundImage: `url(${productImageUrl(product.image)})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center -64px",
+        backgroundRepeat: "no-repeat",
+      }}
+      aria-label={product.name}
+    >
+      <div className="absolute inset-0 bg-gradient-to-t from-brand-dark/28 via-brand-dark/3 to-transparent" />
 
-      <div className="relative z-10 flex flex-1 flex-col border-t border-gray-100 bg-white p-4 sm:p-5">
-        <div className="mb-2 flex items-center justify-between gap-3">
+      <div className="absolute inset-x-3 bottom-3 z-10 rounded-2xl border border-brand-primary/12 bg-white/95 p-3 shadow-[0_14px_32px_rgba(17,24,39,0.12)] backdrop-blur-sm sm:inset-x-4 sm:bottom-4 sm:p-3.5">
+        <div className="mb-1.5 flex items-center justify-between gap-3">
           <span className="min-w-0 break-words text-[9px] font-black uppercase tracking-widest text-brand-primary">
             {product.category?.CategoryName ?? "Featured"}
           </span>
-          <span className="shrink-0 text-[9px] font-black uppercase tracking-widest text-brand-dark/40">
+          <span className="shrink-0 text-[9px] font-black uppercase tracking-widest text-brand-dark/35">
             20-30 min
           </span>
         </div>
 
         <h3
-          className="mb-3 min-h-[46px] break-words text-lg font-black uppercase leading-[1.2] text-brand-dark transition-colors group-hover:text-brand-primary"
+          className="mb-2 line-clamp-2 break-words text-base font-black uppercase leading-[1.12] text-brand-dark transition-colors group-hover:text-brand-primary sm:text-lg"
           title={product.name}
         >
           {product.name}
         </h3>
 
-        <div className="mb-3 min-h-[76px]">
+        <div className="mb-2 min-h-[34px]">
           {variants.length > 0 ? (
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-1.5">
               {visibleVariants.map((variant) => {
                 const isSelected = selectedKey === variant.id;
 
@@ -473,126 +486,103 @@ export function VariantProductCard({
                     type="button"
                     disabled={!isActive || isSelected}
                     onClick={() => handleSelect(variant)}
-                    className={`min-h-[42px] min-w-[72px] flex-1 basis-[calc(50%-0.25rem)] rounded-[14px] border px-3 py-1.5 text-left text-[9px] font-black uppercase tracking-wider transition-all duration-300 sm:flex-none sm:basis-auto ${
+                    className={`min-h-[30px] min-w-[58px] flex-1 rounded-xl border px-2 py-1 text-left text-[8px] font-black uppercase tracking-wider transition-all duration-300 sm:flex-none ${
                       isSelected
                         ? "border-brand-primary bg-brand-primary text-white"
-                        : "border-gray-200 bg-gray-50 text-brand-dark hover:border-brand-primary hover:bg-brand-primary/5 hover:text-brand-primary"
+                        : "border-gray-200 bg-white text-brand-dark hover:border-brand-primary hover:bg-brand-primary/5 hover:text-brand-primary"
                     } disabled:cursor-not-allowed disabled:opacity-80`}
                   >
                     <span className="flex items-center gap-1 break-words">
-                      {isSelected && (
-                        <span className="inline-block h-2 w-2 rounded-full bg-white shadow-[0_0_0_3px_rgba(255,255,255,0.2)]" />
-                      )}
+                      {isSelected && <span className="inline-block h-2 w-2 rounded-full bg-white" />}
                       {isSelected ? "Added" : variant.name}
                     </span>
-                    <span className="block text-[8px] opacity-70">
+                    <span className="block text-[7px] opacity-70">
                       Rs. {variant.price.toLocaleString()}
                     </span>
                   </button>
                 );
               })}
-
             </div>
           ) : (
             <button
               type="button"
               disabled={!isActive || selectedKey === "base"}
               onClick={() => handleSelect()}
-              className={`group/standard flex min-h-[76px] w-full items-center justify-between gap-3 rounded-[16px] border px-3.5 py-3 text-left transition-all duration-300 ${
+              className={`flex min-h-[42px] w-full items-center justify-between gap-3 rounded-xl border px-3 py-2 text-left transition-all duration-300 ${
                 selectedKey === "base"
                   ? "border-brand-primary bg-brand-primary text-white"
-                  : "border-gray-200 bg-gray-50 text-brand-dark hover:border-brand-primary hover:bg-brand-primary/5"
+                  : "border-gray-200 bg-white text-brand-dark hover:border-brand-primary hover:bg-brand-primary/5"
               }`}
             >
               <span>
                 <span className="block text-[9px] font-black uppercase tracking-widest opacity-60">
                   Standard
                 </span>
-                <span className="mt-1 flex items-center gap-2 text-xs font-black uppercase tracking-wider">
-                  {selectedKey === "base" && <span className="inline-block h-2 w-2 rounded-full bg-white" />}
+                <span className="mt-1 text-[11px] font-black uppercase tracking-wider">
                   {selectedKey === "base" ? "Added to cart" : "Single serving"}
                 </span>
               </span>
-              <span
-                className={`shrink-0 rounded-full px-3 py-1 text-[9px] font-black uppercase tracking-wider ${
-                  selectedKey === "base"
-                    ? "bg-white/20 text-white"
-                    : "bg-white text-brand-primary shadow-sm group-hover/standard:bg-brand-primary group-hover/standard:text-white"
-                }`}
-              >
+              <span className="rounded-full bg-brand-primary/10 px-3 py-1 text-[9px] font-black uppercase tracking-wider text-brand-primary">
                 Add
               </span>
             </button>
           )}
         </div>
 
-        <div className="mt-auto space-y-2.5">
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <span className="break-words text-xl font-black text-brand-primary sm:text-2xl">{displayPrice}</span>
-            <span
-              className={`text-right text-[9px] font-black uppercase tracking-widest ${
-                isActive ? "text-brand-dark/40" : "text-red-500"
-              }`}
-            >
-              {isActive ? "Tap option to add" : "Unavailable"}
-            </span>
-          </div>
+        <p className="mb-2 text-xs font-bold text-brand-dark/60">
+          From <span className="text-base font-black text-brand-primary">{displayPrice}</span>
+        </p>
 
-          <div className="grid grid-cols-1 gap-2 sm:grid-cols-[minmax(0,1fr)_auto]">
-            <button
-              type="button"
-              disabled={!isActive || selectedKey === (defaultVariant?.id ?? "base")}
-              onClick={() => handleSelect(defaultVariant)}
-              className={`inline-flex min-h-10 items-center justify-center rounded-[18px] px-5 py-2.5 text-[11px] font-black uppercase tracking-widest text-white transition-all duration-300 ${
-                selectedKey === (defaultVariant?.id ?? "base")
-                  ? "bg-brand-primary"
-                  : "bg-brand-primary hover:-translate-y-0.5 hover:bg-brand-primary/90 hover:shadow-[0_14px_30px_rgba(248,114,5,0.24)]"
-              } disabled:cursor-not-allowed disabled:opacity-80`}
-            >
-              {selectedKey === (defaultVariant?.id ?? "base") ? "Added" : "Order"}
-            </button>
+        <button
+          type="button"
+          disabled={!isActive || selectedKey === (defaultVariant?.id ?? "base")}
+          onClick={() => handleSelect(defaultVariant)}
+          className={`inline-flex min-h-9 w-full items-center justify-center rounded-full px-5 py-2 text-[10px] font-black uppercase tracking-widest text-white transition-all duration-300 ${
+            selectedKey === (defaultVariant?.id ?? "base")
+              ? "bg-brand-primary"
+              : "bg-brand-primary hover:-translate-y-0.5 hover:bg-[#e96500] hover:shadow-[0_14px_30px_rgba(248,114,5,0.26)]"
+          } disabled:cursor-not-allowed disabled:opacity-80`}
+        >
+          {selectedKey === (defaultVariant?.id ?? "base") ? "Added" : "Order Now"}
+        </button>
 
-            {hasManyVariants && (
-              <button
-                type="button"
-                onClick={() => setExpanded((value) => !value)}
-                className="inline-flex min-h-10 items-center justify-center rounded-[18px] border border-gray-200 bg-white px-4 py-2.5 text-[11px] font-black uppercase tracking-widest text-brand-dark transition-all hover:border-brand-primary hover:text-brand-primary"
-              >
-                {expanded ? "Less" : "More Info"}
-              </button>
-            )}
-          </div>
+        {hasManyVariants && (
+          <button
+            type="button"
+            onClick={() => setExpanded((value) => !value)}
+            className="mt-1.5 inline-flex min-h-8 w-full items-center justify-center rounded-full border border-gray-200 bg-white px-4 py-1.5 text-[9px] font-black uppercase tracking-widest text-brand-dark transition-all hover:border-brand-primary hover:text-brand-primary"
+          >
+            {expanded ? "Less" : "More Info"}
+          </button>
+        )}
 
-          {hasDetails && (
-            <div className="rounded-2xl border border-gray-100 bg-brand-surface">
-              <button
-                type="button"
-                onClick={() => setDetailsOpen((value) => !value)}
-                className="flex w-full items-center justify-between gap-3 rounded-2xl px-4 py-3 text-left text-[10px] font-black uppercase tracking-widest text-brand-dark transition-colors hover:text-brand-primary"
-                aria-expanded={detailsOpen}
-              >
-                <span>Details</span>
-                <span className="text-brand-primary">{detailsOpen ? "Less" : "More"}</span>
-              </button>
+        <div className="mt-1.5 rounded-2xl border border-gray-100 bg-brand-surface/80">
+          <button
+            type="button"
+            onClick={() => setDetailsOpen((value) => !value)}
+            className="flex w-full items-center justify-between gap-3 rounded-2xl px-4 py-1.5 text-left text-[9px] font-black uppercase tracking-widest text-brand-dark transition-colors hover:text-brand-primary"
+            aria-expanded={detailsOpen}
+          >
+            <span>Details</span>
+            <span className="text-brand-primary">{detailsOpen ? "Less" : "More"}</span>
+          </button>
 
-              {detailsOpen && (
-                <div className="border-t border-gray-200 px-4 py-3">
-                  <div className="grid grid-cols-2 gap-2 text-[10px] font-bold uppercase tracking-wider text-brand-dark/55">
-                    <span>Category: {product.category?.CategoryName ?? "General"}</span>
-                    <span>Status: {isActive ? "Available" : "Unavailable"}</span>
-                  </div>
-                  {variants.length > 0 && (
-                    <div className="mt-3 flex flex-wrap gap-1.5">
-                      {variants.map((variant) => (
-                        <span
-                          key={variant.id}
-                          className="rounded-xl border border-gray-200 bg-white px-2 py-1 text-[9px] font-black uppercase tracking-wider text-brand-dark/55"
-                        >
-                          {variant.name} - Rs. {variant.price.toLocaleString()}
-                        </span>
-                      ))}
-                    </div>
-                  )}
+          {detailsOpen && (
+            <div className="border-t border-gray-200 px-4 py-3">
+              <div className="grid grid-cols-2 gap-2 text-[10px] font-bold uppercase tracking-wider text-brand-dark/55">
+                <span>Category: {product.category?.CategoryName ?? "General"}</span>
+                <span>Status: {isActive ? "Available" : "Unavailable"}</span>
+              </div>
+              {variants.length > 0 && (
+                <div className="mt-3 flex flex-wrap gap-1.5">
+                  {variants.map((variant) => (
+                    <span
+                      key={variant.id}
+                      className="rounded-xl border border-gray-200 bg-white px-2 py-1 text-[9px] font-black uppercase tracking-wider text-brand-dark/55"
+                    >
+                      {variant.name} - Rs. {variant.price.toLocaleString()}
+                    </span>
+                  ))}
                 </div>
               )}
             </div>
@@ -652,6 +642,14 @@ function toCartItem(product: Product, variant?: ProductVariant) {
 // ─────────────────────────────────────────────────────────────────────────────
 // Main OrderPage
 // ─────────────────────────────────────────────────────────────────────────────
+function cleanWhatsAppText(value: unknown) {
+  return String(value ?? "")
+    .replace(/\r\n/g, "\n")
+    .replace(/\r/g, "\n")
+    .replace(/[^\S\n]+/g, " ")
+    .trim();
+}
+
 export default function OrderPage() {
   const { t, language } = useLanguage();
   const { cart, addToCart, updateQuantity, updateVariant, cartTotal } = useCart();
@@ -664,6 +662,8 @@ export default function OrderPage() {
     return loc ? JSON.parse(loc) : null;
   });
   const [isMobileCartOpen, setIsMobileCartOpen] = useState(false);
+  const [orderToast, setOrderToast] = useState<string | null>(null);
+  const orderToastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // ── Redux hooks ─────────────────────────────────────────────────────────
   const { isLoading, isError, error, refetch } = useProducts();
@@ -675,6 +675,8 @@ export default function OrderPage() {
     changeCategory,
     changeSearch,
   } = useProductFilters();
+
+  const [searchOpen, setSearchOpen] = useState(Boolean(searchQuery));
 
   useEffect(() => {
     const requestedCategory = searchParams.get("category")?.trim();
@@ -697,6 +699,7 @@ export default function OrderPage() {
   useEffect(() => {
     return () => {
       if (searchTimer.current) clearTimeout(searchTimer.current);
+      if (orderToastTimer.current) clearTimeout(orderToastTimer.current);
     };
   }, []);
 
@@ -707,6 +710,9 @@ export default function OrderPage() {
   const handleAddToCart = useCallback(
     (product: Product, variant?: ProductVariant) => {
       addToCart(toCartItem(product, variant));
+      setOrderToast("Order placed successfully!");
+      if (orderToastTimer.current) clearTimeout(orderToastTimer.current);
+      orderToastTimer.current = setTimeout(() => setOrderToast(null), 2400);
       if (cart.length === 0) setIsMobileCartOpen(true);
     },
     [addToCart, cart.length]
@@ -714,69 +720,113 @@ export default function OrderPage() {
 
   const handleCheckout = useCallback(() => {
     if (cart.length === 0) return;
+
     const loc = userLocation ?? { area: "Not specified", city: "Not specified", orderType: "delivery" };
-    let msg = `*NEW ORDER - ZEE FOOD GALLERY*\n\n`;
-    msg += `*Order Type:* ${loc.orderType === "delivery" ? "🚀 Delivery" : "🛍️ Pick-Up"}\n`;
-    msg += `*Location:* ${loc.area}, ${loc.city}\n\n*ITEMS:*\n`;
+    let msg = "New Order - Zee Food Gallery\n";
+    msg += "---------------------------\n";
+    msg += `Order Type: ${loc.orderType === "delivery" ? "Delivery" : "Pick-Up"}\n`;
+    msg += `Location: ${cleanWhatsAppText(loc.area)}, ${cleanWhatsAppText(loc.city)}\n\n`;
+    msg += "Items:\n";
+
     cart.forEach((c) => {
-      const variantLabel = c.item.selectedVariantName ? ` - ${c.item.selectedVariantName}` : "";
-      msg += `- ${c.item.name}${variantLabel} (x${c.quantity}) - ${c.item.price}\n`;
+      const itemName = cleanWhatsAppText(c.item.name);
+      const variantLabel = c.item.selectedVariantName ? ` (${cleanWhatsAppText(c.item.selectedVariantName)})` : "";
+      msg += `- ${itemName}${variantLabel} x${c.quantity} - Rs. ${numericCartPrice(c.item).toLocaleString()}\n`;
     });
-    msg += `\n*Subtotal:* Rs. ${cartTotal.toLocaleString()}\n`;
-    msg += `*Delivery:* Rs. ${deliveryFee}\n`;
-    msg += `*Total:* Rs. ${totalAmount.toLocaleString()}\n\nPlease confirm. Thank you!`;
-    window.open(`https://wa.me/923354153368?text=${encodeURIComponent(msg)}`, "_blank");
+
+    msg += "\n";
+    msg += `Subtotal: Rs. ${cartTotal.toLocaleString()}\n`;
+    msg += `Delivery: Rs. ${deliveryFee}\n`;
+    msg += `Total: Rs. ${totalAmount.toLocaleString()}\n\n`;
+    msg += "Please confirm my order. Thank you.";
+
+    window.open(`https://wa.me/923354153368?text=${encodeURIComponent(msg)}`, "_blank", "noopener,noreferrer");
   }, [cart, userLocation, cartTotal, deliveryFee, totalAmount]);
 
   // ─────────────────────────────────────────────────────────────────────────
   // Render
   // ─────────────────────────────────────────────────────────────────────────
   return (
-    <div className="mt-20 flex min-h-[calc(100svh-80px)] flex-col bg-white font-sans lg:h-[calc(100vh-80px)] lg:overflow-hidden">
+    <div className="mt-20 flex min-h-[calc(100svh-80px)] flex-col bg-[#fbf7f2] font-sans lg:h-[calc(100svh-80px)] lg:overflow-hidden">
       <div className="relative mx-auto flex w-full max-w-[1800px] flex-1 flex-col lg:overflow-hidden lg:flex-row 2xl:max-w-[1920px]">
 
         {/* ── Main Menu Panel ── */}
-        <div className="flex-1 overflow-y-auto border-black/5 px-4 pb-32 pt-7 no-scrollbar sm:px-6 sm:pt-8 lg:border-r lg:pb-8 lg:pr-8 lg:pt-10 2xl:px-12">
+        <div className="flex-1 overflow-y-auto border-black/5 bg-[#fbf7f2] px-4 pb-32 pt-5 no-scrollbar sm:px-6 sm:pt-6 lg:border-r lg:pb-8 lg:pr-8 lg:pt-7 2xl:px-12">
 
           {/* Header */}
-          <div className="mb-12 py-3 sm:mb-16 sm:py-4 2xl:mb-20 2xl:py-6">
-            <h1 className={`mb-1 text-2xl font-black tracking-tight text-[#111827] lg:text-3xl 2xl:text-4xl ${language === "UR" ? "text-right" : ""}`}>
+          <div className="mb-6 rounded-[26px] border border-brand-primary/10 bg-white/35 p-4 shadow-[0_14px_42px_rgba(17,24,39,0.045)] backdrop-blur-sm sm:mb-7 sm:p-5 2xl:mb-8">
+            <h1 className={`mb-1 text-2xl font-black tracking-tight text-[#111827] lg:text-3xl ${language === "UR" ? "text-right" : ""}`}>
               {t("orderDelivery")}
             </h1>
-            <p className={`text-[#111827] font-medium text-xs lg:text-sm mb-6 ${language === "UR" ? "text-right" : ""}`}>
+            <p className={`mb-4 text-xs font-semibold text-[#111827]/70 lg:text-sm ${language === "UR" ? "text-right" : ""}`}>
               {t("exclusiveChefMeals")}
             </p>
 
             {/* Search Bar */}
-            <div className="relative mb-6">
-              <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-dark/30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-              <input
-                type="search"
-                placeholder="Search dishes…"
-                defaultValue={searchQuery}
-                onChange={(e) => handleSearchChange(e.target.value)}
-                className="w-full rounded-2xl border border-gray-100 bg-gray-50 py-3.5 pl-11 pr-4 text-sm font-bold text-brand-dark outline-none transition-all placeholder:text-brand-dark/30 focus:border-brand-primary/40 focus:ring-2 focus:ring-brand-primary/10 2xl:py-4"
-              />
+            <div className="mb-4 flex justify-center">
+              <div className={`relative max-w-2xl transition-all duration-500 ease-out ${searchOpen ? "w-full" : "w-40"}`}>
+                <button
+                  type="button"
+                  onClick={() => setSearchOpen(true)}
+                  aria-label="Open search"
+                  className={`absolute left-0 top-0 z-10 flex h-12 items-center justify-center gap-2 rounded-2xl border-2 border-brand-primary font-black uppercase tracking-widest transition-all duration-300 ${searchOpen ? "pointer-events-none w-12 border-transparent text-brand-primary" : "w-full bg-white text-brand-primary shadow-[0_12px_24px_rgba(248,114,5,0.12)] hover:-translate-y-0.5 hover:bg-brand-primary/5"}`}
+                >
+                  <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                  {!searchOpen && <span className="text-xs">Search</span>}
+                </button>
+                <input
+                  type="search"
+                  placeholder="Search dishes..."
+                  defaultValue={searchQuery}
+                  onFocus={() => setSearchOpen(true)}
+                  onChange={(e) => handleSearchChange(e.target.value)}
+                  className={`h-12 rounded-2xl border border-brand-primary/10 bg-[#fffdf8]/80 py-3 pl-12 pr-4 text-sm font-bold text-brand-dark outline-none transition-all duration-500 placeholder:text-brand-dark/30 focus:border-brand-primary/40 focus:ring-2 focus:ring-brand-primary/10 ${searchOpen ? "w-full opacity-100" : "w-40 cursor-pointer opacity-0"}`}
+                />
+              </div>
             </div>
 
-            {/* Category Pills */}
-            <div className={`flex gap-3 overflow-x-auto pb-3 no-scrollbar ${language === "UR" ? "flex-row-reverse" : ""}`}>
-              {categories.map((cat) => (
-                <button
-                  key={cat}
-                  onClick={() => changeCategory(cat)}
-                  className={`whitespace-nowrap rounded-full px-4 py-2 text-xs font-black uppercase tracking-widest transition-all duration-300 sm:px-5 sm:py-2.5 ${activeCategory === cat
-                    ? "bg-brand-primary text-white "
-                    : "bg-white text-[#111827] border border-[#E5E7EB] hover:border-brand-primary/30 hover:text-brand-primary"
-                    }`}
-                >
-                  {cat}
-                </button>
-              ))}
-            </div>
-          </div>
+            {/* Category Bar */}
+            <div className="relative flex items-center">
+              <div
+                className={`mx-auto flex gap-2.5 overflow-x-auto pb-1 no-scrollbar flex-nowrap justify-center scroll-smooth snap-x snap-mandatory ${language === "UR" ? "flex-row-reverse" : ""}`}
+              >
+                {categories.map((cat) => {
+                  const normalizedCategory = cat === "ڈیس" ? "Desi" : cat;
+                  const imageSrc = CATEGORY_IMAGE_MAP[cat] || CATEGORY_IMAGE_MAP[normalizedCategory];
+                  const isActive = activeCategory === cat;
+                  const displayName = CATEGORY_DISPLAY_MAP[cat] || CATEGORY_DISPLAY_MAP[normalizedCategory] || cat;
+                  return (
+                    <button
+                      key={cat}
+                      onClick={() => changeCategory(cat)}
+                      className={`relative flex-none min-w-[118px] max-w-[132px] flex-shrink-0 flex-col items-center justify-center overflow-hidden rounded-[22px] px-4 py-3 text-center text-sm font-black uppercase tracking-widest transition-all duration-300 ${imageSrc
+                        ? isActive
+                          ? "text-white shadow-[0_10px_30px_rgba(248,114,5,0.18)]"
+                          : "border border-white/25 text-white"
+                        : isActive
+                          ? "border border-brand-primary/25 bg-transparent text-brand-primary"
+                          : "border border-brand-primary/15 bg-transparent text-brand-primary hover:bg-brand-primary/5"
+                        }`}
+                      style={imageSrc ? {
+                        backgroundImage: `url(${imageSrc})`,
+                        backgroundPosition: "center 20%",
+                        backgroundSize: "cover",
+                        backgroundRepeat: "no-repeat",
+                      } : undefined}
+                    >
+                      {imageSrc && (
+                        <span className={`absolute inset-0 ${isActive ? "bg-brand-primary/55" : "bg-black/30"}`} />
+                      )}
+                      <span className={`relative z-10 ${imageSrc ? "font-ama-dhaba" : "font-sans"}`}>
+                        {String(displayName).toLowerCase() === "all" ? "ALL" : displayName}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>          </div>
 
           {/* Error State */}
           {isError && (
@@ -809,7 +859,7 @@ export default function OrderPage() {
           )}
 
           {/* Product Grid */}
-          <div className="grid grid-cols-1 items-stretch gap-6 pt-10 sm:grid-cols-2 sm:gap-8 lg:gap-10 lg:pt-14 xl:grid-cols-3 2xl:grid-cols-4 2xl:gap-12">
+          <div className="grid grid-cols-1 items-stretch gap-2.5 pt-3 sm:grid-cols-2 sm:gap-3 lg:gap-3 lg:pt-4 xl:grid-cols-3 2xl:grid-cols-4 [@media(min-width:1800px)]:grid-cols-5">
             {isLoading
               ? Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)
               : filteredProducts.map((product) => (
@@ -823,7 +873,7 @@ export default function OrderPage() {
         </div>
 
         {/* ── Desktop Cart Sidebar ── */}
-        <div className="hidden h-full w-[400px] flex-col overflow-hidden border-l border-[#E5E7EB] bg-[#F8FAFC] shadow-[-10px_0_40px_rgba(0,0,0,0.03)] lg:flex 2xl:w-[460px]">
+        <div className="hidden h-full w-[400px] flex-col overflow-hidden border-l border-brand-primary/10 bg-[#fbf7f2] shadow-[-10px_0_40px_rgba(0,0,0,0.03)] lg:flex 2xl:w-[460px]">
           <CartContent
             cart={cart}
             cartTotal={cartTotal}
@@ -838,6 +888,15 @@ export default function OrderPage() {
         </div>
 
         {/* ── Mobile Floating Cart Bar ── */}
+        {orderToast && (
+          <div className="fixed right-4 top-24 z-[260] max-w-[calc(100vw-2rem)] animate-in fade-in slide-in-from-top-3 duration-300 sm:right-6">
+            <div className="rounded-2xl border border-brand-primary/20 bg-white px-5 py-3 text-sm font-black text-brand-dark shadow-[0_18px_42px_rgba(17,24,39,0.14)]">
+              <span className="mr-2 text-brand-primary">✓</span>
+              {orderToast}
+            </div>
+          </div>
+        )}
+
         {cart.length > 0 && !isMobileCartOpen && (
           <div className="fixed bottom-4 left-4 right-4 z-[90] animate-in fade-in slide-in-from-bottom-10 sm:bottom-6 lg:hidden">
             <button
@@ -858,7 +917,7 @@ export default function OrderPage() {
         {/* ── Mobile Cart Drawer ── */}
         <div className={`fixed inset-0 z-[200] transition-transform duration-500 lg:hidden ${isMobileCartOpen ? "translate-y-0" : "translate-y-full"}`}>
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setIsMobileCartOpen(false)} />
-          <div className="absolute bottom-0 left-0 right-0 h-[88svh] bg-white rounded-t-[28px] sm:rounded-t-[40px] flex flex-col overflow-hidden shadow-2xl">
+          <div className="absolute bottom-0 left-0 right-0 h-[88svh] bg-[#fbf7f2] rounded-t-[28px] sm:rounded-t-[40px] flex flex-col overflow-hidden shadow-2xl">
             <div className="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mt-4 mb-2" onClick={() => setIsMobileCartOpen(false)} />
             <div className="px-6 py-4 flex justify-between items-center border-b border-gray-100">
               <h2 className="text-xl font-black text-brand-dark uppercase tracking-tight">{t("yourOrder")}</h2>
@@ -924,8 +983,8 @@ function CartContent({
   const [openDetailKey, setOpenDetailKey] = useState<string | null>(null);
 
   return (
-    <div className="flex h-full flex-col overflow-hidden bg-brand-surface">
-      <div className="hidden border-b border-gray-200 bg-white px-6 py-6 md:block 2xl:px-8">
+    <div className="flex h-full flex-col overflow-hidden bg-[#fbf7f2]">
+      <div className="hidden border-b border-brand-primary/10 bg-[#fffdf8]/85 px-6 py-6 md:block 2xl:px-8">
         <h2 className={`flex items-center gap-3 text-xl font-black tracking-tight text-brand-dark ${language === "UR" ? "flex-row-reverse text-right" : ""}`}>
           <span className="h-px w-8 bg-brand-primary" />
           {t("yourOrder")}
@@ -962,7 +1021,7 @@ function CartContent({
                   className={`rounded-2xl border border-gray-200 bg-white p-3 shadow-[0_12px_32px_rgba(17,24,39,0.045)] transition-all duration-300 hover:border-brand-primary/20 ${language === "UR" ? "text-right" : ""}`}
                 >
                   <div className={`grid grid-cols-[64px_minmax(0,1fr)] gap-3 sm:grid-cols-[72px_minmax(0,1fr)] ${language === "UR" ? "direction-rtl" : ""}`}>
-                    <div className="cart-item-image relative flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-gray-100 bg-brand-surface sm:h-[72px] sm:w-[72px]">
+                    <div className="cart-item-image relative flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-brand-primary/10 bg-[#fbf7f2] sm:h-[72px] sm:w-[72px]">
                       <Image
                         src={c.item.image || "/images/placeholder-food.png"}
                         alt={c.item.name || "Cart item"}
@@ -1009,7 +1068,7 @@ function CartContent({
                                 className={`rounded-xl border px-2 py-1 text-[8px] font-black uppercase tracking-wider transition-all ${
                                   c.item.selectedVariantId === variant.id
                                     ? "border-brand-primary bg-brand-primary text-white"
-                                    : "border-gray-200 bg-brand-surface text-brand-dark/55 hover:border-brand-primary hover:bg-white hover:text-brand-primary"
+                                    : "border-gray-200 bg-[#fbf7f2] text-brand-dark/55 hover:border-brand-primary hover:bg-white hover:text-brand-primary"
                                 }`}
                                 title={`Switch to ${variant.name}`}
                               >
@@ -1019,7 +1078,7 @@ function CartContent({
                         </div>
                       )}
 
-                      <div className="mt-3 grid grid-cols-1 items-stretch gap-2 rounded-2xl bg-brand-surface p-2 min-[420px]:grid-cols-[1fr_auto_1fr] min-[420px]:items-center">
+                      <div className="mt-3 grid grid-cols-1 items-stretch gap-2 rounded-2xl bg-[#fbf7f2] p-2 min-[420px]:grid-cols-[1fr_auto_1fr] min-[420px]:items-center">
                         <div>
                           <span className="block text-[8px] font-black uppercase tracking-widest text-brand-dark/40">Price</span>
                           <span className="block text-xs font-black text-brand-dark">{money(unitPrice)}</span>
@@ -1028,7 +1087,7 @@ function CartContent({
                         <div className={`flex items-center justify-center gap-1 rounded-xl bg-white p-1 ${language === "UR" ? "flex-row-reverse" : ""}`}>
                           <button
                             onClick={() => updateQuantity(c.item.id, -1, c.item.selectedVariantId)}
-                            className="flex h-6 w-6 items-center justify-center rounded-xl text-brand-dark transition-colors hover:bg-brand-surface hover:text-brand-primary"
+                            className="flex h-6 w-6 items-center justify-center rounded-xl text-brand-dark transition-colors hover:bg-[#fbf7f2] hover:text-brand-primary"
                             aria-label="Decrease quantity"
                           >
                             <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
@@ -1038,7 +1097,7 @@ function CartContent({
                           <span className="w-5 text-center text-sm font-black text-brand-dark">{c.quantity}</span>
                           <button
                             onClick={() => updateQuantity(c.item.id, 1, c.item.selectedVariantId)}
-                            className="flex h-6 w-6 items-center justify-center rounded-xl text-brand-dark transition-colors hover:bg-brand-surface hover:text-brand-primary"
+                            className="flex h-6 w-6 items-center justify-center rounded-xl text-brand-dark transition-colors hover:bg-[#fbf7f2] hover:text-brand-primary"
                             aria-label="Increase quantity"
                           >
                             <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
@@ -1071,8 +1130,8 @@ function CartContent({
         )}
       </div>
 
-      <div className="border-t border-gray-200 bg-white px-4 py-5 sm:px-6 md:px-6 2xl:px-8">
-        <div className="rounded-2xl border border-gray-200 bg-brand-surface p-4">
+      <div className="border-t border-brand-primary/10 bg-[#fffdf8]/85 px-4 py-5 sm:px-6 md:px-6 2xl:px-8">
+        <div className="rounded-2xl border border-brand-primary/10 bg-[#fbf7f2] p-4">
           {[
             { label: t("subtotal"), value: `Rs. ${cartTotal.toLocaleString()}` },
             { label: t("deliveryFee"), value: `Rs. ${deliveryFee}` },

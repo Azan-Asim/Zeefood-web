@@ -1,16 +1,22 @@
 import type { Metadata } from "next";
-import { Poppins, Noto_Nastaliq_Urdu } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 
-const poppins = Poppins({
-  weight: ["300", "400", "500", "600", "700", "800", "900"],
-  subsets: ["latin"],
+const poppins = localFont({
+  src: [
+    {
+      path: "../../public/fonts/TuGOUUFxWphYQ6YI6q9Xp61FQzxDRKmzr1lWfxk.woff2",
+      weight: "300 900",
+      style: "normal",
+    },
+    {
+      path: "../../public/fonts/ieVn2YZDLWuGJpnzaiwFXS9tYtpd59A.woff2",
+      weight: "300 900",
+      style: "normal",
+    },
+  ],
   variable: "--font-poppins",
-});
-
-const notoUrdu = Noto_Nastaliq_Urdu({
-  subsets: ["arabic"],
-  variable: "--font-noto-urdu",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -25,6 +31,7 @@ import LocationModal from "@/components/common/LocationModal";
 import { LanguageProvider } from "@/context/LanguageContext";
 import { CartProvider } from "@/context/CartContext";
 import ReduxProvider from "@/components/common/ReduxProvider";
+import PageTransition from "@/components/common/PageTransition";
 
 export default function RootLayout({
   children,
@@ -34,11 +41,11 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${notoUrdu.variable} ${poppins.variable} h-full antialiased`}
+      className={`${poppins.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <body
-        className={`${poppins.className} min-h-full flex flex-col font-sans`}
+        className={`${poppins.className} min-h-full flex flex-col`}
         suppressHydrationWarning
       >
         <ReduxProvider>
@@ -46,7 +53,9 @@ export default function RootLayout({
             <CartProvider>
               <LocationModal />
               <Navbar />
-              <main className="flex-grow">{children}</main>
+              <main className="flex-grow overflow-x-hidden">
+                <PageTransition>{children}</PageTransition>
+              </main>
               <Footer />
             </CartProvider>
           </LanguageProvider>

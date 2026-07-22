@@ -90,19 +90,22 @@ export default function SignatureDesi() {
   }, []);
 
   return (
-    <section className="relative w-full bg-white py-20 sm:py-24 lg:py-28 2xl:py-36">
+    <section className="relative w-full bg-[#fbf7f2] pb-5 pt-5 sm:pb-6 sm:pt-6 lg:pb-7 lg:pt-7 2xl:pb-8 2xl:pt-8">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 2xl:max-w-[1600px] 2xl:px-10">
-        <div className="mb-20 flex flex-col items-center py-4 text-center sm:mb-24 sm:py-6 2xl:mb-28 2xl:py-8">
-          <h2 className="text-3xl font-black uppercase leading-none tracking-tight text-brand-primary lg:text-5xl">
-            Signature Desi
+        <div className="mb-4 flex flex-col items-center py-0 text-center sm:mb-5 2xl:mb-6">
+          <h2 className="text-[clamp(2rem,9vw,3rem)] font-black uppercase leading-none tracking-tight text-brand-primary lg:text-5xl">
+            Signature
           </h2>
-          <div className="mb-6 mt-4 h-1.5 w-24 bg-brand-primary" />
-          <p className="max-w-2xl text-lg font-medium text-brand-dark/70">
+          <p lang="ur" dir="rtl" className="-mt-4 font-ama-dhaba text-[clamp(2.55rem,12vw,4rem)] font-black leading-none text-brand-primary lg:-mt-7 lg:text-6xl">
+            دیسی
+          </p>
+          <div className="mb-2 mt-1.5 h-1.5 w-16 rounded-full bg-brand-primary" />
+          <p className="max-w-2xl text-sm font-medium leading-relaxed text-brand-dark/70 sm:text-base">
             Experience the rich, authentic flavors of our heritage with perfectly crafted traditional recipes.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 items-stretch gap-6 pt-10 sm:grid-cols-2 sm:gap-8 lg:gap-10 lg:pt-14 xl:grid-cols-4 2xl:gap-12">
+        <div className="grid grid-cols-1 items-stretch gap-3 pt-0 sm:grid-cols-2 sm:gap-4 lg:gap-4 xl:grid-cols-4 2xl:gap-5 [@media(min-width:1800px)]:grid-cols-5">
           {loading && <div className="col-span-full text-center">Loading...</div>}
           {error && <div className="col-span-full text-center text-red-500">{error}</div>}
 
@@ -133,10 +136,10 @@ export default function SignatureDesi() {
             ))}
         </div>
 
-        <div className="mt-12 flex justify-center">
+        <div className="mt-4 flex justify-center">
           <Link
             href="/menu"
-            className="inline-flex items-center justify-center rounded-2xl border-2 border-brand-primary bg-transparent px-10 py-4 font-black uppercase tracking-widest text-brand-primary no-underline transition-all duration-300 hover:-translate-y-1 hover:bg-brand-primary hover:text-white hover:no-underline hover:shadow-[0_15px_30px_rgba(248,114,5,0.30)]"
+            className="inline-flex items-center justify-center rounded-2xl border-2 border-brand-primary bg-transparent px-9 py-3.5 font-black uppercase tracking-widest text-brand-primary no-underline transition-all duration-300 hover:-translate-y-1 hover:bg-brand-primary hover:text-white hover:no-underline hover:shadow-[0_15px_30px_rgba(248,114,5,0.30)]"
           >
             {t("viewMenu")}
           </Link>

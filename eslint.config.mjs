@@ -11,6 +11,7 @@ const eslintConfig = defineConfig([
     ".next/**",
     "out/**",
     "build/**",
+    "Zeefood-web.worktrees/**",
     "next-env.d.ts",
   ]),
 ]);

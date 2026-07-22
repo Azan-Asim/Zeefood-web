@@ -1,78 +1,153 @@
 "use client";
+
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { useLanguage } from "@/context/LanguageContext";
 
+const topSlides = [
+  {
+    image: "/20260508-164223.png",
+    eyebrow: "Golden starter plate",
+    title: "Samosay With Fresh Garnish",
+    text: "A clean plate of golden samosay sits over crisp lettuce with lemon and mint, giving the dish a fresh, inviting finish. The flaky pastry brings a gentle crunch, while the warm spiced filling adds the familiar comfort of a classic desi starter. It feels light enough for snacking, but special enough to open a full family meal.",
+  },
+  {
+    image: "/Gemini_Generated_Image_jgrjwfjgrjwfjgrj-removebg-preview-clean.png",
+    eyebrow: "Slow-built richness",
+    title: "Koftay",
+    text: "Tender koftay are framed by a glossy masala finish and warm spice aroma, capturing the deep, slow-cooked character of a polished desi main. The rounded pieces soak up the gravy beautifully, giving every bite a rich texture and satisfying flavor. It is generous, balanced, and quietly luxurious without feeling overdone.",
+  },
+];
+
+const bottomSlides = [
+  {
+    image: "/Gemini_Generated_Image_lubib9lubib9lubi-removebg-preview-clean.png",
+    eyebrow: "Street-side character",
+    title: "Chutney & Crunch",
+    text: "This plate carries the lively side of desi khana with fresh herbs, bright chutney, and a crisp finish that brings energy to the table. The fresh vegetables and tangy notes create a refreshing contrast against heavier meals, making it perfect as a side, snack, or quick flavor boost. It is simple, colorful, and full of everyday charm.",
+  },
+  {
+    image: "/20260508-164046-clean.png",
+    eyebrow: "Home-cooked comfort",
+    title: "Rice, Gravy & Heritage",
+    text: "A comforting plate of fragrant rice and rich gravy speaks to the slower rhythm of home-style cooking. The soft rice carries the sauce well, while the warm masala gives the dish a grounded, familiar depth. It is the kind of plate that feels generous, satisfying, and deeply rooted in everyday desi tradition.",
+  },
+];
+
 export default function TopDeals() {
   const { language } = useLanguage();
+  const [topIndex, setTopIndex] = useState(0);
+  const [bottomIndex, setBottomIndex] = useState(0);
+  const [toast, setToast] = useState<string | null>(null);
+  const toastTimer = useRef<number | null>(null);
+
+  useEffect(() => {
+    const topTimer = window.setInterval(() => {
+      setTopIndex((index) => (index + 1) % topSlides.length);
+    }, 3200);
+
+    const bottomTimer = window.setInterval(() => {
+      setBottomIndex((index) => (index + 1) % bottomSlides.length);
+    }, 3600);
+
+    return () => {
+      window.clearInterval(topTimer);
+      window.clearInterval(bottomTimer);
+      if (toastTimer.current) window.clearTimeout(toastTimer.current);
+    };
+  }, []);
+
+  const handleQuickOrder = () => {
+    setToast("Order placed successfully!");
+    if (toastTimer.current) window.clearTimeout(toastTimer.current);
+    toastTimer.current = window.setTimeout(() => setToast(null), 2200);
+  };
 
   return (
-    <section className="relative z-10 w-full overflow-hidden bg-white py-20 sm:py-24 lg:py-28 2xl:py-36">
-
+    <section className="relative z-10 w-full overflow-hidden bg-[#fbf7f2] pb-5 pt-3 sm:pb-6 sm:pt-4 lg:pb-8 lg:pt-4">
       <div className="relative z-20 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 2xl:max-w-[1600px] 2xl:px-10">
-
-        {/* Header */}
-        <div className="mb-18 flex flex-col items-center py-4 text-center sm:mb-20 sm:py-6 2xl:mb-24 2xl:py-8">
-          <h2 className="text-4xl lg:text-6xl font-black tracking-tighter uppercase font-sans leading-[0.95] text-brand-primary">
-            {language === "UR" ? "طریقۂ پکانے" : "Way of Cooking"}
+        <div className="mb-2 flex flex-col items-center text-center sm:mb-3 lg:mb-4">
+          <h2 className="text-[clamp(1.7rem,8vw,2.5rem)] font-black uppercase leading-[0.95] tracking-tighter text-brand-primary lg:text-4xl">
+            {language === "UR" ? "طریقہ پکانے" : "Way of Cooking"}
           </h2>
-          <h3 className="text-2xl lg:text-3xl font-bold text-black mt-2">
-            {language === "UR" ? "دیسی کھانوں کی تاریخ" : "The Story of Desi Food"}
+          <h3 lang="ur" dir="rtl" className="-mt-1 font-ama-dhaba text-[clamp(2.4rem,11vw,3.7rem)] font-black leading-none text-brand-primary lg:text-5xl">
+            دیسی کھانے کی کہانی
           </h3>
-          <div className="w-24 h-1.5 bg-brand-primary mt-6 rounded-full" />
+          <p className="mt-0.5 max-w-2xl text-sm font-medium leading-6 text-brand-dark/65">
+            A carefully composed look at the dishes that shape everyday desi dining, from crisp starters to comfort-rich mains.
+          </p>
+          <div className="mt-1 h-1.5 w-14 rounded-full bg-brand-primary" />
         </div>
 
-        {/* Content Grid: Image + Text */}
-        <div className="grid grid-cols-1 items-center gap-8 sm:gap-10 lg:grid-cols-2 2xl:gap-16">
-          <div className="flex items-center justify-center">
-         
-              <Image
-                src="/images/home/desi/biryani_transparent.png"
-                alt={language === "UR" ? "دیسی پکوان" : "Desi Cooking"}
-                width={800}
-                height={560}
-                className="h-auto w-full max-w-[760px] object-contain"
-                unoptimized
-              />
-       
-          </div>
-
-          <div className="mx-auto flex max-w-3xl flex-col gap-5 lg:mx-0 2xl:gap-7">
-            <div>
-              <h4 className="text-xl font-black text-brand-dark mb-3">{language === "UR" ? "روایتی انداز" : "Traditional Techniques"}</h4>
-              <p className={`text-brand-dark/70 leading-relaxed ${language === "UR" ? "font-urdu" : ""}`}>
-                {language === "UR" ?
-                  "دیسی پکوان صدیوں پر محیط تجربے اور مختلف خطّوں کے ملاپ کا نتیجہ ہیں۔ کھانے کو خوش ذائقہ بنانے کے لیے دھیمی آنچ، دم پر پکانا، اور مسالوں کا احتیاط سے استعمال روایتی طریقوں میں شامل ہیں۔"
-                  :
-                  "Desi cuisine is the result of centuries of culinary evolution across regions. Techniques like slow cooking over low heat, ‘dum’ (steam) cooking, and careful layering of spices define the authentic way of preparing these dishes."
-                }
-              </p>
-            </div>
-
-            <div>
-              <h4 className="text-xl font-black text-brand-dark mb-3">{language === "UR" ? "مقامی اجزاء" : "Local Ingredients"}</h4>
-              <p className={`text-brand-dark/70 leading-relaxed ${language === "UR" ? "font-urdu" : ""}`}>
-                {language === "UR" ?
-                  "زردہ باسمتی چاول، تازه دھنیا، لیمن، ہلدی، اور تِل جیسے اجزاء دیسی پکوان کو منفرد ذائقہ دیتے ہیں۔ ہر علاقے کے مزاج کے مطابق مصالحوں کا امتزاج بدلتا ہے۔"
-                  :
-                  "Ingredients such as fragrant Basmati rice, fresh coriander, lemon, turmeric and roasted spices give desi dishes their distinctive flavors. Regional variations arise from local produce and spice blends."
-                }
-              </p>
-            </div>
-
-            <div>
-              <h4 className="text-xl font-black text-brand-dark mb-3">{language === "UR" ? "ثقافتی اثرات" : "Cultural Influences"}</h4>
-              <p className={`text-brand-dark/70 leading-relaxed ${language === "UR" ? "font-urdu" : ""}`}>
-                {language === "UR" ?
-                  "دیسی کھانے میں وسطِ ایشیا، وسطِ مشرق اور مقامی ذائقوں کا ملاپ ملتا ہے۔ تہذیبوں کی آمد و رفت نے نئے طریقے اور مصالحوں کو متعارف کروایا، جس سے مزیدار اور متنوع کھانے وجود میں آئے۔"
-                  :
-                  "Desi food reflects a blend of Central Asian, Middle Eastern and local culinary traditions. Historical trade and migration introduced new techniques and spices, resulting in the rich, diverse dishes enjoyed today."
-                }
-              </p>
-            </div>
-          </div>
+        <div className="space-y-1 lg:space-y-2">
+          <StorySlider slide={topSlides[topIndex]} onQuickOrder={handleQuickOrder} />
+          <StorySlider slide={bottomSlides[bottomIndex]} onQuickOrder={handleQuickOrder} reverse />
         </div>
-
       </div>
+      {toast && (
+        <div className="fixed right-4 top-24 z-[260] max-w-[calc(100vw-2rem)] animate-in fade-in slide-in-from-top-3 duration-300 sm:right-6">
+          <div className="rounded-2xl border border-brand-primary/20 bg-white px-5 py-3 text-sm font-black text-brand-dark shadow-[0_18px_42px_rgba(17,24,39,0.14)]">
+            <span className="mr-2 text-brand-primary">✓</span>
+            {toast}
+          </div>
+        </div>
+      )}
     </section>
+  );
+}
+
+function StorySlider({
+  slide,
+  onQuickOrder,
+  reverse = false,
+}: {
+  slide: {
+    image: string;
+    eyebrow: string;
+    title: string;
+    text: string;
+  };
+  onQuickOrder: () => void;
+  reverse?: boolean;
+}) {
+  return (
+    <div className={`grid grid-cols-1 items-center gap-2 lg:grid-cols-2 lg:gap-5 ${reverse ? "lg:[&>*:first-child]:order-2" : ""}`}>
+      <div className="flex justify-center">
+        <div className="relative flex w-full max-w-[680px] flex-col items-center overflow-visible bg-transparent">
+          <div className="relative h-[220px] w-full overflow-visible bg-transparent sm:h-[290px] lg:h-[340px] 2xl:h-[380px]">
+            <Image
+              key={slide.image}
+              src={slide.image}
+              alt={slide.title}
+              fill
+              className="scale-[1.02] object-contain object-center drop-shadow-[0_18px_30px_rgba(17,24,39,0.14)] animate-in fade-in zoom-in-95 duration-700"
+              sizes="(max-width: 1024px) 92vw, 700px"
+              unoptimized
+            />
+          </div>
+          <button
+            type="button"
+            onClick={onQuickOrder}
+            className="mx-auto mt-2 inline-flex min-h-11 items-center justify-center rounded-2xl bg-brand-primary px-7 text-sm font-bold text-white shadow-[0_10px_22px_rgba(248,114,5,0.22)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-brand-primary/90 hover:shadow-[0_14px_28px_rgba(248,114,5,0.28)]"
+          >
+            Order Now
+          </button>
+        </div>
+      </div>
+
+      <div className="mx-auto max-w-xl text-center lg:mx-0 lg:text-left">
+        <div className="border-l-0 border-brand-primary/30 lg:border-l-4 lg:pl-6">
+          <p key={slide.eyebrow} className="text-xs font-black uppercase tracking-[0.24em] text-brand-primary animate-in fade-in slide-in-from-bottom-2 duration-500">
+            {slide.eyebrow}
+          </p>
+          <h4 key={slide.title} className="mt-2 text-2xl font-black uppercase leading-tight text-brand-dark animate-in fade-in slide-in-from-bottom-2 duration-500 lg:text-3xl">
+            {slide.title}
+          </h4>
+          <p key={slide.text} className="mt-3 text-sm font-medium leading-7 text-brand-dark/70 animate-in fade-in slide-in-from-bottom-2 duration-500 lg:text-base lg:leading-8">
+            {slide.text}
+          </p>
+        </div>
+      </div>
+    </div>
   );
 }

@@ -145,15 +145,19 @@ export default function Footer() {
 
           {/* Brand Column */}
           <div className="lg:col-span-2 flex flex-col gap-6">
-            <Link href="/" className="inline-block">
-              <Image
-                src="/logo.png"
-                alt="ZeeFood"
-                width={160}
-                height={60}
-                className="w-[160px] h-auto object-contain"
-                unoptimized
-              />
+            <Link href="/" className="inline-flex w-fit items-center gap-3 no-underline">
+              <span className="relative block h-20 w-24 shrink-0">
+                <Image
+                  src="/fiery-wok.png"
+                  alt="Ama G Ka Dhaba"
+                  fill
+                  className="object-contain object-center"
+                  unoptimized
+                />
+              </span>
+              <span lang="ur" dir="rtl" className="font-ama-dhaba text-[34px] font-black leading-none text-brand-primary">
+                اماں جی کا ڈھابہ
+              </span>
             </Link>
             <p className="text-brand-dark/55 text-sm font-medium leading-relaxed max-w-sm">
               Pakistan&apos;s most loved premium desi food brand. From sizzling Karahi to golden Biryani — every bite tells a story of heritage and love.
