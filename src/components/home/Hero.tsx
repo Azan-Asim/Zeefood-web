@@ -3,6 +3,9 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
+
+// circular bar
+
 const heroItems = [
   {
     name: "Chicken Pulao",
