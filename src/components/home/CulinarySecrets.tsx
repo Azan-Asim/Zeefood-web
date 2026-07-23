@@ -121,10 +121,10 @@ export default function CulinarySecrets() {
   }, []);
 
   return (
-    <section className="relative w-full overflow-hidden bg-[#fbf7f2] px-4 pb-7 pt-3 sm:px-6 sm:pb-8 sm:pt-4 lg:px-8 lg:pb-10 lg:pt-5">
-      <div className="mx-auto max-w-7xl 2xl:max-w-[1600px] 2xl:px-10">
+    <section className="relative w-full overflow-hidden bg-[#fbf7f2] pb-7 pt-3 sm:pb-8 sm:pt-4 lg:pb-10 lg:pt-5">
+      <div className="site-container">
         <div className="rounded-[26px] border border-brand-primary/10 bg-white/35 p-4 shadow-[0_18px_55px_rgba(17,24,39,0.055)] backdrop-blur-sm sm:p-5 lg:p-6">
-          <div className="grid gap-5 lg:grid-cols-[0.44fr_1fr] lg:items-start lg:gap-5 2xl:gap-7">
+          <div className="grid gap-5 lg:grid-cols-[minmax(18rem,0.44fr)_1fr] lg:items-start lg:gap-5 2xl:gap-8">
             <div className="max-w-xl">
               <span className="text-xs font-black uppercase tracking-[0.34em] text-brand-primary">
                 From our kitchen
@@ -155,7 +155,7 @@ export default function CulinarySecrets() {
               </Link>
             </div>
 
-            <div className="grid grid-cols-1 items-stretch gap-2.5 sm:grid-cols-2 sm:gap-3 lg:grid-cols-3 [@media(min-width:1800px)]:grid-cols-4">
+            <div className="fluid-food-grid grid items-stretch gap-2.5 sm:gap-3">
               {loading &&
                 [0, 1, 2].map((item) => (
                   <div key={item} className="min-h-[500px] animate-pulse rounded-2xl border border-gray-100 bg-white/70 shadow-sm" />

@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 
@@ -22,6 +22,11 @@ const poppins = localFont({
 export const metadata: Metadata = {
   title: "ZeeFood Premium",
   description: "Premium food delivery experience.",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
 };
 
 

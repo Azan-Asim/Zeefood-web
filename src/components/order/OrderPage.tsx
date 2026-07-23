@@ -10,6 +10,17 @@ import { useCart } from "@/context/CartContext";
 import { useProducts, useProductFilters } from "@/hooks/useProducts";
 import type { Product, ProductVariant } from "@/lib/store";
 
+type ProductCardDetails = {
+  recipe?: string;
+  ingredients?: string[];
+  prepTime?: string;
+  nutritionalInfo?: string;
+};
+
+type ProductWithOptionalDetails = Product & {
+  details?: ProductCardDetails;
+};
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Image helper — DRM images are served from a relative path
 // ─────────────────────────────────────────────────────────────────────────────
@@ -419,7 +430,7 @@ export function VariantProductCard({
   product,
   onAddToCart,
 }: {
-  product: Product;
+  product: ProductWithOptionalDetails;
   onAddToCart: (product: Product, variant?: ProductVariant) => void;
 }) {
   const [expanded, setExpanded] = useState(false);
@@ -428,6 +439,13 @@ export function VariantProductCard({
   const variants = product.variants ?? [];
   const visibleVariants = expanded ? variants : variants.slice(0, 3);
   const hasManyVariants = variants.length > 3;
+  const detailItems = [
+    product.details?.prepTime ? `Prep time: ${product.details.prepTime}` : null,
+    product.details?.recipe ? product.details.recipe : null,
+    product.details?.nutritionalInfo ? product.details.nutritionalInfo : null,
+  ].filter(Boolean);
+  const ingredientItems = product.details?.ingredients?.filter(Boolean) ?? [];
+  const hasDetails = detailItems.length > 0 || ingredientItems.length > 0;
   const basePrice = product.price > 0 ? product.price : variants[0]?.price ?? 0;
   const displayPrice = basePrice > 0 ? `Rs. ${basePrice.toLocaleString()}` : "Ask";
   const isActive = product.status ? product.status === "ACTIVE" : true;
@@ -446,7 +464,7 @@ export function VariantProductCard({
 
   return (
     <article
-      className="group relative h-[370px] w-full overflow-hidden rounded-[20px] bg-white shadow-[0_12px_30px_rgba(17,24,39,0.08)] ring-1 ring-brand-primary/10 transition-all duration-300 hover:-translate-y-1 hover:ring-brand-primary/25 hover:shadow-[0_18px_42px_rgba(248,114,5,0.14)] sm:h-[400px] xl:h-[425px]"
+      className="group relative h-[370px] w-full overflow-hidden rounded-[20px] bg-white shadow-[0_12px_30px_rgba(17,24,39,0.08)] ring-1 ring-brand-primary/10 transition-all duration-300 hover:-translate-y-1 hover:ring-brand-primary/25 hover:shadow-[0_18px_42px_rgba(248,114,5,0.14)] sm:h-[400px] xl:h-[425px] 2xl:h-[455px] [@media(min-width:2200px)]:h-[500px]"
       style={{
         backgroundImage: `url(${productImageUrl(product.image)})`,
         backgroundSize: "cover",
@@ -468,7 +486,7 @@ export function VariantProductCard({
         </div>
 
         <h3
-          className="mb-2 line-clamp-2 break-words text-base font-black uppercase leading-[1.12] text-brand-dark transition-colors group-hover:text-brand-primary sm:text-lg"
+          className="mb-2 line-clamp-2 break-words text-base font-black uppercase leading-[1.12] text-brand-dark transition-colors group-hover:text-brand-primary sm:text-lg 2xl:text-xl"
           title={product.name}
         >
           {product.name}
@@ -556,38 +574,41 @@ export function VariantProductCard({
           </button>
         )}
 
-        <div className="mt-1.5 rounded-2xl border border-gray-100 bg-brand-surface/80">
-          <button
-            type="button"
-            onClick={() => setDetailsOpen((value) => !value)}
-            className="flex w-full items-center justify-between gap-3 rounded-2xl px-4 py-1.5 text-left text-[9px] font-black uppercase tracking-widest text-brand-dark transition-colors hover:text-brand-primary"
-            aria-expanded={detailsOpen}
-          >
-            <span>Details</span>
-            <span className="text-brand-primary">{detailsOpen ? "Less" : "More"}</span>
-          </button>
+        {hasDetails && (
+          <div className="mt-1 rounded-xl border border-gray-100 bg-brand-surface/80">
+            <button
+              type="button"
+              onClick={() => setDetailsOpen((value) => !value)}
+              className="flex w-full items-center justify-between gap-2 rounded-xl px-3 py-1 text-left text-[8px] font-black uppercase tracking-widest text-brand-dark transition-colors hover:text-brand-primary"
+              aria-expanded={detailsOpen}
+            >
+              <span>Details</span>
+              <span className="text-brand-primary">{detailsOpen ? "Less" : "More"}</span>
+            </button>
 
-          {detailsOpen && (
-            <div className="border-t border-gray-200 px-4 py-3">
-              <div className="grid grid-cols-2 gap-2 text-[10px] font-bold uppercase tracking-wider text-brand-dark/55">
-                <span>Category: {product.category?.CategoryName ?? "General"}</span>
-                <span>Status: {isActive ? "Available" : "Unavailable"}</span>
-              </div>
-              {variants.length > 0 && (
-                <div className="mt-3 flex flex-wrap gap-1.5">
-                  {variants.map((variant) => (
-                    <span
-                      key={variant.id}
-                      className="rounded-xl border border-gray-200 bg-white px-2 py-1 text-[9px] font-black uppercase tracking-wider text-brand-dark/55"
-                    >
-                      {variant.name} - Rs. {variant.price.toLocaleString()}
-                    </span>
+            {detailsOpen && (
+              <div className="border-t border-gray-200 px-3 py-2">
+                <div className="space-y-1.5 text-[9px] font-bold uppercase tracking-wider text-brand-dark/55">
+                  {detailItems.map((detail) => (
+                    <p key={detail}>{detail}</p>
                   ))}
                 </div>
-              )}
-            </div>
-          )}
-        </div>
+                {ingredientItems.length > 0 && (
+                  <div className="mt-2 flex flex-wrap gap-1">
+                    {ingredientItems.map((ingredient) => (
+                      <span
+                        key={ingredient}
+                        className="rounded-lg border border-gray-200 bg-white px-2 py-0.5 text-[8px] font-black uppercase tracking-wider text-brand-dark/55"
+                      >
+                        {ingredient}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </article>
   );
@@ -748,10 +769,10 @@ export default function OrderPage() {
   // ─────────────────────────────────────────────────────────────────────────
   return (
     <div className="mt-20 flex min-h-[calc(100svh-80px)] flex-col bg-[#fbf7f2] font-sans lg:h-[calc(100svh-80px)] lg:overflow-hidden">
-      <div className="relative mx-auto flex w-full max-w-[1800px] flex-1 flex-col lg:overflow-hidden lg:flex-row 2xl:max-w-[1920px]">
+      <div className="relative mx-auto flex w-full max-w-[2160px] flex-1 flex-col lg:overflow-hidden lg:flex-row">
 
         {/* ── Main Menu Panel ── */}
-        <div className="flex-1 overflow-y-auto border-black/5 bg-[#fbf7f2] px-4 pb-32 pt-5 no-scrollbar sm:px-6 sm:pt-6 lg:border-r lg:pb-8 lg:pr-8 lg:pt-7 2xl:px-12">
+        <div className="flex-1 overflow-y-auto border-black/5 bg-[#fbf7f2] px-4 pb-32 pt-5 no-scrollbar sm:px-6 sm:pt-6 lg:border-r lg:pb-8 lg:pr-8 lg:pt-7 2xl:px-12 [@media(min-width:2200px)]:px-16">
 
           {/* Header */}
           <div className="mb-6 rounded-[26px] border border-brand-primary/10 bg-white/35 p-4 shadow-[0_14px_42px_rgba(17,24,39,0.045)] backdrop-blur-sm sm:mb-7 sm:p-5 2xl:mb-8">
@@ -790,7 +811,7 @@ export default function OrderPage() {
             {/* Category Bar */}
             <div className="relative flex items-center">
               <div
-                className={`mx-auto flex gap-2.5 overflow-x-auto pb-1 no-scrollbar flex-nowrap justify-center scroll-smooth snap-x snap-mandatory ${language === "UR" ? "flex-row-reverse" : ""}`}
+                className={`mx-auto flex max-w-full gap-2.5 overflow-x-auto pb-1 no-scrollbar flex-nowrap justify-start scroll-smooth snap-x snap-mandatory lg:justify-center ${language === "UR" ? "flex-row-reverse" : ""}`}
               >
                 {categories.map((cat) => {
                   const normalizedCategory = cat === "ڈیس" ? "Desi" : cat;
@@ -801,7 +822,7 @@ export default function OrderPage() {
                     <button
                       key={cat}
                       onClick={() => changeCategory(cat)}
-                      className={`relative flex-none min-w-[118px] max-w-[132px] flex-shrink-0 flex-col items-center justify-center overflow-hidden rounded-[22px] px-4 py-3 text-center text-sm font-black uppercase tracking-widest transition-all duration-300 ${imageSrc
+                      className={`relative flex-none min-w-[112px] max-w-[136px] flex-shrink-0 flex-col items-center justify-center overflow-hidden rounded-[22px] px-3 py-3 text-center text-sm font-black uppercase tracking-widest transition-all duration-300 sm:min-w-[118px] sm:px-4 2xl:min-w-[132px] 2xl:max-w-[150px] ${imageSrc
                         ? isActive
                           ? "text-white shadow-[0_10px_30px_rgba(248,114,5,0.18)]"
                           : "border border-white/25 text-white"
@@ -859,7 +880,7 @@ export default function OrderPage() {
           )}
 
           {/* Product Grid */}
-          <div className="grid grid-cols-1 items-stretch gap-2.5 pt-3 sm:grid-cols-2 sm:gap-3 lg:gap-3 lg:pt-4 xl:grid-cols-3 2xl:grid-cols-4 [@media(min-width:1800px)]:grid-cols-5">
+          <div className="fluid-food-grid grid items-stretch gap-2.5 pt-3 sm:gap-3 lg:gap-3 lg:pt-4 2xl:gap-4">
             {isLoading
               ? Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)
               : filteredProducts.map((product) => (
@@ -873,7 +894,7 @@ export default function OrderPage() {
         </div>
 
         {/* ── Desktop Cart Sidebar ── */}
-        <div className="hidden h-full w-[400px] flex-col overflow-hidden border-l border-brand-primary/10 bg-[#fbf7f2] shadow-[-10px_0_40px_rgba(0,0,0,0.03)] lg:flex 2xl:w-[460px]">
+        <div className="hidden h-full w-[min(28vw,460px)] min-w-[360px] flex-col overflow-hidden border-l border-brand-primary/10 bg-[#fbf7f2] shadow-[-10px_0_40px_rgba(0,0,0,0.03)] lg:flex [@media(min-width:2200px)]:w-[520px]">
           <CartContent
             cart={cart}
             cartTotal={cartTotal}

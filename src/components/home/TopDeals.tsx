@@ -65,7 +65,7 @@ export default function TopDeals() {
 
   return (
     <section className="relative z-10 w-full overflow-hidden bg-[#fbf7f2] pb-5 pt-3 sm:pb-6 sm:pt-4 lg:pb-8 lg:pt-4">
-      <div className="relative z-20 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 2xl:max-w-[1600px] 2xl:px-10">
+      <div className="site-container relative z-20">
         <div className="mb-2 flex flex-col items-center text-center sm:mb-3 lg:mb-4">
           <h2 className="text-[clamp(1.7rem,8vw,2.5rem)] font-black uppercase leading-[0.95] tracking-tighter text-brand-primary lg:text-4xl">
             {language === "UR" ? "طریقہ پکانے" : "Way of Cooking"}
@@ -79,7 +79,7 @@ export default function TopDeals() {
           <div className="mt-1 h-1.5 w-14 rounded-full bg-brand-primary" />
         </div>
 
-        <div className="space-y-1 lg:space-y-2">
+        <div className="space-y-2 lg:space-y-3 2xl:space-y-5">
           <StorySlider slide={topSlides[topIndex]} onQuickOrder={handleQuickOrder} />
           <StorySlider slide={bottomSlides[bottomIndex]} onQuickOrder={handleQuickOrder} reverse />
         </div>
@@ -111,10 +111,10 @@ function StorySlider({
   reverse?: boolean;
 }) {
   return (
-    <div className={`grid grid-cols-1 items-center gap-2 lg:grid-cols-2 lg:gap-5 ${reverse ? "lg:[&>*:first-child]:order-2" : ""}`}>
+    <div className={`grid grid-cols-1 items-center gap-3 lg:grid-cols-2 lg:gap-7 2xl:gap-10 ${reverse ? "lg:[&>*:first-child]:order-2" : ""}`}>
       <div className="flex justify-center">
         <div className="relative flex w-full max-w-[680px] flex-col items-center overflow-visible bg-transparent">
-          <div className="relative h-[220px] w-full overflow-visible bg-transparent sm:h-[290px] lg:h-[340px] 2xl:h-[380px]">
+          <div className="relative h-[220px] w-full overflow-visible bg-transparent sm:h-[290px] lg:h-[340px] 2xl:h-[420px] [@media(min-width:2200px)]:h-[520px]">
             <Image
               key={slide.image}
               src={slide.image}
@@ -135,15 +135,15 @@ function StorySlider({
         </div>
       </div>
 
-      <div className="mx-auto max-w-xl text-center lg:mx-0 lg:text-left">
+      <div className="mx-auto max-w-xl text-center lg:mx-0 lg:max-w-2xl lg:text-left 2xl:max-w-3xl">
         <div className="border-l-0 border-brand-primary/30 lg:border-l-4 lg:pl-6">
           <p key={slide.eyebrow} className="text-xs font-black uppercase tracking-[0.24em] text-brand-primary animate-in fade-in slide-in-from-bottom-2 duration-500">
             {slide.eyebrow}
           </p>
-          <h4 key={slide.title} className="mt-2 text-2xl font-black uppercase leading-tight text-brand-dark animate-in fade-in slide-in-from-bottom-2 duration-500 lg:text-3xl">
+          <h4 key={slide.title} className="mt-2 text-2xl font-black uppercase leading-tight text-brand-dark animate-in fade-in slide-in-from-bottom-2 duration-500 lg:text-3xl 2xl:text-4xl">
             {slide.title}
           </h4>
-          <p key={slide.text} className="mt-3 text-sm font-medium leading-7 text-brand-dark/70 animate-in fade-in slide-in-from-bottom-2 duration-500 lg:text-base lg:leading-8">
+          <p key={slide.text} className="mt-3 text-sm font-medium leading-7 text-brand-dark/70 animate-in fade-in slide-in-from-bottom-2 duration-500 lg:text-base lg:leading-8 2xl:text-lg 2xl:leading-9">
             {slide.text}
           </p>
         </div>

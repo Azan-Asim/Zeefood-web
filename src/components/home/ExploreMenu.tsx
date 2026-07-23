@@ -107,7 +107,7 @@ export default function ExploreMenu() {
 
   return (
     <section className="w-full bg-[#fbf7f2] pb-4 pt-2 sm:pb-5 sm:pt-3 lg:pb-6 lg:pt-3 2xl:pb-7 2xl:pt-4">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 2xl:max-w-[1600px] 2xl:px-10">
+      <div className="site-container">
         <div className="mb-3 grid grid-cols-1 items-end gap-2 py-0 sm:mb-4 sm:grid-cols-[1fr_auto_1fr] 2xl:mb-5">
           <div className="hidden sm:block" />
 
@@ -144,13 +144,13 @@ export default function ExploreMenu() {
 
           <div
             ref={categoryScrollRef}
-            className="grid auto-cols-[100%] grid-flow-col gap-2 overflow-x-auto pb-2 pt-1 no-scrollbar scroll-smooth snap-x snap-proximity sm:auto-cols-[calc((100%-0.75rem)/2)] lg:auto-cols-[calc((100%-2.25rem)/4)] 2xl:gap-3"
+            className="grid auto-cols-[100%] grid-flow-col gap-2 overflow-x-auto pb-2 pt-1 no-scrollbar scroll-smooth snap-x snap-proximity sm:auto-cols-[calc((100%-0.75rem)/2)] lg:auto-cols-[calc((100%-2.25rem)/4)] 2xl:auto-cols-[calc((100%-3rem)/5)] 2xl:gap-3 [@media(min-width:2200px)]:auto-cols-[calc((100%-3.75rem)/6)]"
           >
             {visibleCategories.map((cat) => (
               <Link
                 key={cat.id}
                 href={`/menu?category=${encodeURIComponent(cat.hrefName)}`}
-                className={`group relative flex h-[170px] cursor-pointer snap-start flex-col justify-end overflow-hidden rounded-[18px] border border-brand-primary/10 bg-white p-4 shadow-sm transition-all duration-500 ease-out hover:-translate-y-1 hover:border-brand-primary/25 hover:shadow-[0_14px_28px_rgba(17,24,39,0.10)] sm:h-[200px] sm:p-4 lg:h-[210px] 2xl:h-[230px] 2xl:p-5 ${isSliding ? "translate-y-1 scale-[0.985] opacity-90" : "translate-y-0 scale-100 opacity-100"}`}
+                className={`group relative flex h-[170px] cursor-pointer snap-start flex-col justify-end overflow-hidden rounded-[18px] border border-brand-primary/10 bg-white p-4 shadow-sm transition-all duration-500 ease-out hover:-translate-y-1 hover:border-brand-primary/25 hover:shadow-[0_14px_28px_rgba(17,24,39,0.10)] sm:h-[200px] sm:p-4 lg:h-[210px] 2xl:h-[240px] 2xl:p-5 [@media(min-width:2200px)]:h-[280px] ${isSliding ? "translate-y-1 scale-[0.985] opacity-90" : "translate-y-0 scale-100 opacity-100"}`}
                 style={{
                   backgroundImage: `url(${cat.image})`,
                   backgroundPosition: "center 20%",

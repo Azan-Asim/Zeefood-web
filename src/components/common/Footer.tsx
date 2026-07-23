@@ -88,7 +88,7 @@ export default function Footer() {
       <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-brand-primary/4 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute top-0 left-0 w-[400px] h-[400px] bg-brand-secondary/4 rounded-full blur-[100px] pointer-events-none" />
 
-      <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 relative z-10">
+      <div className="site-container relative z-10">
 
         {/* TOP CTA Strip */}
         {/* <div className="flex flex-col md:flex-row items-center justify-between gap-6 py-12 border-b border-gray-100">
@@ -114,7 +114,7 @@ export default function Footer() {
           </div>
         </div> */}
 
-        <div className="flex flex-col md:flex-row items-center justify-between gap-6 py-12 border-b border-gray-100">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-6 py-8 border-b border-gray-100 sm:py-10 lg:py-12 2xl:py-16">
           {/* Left Text Section (Centered on Mobile) */}
           <div className="text-center md:text-left w-full md:w-auto">
             <h3 className="text-2xl lg:text-3xl font-medium text-brand-dark tracking-tight">
@@ -127,7 +127,7 @@ export default function Footer() {
           </div>
 
           {/* Right Buttons Section (Column on Mobile, Row on Desktop) */}
-          <div className="w-full md:w-auto flex flex-col sm:flex-row items-center gap-4">
+          <div className="w-full md:w-auto flex flex-col sm:flex-row items-center gap-3 sm:gap-4">
             <Link href="/order" className="w-full sm:w-auto flex items-center justify-center whitespace-nowrap px-8 py-4 bg-brand-primary text-white font-medium uppercase tracking-widest text-xs rounded-xl transition-all duration-300 shadow-[0_10px_30px_rgba(248,114,5,0.3)] hover:shadow-[0_15px_40px_rgba(248,114,5,0.5)] hover:-translate-y-0.5">
               Order Online
             </Link>
@@ -141,11 +141,11 @@ export default function Footer() {
         </div>
 
         {/* MAIN FOOTER GRID */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 py-8">
+        <div className="grid grid-cols-1 gap-9 py-8 sm:grid-cols-2 md:gap-10 lg:grid-cols-5 lg:gap-12 2xl:gap-16 2xl:py-12">
 
           {/* Brand Column */}
           <div className="lg:col-span-2 flex flex-col gap-6">
-            <Link href="/" className="inline-flex w-fit items-center gap-3 no-underline">
+            <Link href="/" className="inline-flex w-fit max-w-full items-center gap-3 no-underline">
               <span className="relative block h-20 w-24 shrink-0">
                 <Image
                   src="/fiery-wok.png"
@@ -155,7 +155,7 @@ export default function Footer() {
                   unoptimized
                 />
               </span>
-              <span lang="ur" dir="rtl" className="font-ama-dhaba text-[34px] font-black leading-none text-brand-primary">
+              <span lang="ur" dir="rtl" className="font-ama-dhaba text-[clamp(1.75rem,8vw,2.125rem)] font-black leading-none text-brand-primary">
                 اماں جی کا ڈھابہ
               </span>
             </Link>
@@ -205,7 +205,7 @@ export default function Footer() {
           ))}
         </div>
 
-        <div className="flex flex-col xl:flex-row xl:items-end justify-between gap-10 mt-2 w-full">
+        <div className="flex flex-col xl:flex-row xl:items-end justify-between gap-8 mt-2 w-full lg:gap-10">
           {/* Contact Info */}
 
           <div className="flex flex-col gap-3 mt-2">
@@ -224,7 +224,7 @@ export default function Footer() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
               </span>
-              <span>464-Sir Handi Road, Near Gourmet bakers, first round about, Samnabad, Lahore</span>
+              <span className="max-w-xl">464-Sir Handi Road, Near Gourmet bakers, first round about, Samnabad, Lahore</span>
             </div>
           </div>
 
@@ -268,7 +268,7 @@ export default function Footer() {
                   POWERED BY
                 </span>
                 <div className="h-6 w-[2px] bg-gray-200 group-hover:bg-[#2563eb]/30 transition-colors duration-300"></div>
-                <div className="relative w-40 h-10">
+                <div className="relative h-10 w-32 sm:w-40">
                   <Image
                     src="/devsinnlogo0.svg"
                     alt="Devsinn Technologies"

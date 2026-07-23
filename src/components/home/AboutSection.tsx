@@ -188,7 +188,7 @@ export default function AboutSection() {
             <h3 className="mt-3 text-2xl sm:text-3xl font-medium text-brand-dark">From a family idea to a neighborhood favorite</h3>
             <div className="mt-8 space-y-6">
               {journey.map((item) => (
-                <div key={item.year} className="flex gap-5 items-start">
+                <div key={item.year} className="flex items-start gap-5 rounded-[1.25rem] border border-transparent p-2 transition-all duration-300 hover:-translate-y-1 hover:border-brand-primary/15 hover:bg-brand-primary/5">
                   <div className="w-14 h-14 shrink-0 rounded-2xl bg-brand-primary text-white flex items-center justify-center font-black text-sm shadow-lg">
                     {item.year}
                   </div>
@@ -208,7 +208,7 @@ export default function AboutSection() {
             </div>
             <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
               {highlights.map((item) => (
-                <div key={item.title} className="rounded-[1.5rem] bg-white/75 border border-brand-primary/10 p-5 shadow-[0_12px_28px_rgba(17,24,39,0.04)]">
+                <div key={item.title} className="rounded-[1.5rem] border border-brand-primary/10 bg-white/75 p-5 shadow-[0_12px_28px_rgba(17,24,39,0.04)] transition-all duration-300 hover:-translate-y-1 hover:border-brand-primary/20 hover:bg-brand-primary/5">
                   <h4 className="text-base font-medium text-brand-dark">{item.title}</h4>
                   <p className="mt-2 text-sm text-brand-dark/65 leading-relaxed">{item.description}</p>
                 </div>
@@ -253,16 +253,16 @@ export default function AboutSection() {
           <h3 className="text-2xl font-medium text-brand-dark text-center mb-8">Frequently Asked Questions</h3>
           <div className="space-y-4">
             {faqs.map((f, idx) => (
-              <div key={f.q} className="border border-gray-100 rounded-2xl overflow-hidden">
+              <div key={f.q} className="overflow-hidden rounded-2xl border border-gray-100 transition-all duration-300 hover:-translate-y-0.5 hover:border-brand-primary/20 hover:bg-brand-primary/5 hover:shadow-[0_16px_34px_rgba(17,24,39,0.06)]">
                 <button
                   onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
-                  className="w-full text-left px-6 py-4 flex items-center justify-between bg-white"
+                  className="flex w-full items-center justify-between bg-white/90 px-6 py-4 text-left transition-colors duration-300 hover:bg-brand-primary/5"
                 >
                   <span className="font-medium text-brand-dark">{f.q}</span>
                   <span className="text-brand-dark/50">{openFaq === idx ? "−" : "+"}</span>
                 </button>
                 {openFaq === idx && (
-                  <div className="px-6 py-4 bg-white/50 text-brand-dark/70">{f.a}</div>
+                  <div className="bg-white/50 px-6 py-4 text-brand-dark/70">{f.a}</div>
                 )}
               </div>
             ))}
