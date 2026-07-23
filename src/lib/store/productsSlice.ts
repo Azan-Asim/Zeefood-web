@@ -191,6 +191,38 @@ export const selectPagination = createSelector(
   (s) => s.pagination
 );
 
+const SEARCH_ALIASES: Record<string, string[]> = {
+  biryani: ["biryani", "بریانی", "briyani", "biryanee"],
+  "بریانی": ["biryani", "بریانی", "briyani", "biryanee"],
+  samosa: ["samosa", "samosay", "samosa chaat", "سموسے", "سموسہ"],
+  samosay: ["samosa", "samosay", "samosa chaat", "سموسے", "سموسہ"],
+  "سموسے": ["samosa", "samosay", "samosa chaat", "سموسے", "سموسہ"],
+  "gol gappay": ["gol gappay", "gol gappy", "golgappy", "gol gappe", "گول گپے"],
+  golgappy: ["gol gappay", "gol gappy", "golgappy", "gol gappe", "گول گپے"],
+  "گول گپے": ["gol gappay", "gol gappy", "golgappy", "gol gappe", "گول گپے"],
+  chutni: ["chutni", "chatni", "chutney", "چٹنی"],
+  chatni: ["chutni", "chatni", "chutney", "چٹنی"],
+  "چٹنی": ["chutni", "chatni", "chutney", "چٹنی"],
+  kabab: ["kabab", "kebab", "seekh kabab", "seekh kebab", "کباب"],
+  kebab: ["kabab", "kebab", "seekh kabab", "seekh kebab", "کباب"],
+  "کباب": ["kabab", "kebab", "seekh kabab", "seekh kebab", "کباب"],
+  "dahi bhallay": ["dahi bhallay", "dahi bhalla", "dahi baray", "دہی بھلے"],
+  "دہی بھلے": ["dahi bhallay", "dahi bhalla", "dahi baray", "دہی بھلے"],
+  "dal chawal": ["dal chawal", "daal chawal", "dal rice", "دال چاول"],
+  "دال چاول": ["dal chawal", "daal chawal", "dal rice", "دال چاول"],
+  nuggets: ["nuggets", "nugits", "chicken nuggets", "نگٹس", "نِگٹس"],
+  "نِگٹس": ["nuggets", "nugits", "chicken nuggets", "نگٹس", "نِگٹس"],
+};
+
+function searchTerms(query: string) {
+  const q = query.toLowerCase().trim();
+  if (!q) return [];
+
+  return Array.from(new Set([q, ...(SEARCH_ALIASES[q] ?? [])])).map((term) =>
+    term.toLowerCase()
+  );
+}
+
 /** Memoised selector: returns products filtered by activeCategory + searchQuery */
 export const selectFilteredProducts = createSelector(
   selectAllProducts,
@@ -202,11 +234,23 @@ export const selectFilteredProducts = createSelector(
         category === "All" ||
         product.category?.CategoryName?.toLowerCase() === category.toLowerCase();
 
-      const q = query.toLowerCase().trim();
+      const terms = searchTerms(query);
+      const haystack = [
+        product.name,
+        product.category?.CategoryName,
+        ...Object.entries(SEARCH_ALIASES)
+          .filter(([, aliases]) =>
+            aliases.some((alias) =>
+              `${product.name} ${product.category?.CategoryName ?? ""}`.toLowerCase().includes(alias.toLowerCase())
+            )
+          )
+          .flatMap(([key, aliases]) => [key, ...aliases]),
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
       const matchesSearch =
-        !q ||
-        product.name.toLowerCase().includes(q) ||
-        product.category?.CategoryName?.toLowerCase().includes(q);
+        terms.length === 0 || terms.some((term) => haystack.includes(term));
 
       return matchesCategory && matchesSearch;
     });

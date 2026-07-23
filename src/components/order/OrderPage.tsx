@@ -785,12 +785,12 @@ export default function OrderPage() {
 
             {/* Search Bar */}
             <div className="mb-4 flex justify-center">
-              <div className={`relative max-w-2xl transition-all duration-500 ease-out ${searchOpen ? "w-full" : "w-40"}`}>
+              <div className={`relative max-w-2xl transition-all duration-500 ease-out ${searchOpen ? "w-full" : "w-44"}`}>
                 <button
                   type="button"
                   onClick={() => setSearchOpen(true)}
                   aria-label="Open search"
-                  className={`absolute left-0 top-0 z-10 flex h-12 items-center justify-center gap-2 rounded-2xl border-2 border-brand-primary font-black uppercase tracking-widest transition-all duration-300 ${searchOpen ? "pointer-events-none w-12 border-transparent text-brand-primary" : "w-full bg-white text-brand-primary shadow-[0_12px_24px_rgba(248,114,5,0.12)] hover:-translate-y-0.5 hover:bg-brand-primary/5"}`}
+                  className={`absolute left-0 top-0 z-10 flex h-12 items-center justify-center gap-2 rounded-2xl border border-brand-primary/15 font-black uppercase tracking-widest transition-all duration-300 ${searchOpen ? "pointer-events-none w-12 border-transparent text-brand-primary" : "w-full bg-[#fffdf8] text-brand-primary shadow-[0_12px_28px_rgba(248,114,5,0.12)] hover:-translate-y-0.5 hover:border-brand-primary/30 hover:bg-white hover:shadow-[0_16px_34px_rgba(248,114,5,0.16)]"}`}
                 >
                   <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -803,7 +803,7 @@ export default function OrderPage() {
                   defaultValue={searchQuery}
                   onFocus={() => setSearchOpen(true)}
                   onChange={(e) => handleSearchChange(e.target.value)}
-                  className={`h-12 rounded-2xl border border-brand-primary/10 bg-[#fffdf8]/80 py-3 pl-12 pr-4 text-sm font-bold text-brand-dark outline-none transition-all duration-500 placeholder:text-brand-dark/30 focus:border-brand-primary/40 focus:ring-2 focus:ring-brand-primary/10 ${searchOpen ? "w-full opacity-100" : "w-40 cursor-pointer opacity-0"}`}
+                  className={`h-12 rounded-2xl border border-brand-primary/10 bg-[#fffdf8]/80 py-3 pl-12 pr-4 text-sm font-bold text-brand-dark outline-none transition-all duration-500 placeholder:text-brand-dark/30 focus:border-brand-primary/40 focus:ring-2 focus:ring-brand-primary/10 ${searchOpen ? "w-full opacity-100" : "w-44 cursor-pointer opacity-0"}`}
                 />
               </div>
             </div>
@@ -822,7 +822,7 @@ export default function OrderPage() {
                     <button
                       key={cat}
                       onClick={() => changeCategory(cat)}
-                      className={`relative flex-none min-w-[112px] max-w-[136px] flex-shrink-0 flex-col items-center justify-center overflow-hidden rounded-[22px] px-3 py-3 text-center text-sm font-black uppercase tracking-widest transition-all duration-300 sm:min-w-[118px] sm:px-4 2xl:min-w-[132px] 2xl:max-w-[150px] ${imageSrc
+                      className={`relative flex-none min-w-[124px] max-w-[150px] flex-shrink-0 flex-col items-center justify-center overflow-hidden rounded-2xl px-4 py-3.5 text-center text-sm font-black uppercase tracking-widest transition-all duration-300 sm:min-w-[134px] sm:px-5 sm:py-4 2xl:min-w-[148px] 2xl:max-w-[164px] ${imageSrc
                         ? isActive
                           ? "text-white shadow-[0_10px_30px_rgba(248,114,5,0.18)]"
                           : "border border-white/25 text-white"
