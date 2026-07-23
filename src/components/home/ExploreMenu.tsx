@@ -132,14 +132,14 @@ export default function ExploreMenu() {
           </div>
         </div>
 
-        <div className="relative px-4 sm:px-5 md:px-6">
+        <div className="relative sm:px-5 md:px-6">
           <button
             type="button"
             onClick={() => scrollCategories("left")}
-            className="absolute left-0 top-1/2 z-20 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-brand-primary/20 bg-white text-brand-primary shadow-sm transition-all duration-300 hover:bg-brand-primary hover:text-white hover:shadow-lg active:scale-95 sm:h-10 sm:w-10 md:h-11 md:w-11 md:-translate-x-1/2"
+            className="absolute left-0 top-1/2 z-20 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-brand-primary/20 bg-white text-brand-primary shadow-sm transition-all duration-300 hover:bg-brand-primary hover:text-white hover:shadow-lg active:scale-95 sm:flex md:h-11 md:w-11 md:-translate-x-1/2"
             aria-label="Scroll categories left"
           >
-            <ChevronLeft className="h-4 w-4 sm:h-5 sm:w-5" strokeWidth={2.5} />
+            <ChevronLeft className="h-5 w-5" strokeWidth={2.5} />
           </button>
 
           <div
@@ -173,10 +173,29 @@ export default function ExploreMenu() {
           <button
             type="button"
             onClick={() => scrollCategories("right")}
-            className="absolute right-0 top-1/2 z-20 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-brand-primary/20 bg-white text-brand-primary shadow-sm transition-all duration-300 hover:bg-brand-primary hover:text-white hover:shadow-lg active:scale-95 sm:h-10 sm:w-10 md:h-11 md:w-11 md:translate-x-1/2"
+            className="absolute right-0 top-1/2 z-20 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-brand-primary/20 bg-white text-brand-primary shadow-sm transition-all duration-300 hover:bg-brand-primary hover:text-white hover:shadow-lg active:scale-95 sm:flex md:h-11 md:w-11 md:translate-x-1/2"
             aria-label="Scroll categories right"
           >
-            <ChevronRight className="h-4 w-4 sm:h-5 sm:w-5" strokeWidth={2.5} />
+            <ChevronRight className="h-5 w-5" strokeWidth={2.5} />
+          </button>
+        </div>
+
+        <div className="mt-3 flex items-center justify-center gap-3 sm:hidden">
+          <button
+            type="button"
+            onClick={() => scrollCategories("left")}
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-brand-primary/20 bg-white text-brand-primary shadow-sm transition-all duration-300 active:scale-95"
+            aria-label="Scroll categories left"
+          >
+            <ChevronLeft className="h-5 w-5" strokeWidth={2.5} />
+          </button>
+          <button
+            type="button"
+            onClick={() => scrollCategories("right")}
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-brand-primary/20 bg-white text-brand-primary shadow-sm transition-all duration-300 active:scale-95"
+            aria-label="Scroll categories right"
+          >
+            <ChevronRight className="h-5 w-5" strokeWidth={2.5} />
           </button>
         </div>
       </div>

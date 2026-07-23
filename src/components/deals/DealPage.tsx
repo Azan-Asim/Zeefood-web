@@ -63,9 +63,9 @@ export default function DealPage({ products }: { products: Product[] }) {
     }, [products]);
 
     return (
-        <main className="min-h-screen bg-[#FFFFFF] pb-20 pt-28 text-brand-dark sm:pt-32">
+        <main className="min-h-screen bg-[#FFFFFF] pb-14 pt-24 text-brand-dark sm:pt-28">
             <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                <div className="mb-10 flex flex-col gap-5 sm:mb-12 lg:flex-row lg:items-end lg:justify-between">
+                <div className="mb-7 flex flex-col gap-4 sm:mb-8 lg:flex-row lg:items-end lg:justify-between">
                     <div className="max-w-2xl">
                         <p className="mb-3 text-sm font-semibold uppercase tracking-[0.2em] text-brand-primary">Exclusive Deals</p>
                         <h1 className="text-3xl font-black leading-tight sm:text-4xl">Special prices from our kitchen.</h1>
@@ -145,7 +145,7 @@ export default function DealPage({ products }: { products: Product[] }) {
                                         className={`relative z-10 mt-6 w-full touch-manipulation rounded-[18px] px-4 py-3 text-sm font-semibold text-white transition-[background-color,box-shadow,transform] duration-300 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-45 ${
                                             activeDealId === deal.id
                                                 ? "!bg-[#f87205] !shadow-[0_10px_25px_rgba(248,114,5,0.40)]"
-                                                : "!bg-brand-dark !shadow-[0_10px_25px_rgba(18,18,18,0.12)]"
+                                                : "!bg-white !text-brand-primary !border !border-brand-primary/20 !shadow-[0_10px_25px_rgba(248,114,5,0.10)]"
                                         }`}
                                     >
                                         {isAvailable ? "Add to Cart" : "Unavailable"}

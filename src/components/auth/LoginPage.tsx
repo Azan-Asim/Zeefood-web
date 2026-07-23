@@ -183,7 +183,7 @@ export default function LoginPage() {
               <button
                 type="submit"
                 id="otp-submit-btn"
-                className="relative w-full py-2.5 mt-1 rounded-xl font-black text-white text-[0.9rem] tracking-wide overflow-hidden group transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_12px_32px_rgba(248,114,5,0.45)] shadow-[0_6px_20px_rgba(248,114,5,0.3)] bg-gradient-to-br from-[#F87205] via-[#F87205] to-[#111827]"
+                className="relative w-full py-2.5 mt-1 rounded-xl font-black text-white text-[0.9rem] tracking-wide overflow-hidden group transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_12px_32px_rgba(248,114,5,0.45)] shadow-[0_6px_20px_rgba(248,114,5,0.3)] bg-brand-primary hover:bg-brand-primary/90"
                 aria-label="Send OTP to log in"
               >
                 <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 translate-x-[-200%] group-hover:translate-x-[200%] duration-700 ease-in-out" />
