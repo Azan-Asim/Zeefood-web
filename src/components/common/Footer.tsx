@@ -114,7 +114,7 @@ export default function Footer() {
           </div>
         </div> */}
 
-        <div className="flex flex-col md:flex-row items-center justify-between gap-6 py-8 border-b border-gray-100 sm:py-10 lg:py-12 2xl:py-16">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-5 py-6 border-b border-gray-100 sm:py-8 lg:py-9 2xl:py-10">
           {/* Left Text Section (Centered on Mobile) */}
           <div className="text-center md:text-left w-full md:w-auto">
             <h3 className="text-2xl lg:text-3xl font-medium text-brand-dark tracking-tight">
@@ -141,7 +141,7 @@ export default function Footer() {
         </div>
 
         {/* MAIN FOOTER GRID */}
-        <div className="grid grid-cols-1 gap-9 py-8 sm:grid-cols-2 md:gap-10 lg:grid-cols-5 lg:gap-12 2xl:gap-16 2xl:py-12">
+        <div className="grid grid-cols-1 gap-7 py-6 sm:grid-cols-2 md:gap-8 lg:grid-cols-5 lg:gap-9 2xl:gap-10 2xl:py-8">
 
           {/* Brand Column */}
           <div className="lg:col-span-2 flex flex-col gap-6">

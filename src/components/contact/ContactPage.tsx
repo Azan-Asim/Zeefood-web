@@ -21,34 +21,31 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white relative overflow-hidden flex items-start justify-center px-4 pb-12 pt-28 sm:items-center sm:py-16">
-      {/* Decorative Blur Backgrounds */}
-      <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-[#fef2eb] to-transparent pointer-events-none" />
-      <div className="absolute top-40 -left-32 w-96 h-96 bg-[radial-gradient(circle,rgba(248,114,5,0.08)_0%,transparent_70%)] rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-20 -right-20 w-80 h-80 bg-[radial-gradient(circle,rgba(248,114,5,0.1)_0%,transparent_70%)] rounded-full blur-3xl pointer-events-none" />
+    <div className="min-h-screen bg-[#fbf7f2] relative overflow-hidden flex items-start justify-center px-4 pb-10 pt-24 sm:items-center sm:pb-12 sm:pt-28 lg:pt-[7.5rem]">
+      <div className="absolute inset-x-0 top-0 h-[420px] bg-gradient-to-b from-orange-50/80 via-[#fbf7f2] to-[#fbf7f2] pointer-events-none" />
 
 
       {/* Main Content */}
-      <main className="relative z-10 w-full max-w-6xl mx-auto px-0 sm:px-6 py-8 sm:py-12 lg:py-24">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 sm:gap-14 lg:gap-24 items-center">
+      <main className="site-container relative z-10 py-6 sm:py-8 lg:py-10">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-10 lg:gap-14 items-center">
           
           {/* Left Side: Contact Info */}
           <div>
-            <div className="inline-flex items-center gap-2 bg-[#F8FAFC] text-[#F87205] px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest mb-6">
+            <div className="inline-flex items-center gap-2 bg-[#fffdf8]/90 border border-brand-primary/15 text-brand-primary px-4 py-1.5 rounded-2xl text-xs font-bold uppercase tracking-widest mb-6 shadow-sm">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#F87205] opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-[#F87205]"></span>
               </span>
               Get in Touch
             </div>
-            <h1 className="text-3xl sm:text-4xl lg:text-6xl font-black text-[#111827] tracking-tight mb-6 leading-tight">
+            <h1 className="text-3xl sm:text-4xl lg:text-6xl font-black text-brand-dark tracking-tight mb-6 leading-tight">
               Let&apos;s talk about your <span className="text-brand-primary ">Next Meal.</span>
             </h1>
-            <p className="text-[#111827] text-base sm:text-lg font-medium max-w-md mb-8 sm:mb-12">
+            <p className="text-brand-dark/70 text-base sm:text-lg font-semibold max-w-md mb-6 sm:mb-8 leading-relaxed">
               Have questions, feedback, or want to partner with ZeeFood? We&apos;d love to hear from you. Drop us a message below.
             </p>
 
-            <div className="flex flex-col gap-6 sm:gap-8">
+            <div className="flex flex-col gap-5 sm:gap-6">
               <ContactMethod 
                 icon={
                   <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -83,9 +80,9 @@ export default function ContactPage() {
           {/* Right Side: Contact Form (Glassmorphism) */}
           <div className="relative">
             {/* Background glowing orb for form */}
-            <div className="absolute inset-0 bg-gradient-to-tr from-[#F87205] to-[#F4A261] rounded-[40px] blur-3xl opacity-10" />
+            <div className="absolute inset-0 rounded-[28px] bg-brand-primary/10 blur-2xl" />
             
-            <div className="relative bg-white/80 backdrop-blur-xl border border-white p-5 sm:p-8 lg:p-10 rounded-2xl sm:rounded-[32px] shadow-[0_20px_60px_rgba(0,0,0,0.05)]">
+            <div className="relative bg-[#fffdf8]/92 backdrop-blur-xl border border-brand-primary/10 p-5 sm:p-8 lg:p-10 rounded-2xl shadow-[0_24px_70px_rgba(17,24,39,0.06)]">
               {!state.isSubmitted ? (
                 <form onSubmit={handleSubmit} className="flex flex-col gap-6">
                   {/* Name Input */}
@@ -98,7 +95,7 @@ export default function ContactPage() {
                       placeholder="John Doe"
                       value={state.name}
                       onChange={(e) => setState({ ...state, name: e.target.value })}
-                      className="w-full px-4 sm:px-5 py-4 border border-transparent focus:border-brand-primary rounded-2xl outline-none transition-all placeholder:text-[#111827] text-[#111827] font-medium bg-gray-200"
+                      className="w-full px-4 sm:px-5 py-4 border border-brand-primary/10 focus:border-brand-primary rounded-2xl outline-none transition-all placeholder:text-brand-dark/35 text-brand-dark font-semibold bg-white"
                     />
                   </div>
 
@@ -112,7 +109,7 @@ export default function ContactPage() {
                       placeholder="john@example.com"
                       value={state.email}
                       onChange={(e) => setState({ ...state, email: e.target.value })}
-                      className="w-full px-4 sm:px-5 py-4 border border-transparent focus:border-brand-primary rounded-2xl outline-none transition-all placeholder:text-[#111827] text-[#111827] font-medium bg-gray-200"
+                      className="w-full px-4 sm:px-5 py-4 border border-brand-primary/10 focus:border-brand-primary rounded-2xl outline-none transition-all placeholder:text-brand-dark/35 text-brand-dark font-semibold bg-white"
                     />
                   </div>
 
@@ -126,13 +123,13 @@ export default function ContactPage() {
                       placeholder="How can we help you today?"
                       value={state.message}
                       onChange={(e) => setState({ ...state, message: e.target.value })}
-                      className="w-full px-4 sm:px-5 py-4 border border-transparent focus:border-brand-primary rounded-2xl outline-none transition-all placeholder:text-[#111827] text-[#111827] font-medium bg-gray-200 "
+                      className="w-full px-4 sm:px-5 py-4 border border-brand-primary/10 focus:border-brand-primary rounded-2xl outline-none transition-all placeholder:text-brand-dark/35 text-brand-dark font-semibold bg-white"
                     />
                   </div>
 
                   <button
                     type="submit"
-                    className="relative bg-brand-primary w-full py-4 mt-2 rounded-md font-bold text-white text-lg tracking-wide overflow-hidden group transition-all duration-300  "
+                    className="relative bg-brand-primary w-full py-4 mt-2 rounded-2xl font-bold text-white text-lg tracking-wide overflow-hidden group transition-all duration-300 hover:bg-brand-primary/90 shadow-[0_14px_30px_rgba(248,114,5,0.24)]"
                   >
                     <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-primary translate-x-[-200%] group-hover:translate-x-[200%] duration-700 ease-in-out" />
                     <span className="relative flex items-center justify-center gap-2">
@@ -148,8 +145,8 @@ export default function ContactPage() {
                       <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                     </svg>
                   </div>
-                  <h3 className="text-2xl font-black text-[#111827] mb-2">Message Sent!</h3>
-                  <p className="text-[#111827] font-medium max-w-sm mb-8">
+                  <h3 className="text-2xl font-black text-brand-dark mb-2">Message Sent!</h3>
+                  <p className="text-brand-dark/75 font-medium max-w-sm mb-8">
                     Thanks for reaching out, {state.name}. Our premium support team will get back to you within 24 hours.
                   </p>
                   <button onClick={() => setState({ name: "", email: "", message: "", isSubmitted: false })} className="text-[#F87205] font-bold hover:underline underline-offset-4">
@@ -171,12 +168,12 @@ export default function ContactPage() {
 function ContactMethod({ icon, title, detail }: { icon: React.ReactNode; title: string; detail: string }) {
   return (
     <div className="flex items-start gap-4 sm:gap-5 group">
-      <div className="w-12 h-12 sm:w-14 sm:h-14 shrink-0 rounded-2xl bg-white border border-brand-primary flex items-center justify-center text-[#F87205] transition-transform group-hover:scale-110 group-hover:bg-brand-primary group-hover:text-white duration-300">
+      <div className="w-12 h-12 sm:w-14 sm:h-14 shrink-0 rounded-2xl bg-white border border-brand-primary/20 flex items-center justify-center text-brand-primary transition-transform group-hover:scale-110 group-hover:bg-brand-primary group-hover:text-white duration-300 shadow-sm">
         {icon}
       </div>
       <div className="min-w-0 pt-1.5">
         <h4 className="text-brand-primary font-black text-base sm:text-lg mb-1">{title}</h4>
-        <p className="break-words text-[#111827] font-medium text-sm sm:text-base">{detail}</p>
+        <p className="break-words text-brand-dark/70 font-semibold text-sm sm:text-base">{detail}</p>
       </div>
     </div>
   );

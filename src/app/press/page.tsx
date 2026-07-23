@@ -11,12 +11,12 @@ export default function PressPage() {
       title2="" 
       description="Latest news, announcements, and media resources from the ZeeFood PR team."
     >
-      <div className="space-y-12">
+      <div className="space-y-8">
         <section>
-          <h2 className="text-3xl lg:text-4xl font-black mb-10">
+          <h2 className="text-3xl lg:text-4xl font-black mb-6">
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-primary to-brand-secondary">Latest Announcements</span>
           </h2>
-          <div className="space-y-12">
+          <div className="space-y-8">
             {[
               { date: "May 2026", title: "ZeeFood launches premium nationwide delivery", desc: "Expanding our fleet to ensure ultra-fast, premium food delivery across all major cities in Pakistan." },
               { date: "March 2026", title: "New 'Elite Deals' break sales records", desc: "Our newly introduced premium combos have set a new industry benchmark for quality and value." }
@@ -43,8 +43,8 @@ export default function PressPage() {
           </div>
         </section>
 
-        <div className="mt-20 p-10 bg-white border-2 border-dashed border-brand-primary/20 rounded-[40px] flex flex-col md:flex-row items-center gap-10">
-          <div className="w-24 h-24 bg-brand-primary/5 rounded-[32px] flex items-center justify-center text-5xl shrink-0">
+        <div className="mt-10 p-6 sm:p-8 bg-white border-2 border-dashed border-brand-primary/20 rounded-[32px] flex flex-col md:flex-row items-center gap-6">
+          <div className="w-20 h-20 bg-brand-primary/5 rounded-[24px] flex items-center justify-center text-4xl shrink-0">
             📰
           </div>
           <div className="text-center md:text-left">

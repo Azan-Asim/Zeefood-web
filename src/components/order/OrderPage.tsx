@@ -307,7 +307,7 @@ function ProductCard({
             type="button"
             disabled={!isActive}
             onClick={() => onAddToCart(product)}
-            className=" w-full rounded-full border border-transparent bg-brand-dark px-4 md:px-6 py-3 md:py-4 text-[10px] md:text-xs font-black uppercase tracking-widest text-white shadow-md transition-all duration-300 group-hover:bg-brand-primary disabled:cursor-not-allowed disabled:opacity-40
+            className=" w-full rounded-full border border-transparent bg-brand-primary px-4 md:px-6 py-3 md:py-4 text-[10px] md:text-xs font-black uppercase tracking-widest text-white shadow-[0_10px_22px_rgba(248,114,5,0.22)] transition-all duration-300 group-hover:bg-brand-primary/90 disabled:cursor-not-allowed disabled:opacity-40
             "
           >
             {!isActive ? "Unavailable" : t("orderNow")}
@@ -851,7 +851,7 @@ export default function OrderPage() {
 
           {/* Error State */}
           {isError && (
-            <div className="flex flex-col items-center justify-center py-24 text-center gap-5">
+            <div className="flex flex-col items-center justify-center py-14 text-center gap-5">
               <div className="w-16 h-16 rounded-full bg-red-50 flex items-center justify-center">
                 <svg className="w-8 h-8 text-brand-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M12 3a9 9 0 100 18A9 9 0 0012 3z" />
@@ -872,7 +872,7 @@ export default function OrderPage() {
 
           {/* Empty State */}
           {!isLoading && !isError && filteredProducts.length === 0 && (
-            <div className="flex flex-col items-center justify-center py-24 text-center gap-4">
+            <div className="flex flex-col items-center justify-center py-14 text-center gap-4">
               <span className="text-6xl">🍽️</span>
               <p className="font-black text-brand-dark text-xl">No dishes found</p>
               <p className="text-brand-dark/40 text-sm">Try a different search or category.</p>

@@ -63,24 +63,24 @@ export default function Hero() {
   const item = heroItems[currentIndex];
 
   return (
-    <section className="relative flex min-h-[calc(100svh-80px)] items-center overflow-x-hidden bg-[#fbf7f2] pb-5 pt-[5.7rem] sm:min-h-[520px] sm:pb-7 sm:pt-[6.55rem] lg:min-h-[500px] lg:pb-4 lg:pt-[6.2rem] 2xl:min-h-[620px] 2xl:pt-[6.9rem] [@media(min-width:2200px)]:min-h-[720px]">
-      <div className="site-container flex flex-col items-center gap-3 sm:gap-4">
+    <section className="relative flex min-h-[100svh] items-center overflow-x-hidden bg-[#fbf7f2] pb-6 pt-[5.9rem] sm:pb-8 sm:pt-[6.6rem] lg:pb-8 lg:pt-[6.3rem] 2xl:pt-[6.9rem]">
+      <div className="site-container flex flex-col items-center">
         {/* Thumbnail previews removed per user request */}
 
-        <div className="flex w-full flex-col items-center gap-3 lg:flex-row lg:gap-7 2xl:gap-12 [@media(min-width:2200px)]:gap-16">
+        <div className="flex w-full flex-col items-center gap-4 lg:flex-row lg:gap-8 2xl:gap-12 [@media(min-width:2200px)]:gap-16">
           <div className="relative z-10 max-w-3xl space-y-2 text-center sm:space-y-3 lg:w-1/2 lg:text-left 2xl:max-w-4xl">
             <div className="inline-flex flex-col items-center lg:items-start">
-              <p lang="ur" dir="rtl" className="font-ama-dhaba text-[clamp(34px,9vw,52px)] font-black leading-none text-brand-primary lg:text-[clamp(54px,3.8vw,68px)] [@media(min-width:2200px)]:text-[76px]">
+              <p lang="ur" dir="rtl" className="font-ama-dhaba text-[clamp(38px,10vw,58px)] font-black leading-none text-brand-primary lg:text-[clamp(60px,4.4vw,78px)] [@media(min-width:2200px)]:text-[88px]">
                 اماں جی کا ڈھابہ
               </p>
             </div>
 
             <div key={item.name} className="animate-hero-copy-fade space-y-2 sm:space-y-3">
-              <h1 className="text-[clamp(2.1rem,8.5vw,3.25rem)] font-extrabold leading-[1.06] text-brand-dark lg:text-[clamp(3rem,4vw,4.15rem)] [@media(min-width:2200px)]:text-[5rem]">
+              <h1 className="text-[clamp(2.35rem,9.5vw,3.7rem)] font-extrabold leading-[1.02] text-brand-dark lg:text-[clamp(3.7rem,5.1vw,5.35rem)] [@media(min-width:2200px)]:text-[6.1rem]">
                 {item.title} <span className="text-brand-primary">{item.highlight}</span>
               </h1>
 
-              <p className="mx-auto max-w-2xl text-sm font-semibold leading-relaxed text-brand-dark sm:text-lg lg:mx-0 2xl:max-w-3xl 2xl:text-xl [@media(min-width:2200px)]:text-2xl">
+              <p className="mx-auto max-w-2xl text-base font-semibold leading-relaxed text-brand-dark sm:text-xl lg:mx-0 2xl:max-w-3xl 2xl:text-2xl [@media(min-width:2200px)]:text-3xl">
                 {item.description}
               </p>
             </div>
@@ -96,7 +96,7 @@ export default function Hero() {
           </div>
 
           <div className="relative z-10 flex w-full justify-center lg:w-1/2 lg:justify-end">
-            <div className="relative grid aspect-square w-[min(74vw,290px)] place-items-center sm:w-[min(46vw,360px)] lg:w-[min(30vw,420px)] 2xl:w-[min(27vw,560px)] [@media(min-width:2200px)]:w-[min(24vw,680px)]">
+            <div className="relative grid aspect-square w-[min(80vw,330px)] place-items-center sm:w-[min(52vw,420px)] lg:w-[min(36vw,560px)] 2xl:w-[min(31vw,680px)] [@media(min-width:2200px)]:w-[min(28vw,800px)]">
               <div key={item.image} className="animate-hero-copy-fade relative aspect-square w-full max-w-full">
                 <HeroProductImage src={item.image} alt={item.name} priority={currentIndex === 0} />
               </div>
