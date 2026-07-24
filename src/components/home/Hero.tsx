@@ -3,9 +3,7 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
-
 // circular bar
-
 const heroItems = [
   {
     name: "Chicken Pulao",
@@ -78,14 +76,6 @@ const heroItems = [
     title: "Gol Gappy,",
     highlight: "Crisp & Tangy",
     description: "Crunchy shells with punchy pani and chatpata filling for a lively street-style snack.",
-  },
-  {
-    name: "Samosa",
-    urduName: "سموسے",
-    image: "/newsamosa.png",
-    title: "Golden Samosay,",
-    highlight: "Crisp & Warm",
-    description: "Flaky golden pockets with a savory filling, made for tea-time cravings and shared plates.",
   },
 ];
 
