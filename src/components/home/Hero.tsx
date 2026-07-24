@@ -82,7 +82,7 @@ const heroItems = [
   {
     name: "Samosa",
     urduName: "سموسے",
-    image: "/samosa.png",
+    image: "/newsamosa.png",
     title: "Golden Samosay,",
     highlight: "Crisp & Warm",
     description: "Flaky golden pockets with a savory filling, made for tea-time cravings and shared plates.",
@@ -105,11 +105,6 @@ export default function Hero() {
 
     return () => window.clearInterval(interval);
   }, [rotationStep]);
-
-  const selectItem = (index: number) => {
-    setCurrentIndex(index);
-    setRotation(-index * rotationStep);
-  };
 
   const item = heroItems[currentIndex];
 
@@ -136,7 +131,7 @@ export default function Hero() {
           </div>
 
           <div className="relative z-10 flex w-full justify-center lg:w-1/2 lg:justify-end">
-            <CircularHeroDisplay currentIndex={currentIndex} rotation={rotation} onSelect={selectItem} />
+            <CircularHeroDisplay currentIndex={currentIndex} rotation={rotation} />
           </div>
         </div>
       </div>
@@ -147,11 +142,9 @@ export default function Hero() {
 function CircularHeroDisplay({
   currentIndex,
   rotation,
-  onSelect,
 }: {
   currentIndex: number;
   rotation: number;
-  onSelect: (index: number) => void;
 }) {
   const visibleItems = Array.from({ length: 6 }, (_, offset) => {
     const itemIndex = (currentIndex + offset) % heroItems.length;
@@ -177,12 +170,9 @@ function CircularHeroDisplay({
           const zIndex = isActive ? 30 : 20 - dish.displayIndex;
 
           return (
-            <button
+            <div
               key={dish.name}
-              type="button"
-              onClick={() => onSelect(dish.itemIndex)}
-              aria-label={`Show ${dish.name}`}
-              className="absolute grid -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full outline-none transition-opacity duration-[800ms] ease-[cubic-bezier(0.4,0,0.2,1)] focus-visible:ring-2 focus-visible:ring-brand-primary/45"
+              className="absolute grid -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full transition-opacity duration-[800ms] ease-[cubic-bezier(0.4,0,0.2,1)]"
               style={{
                 left: `${position.x}%`,
                 top: `${position.y}%`,
@@ -208,7 +198,7 @@ function CircularHeroDisplay({
                   unoptimized
                 />
               </div>
-            </button>
+            </div>
           );
         })}
       </div>
