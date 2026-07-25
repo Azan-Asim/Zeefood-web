@@ -29,10 +29,12 @@ export default function Navbar() {
       <nav
         className={`fixed left-0 right-0 top-0 z-[100] w-full overflow-hidden transition-all duration-300 ${
           isScrolled
-            ? "h-16 border-b border-brand-primary/10 bg-white/90 shadow-sm backdrop-blur-md"
-            : "h-20 border-b border-brand-primary/10 bg-gradient-to-r from-white via-orange-50/80 to-white"
+            ? "h-16 border-b border-brand-primary/10 bg-white/90 shadow-md backdrop-blur-md"
+            : "h-20 border-b border-brand-primary/10 bg-white"
         }`}>
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(248,114,5,0.16),transparent_42%),linear-gradient(125deg,rgba(248,114,5,0.06),transparent_36%,rgba(248,114,5,0.05))]" />
+        {isScrolled && (
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(248,114,5,0.08),transparent_42%)]" />
+        )}
         <div className="site-container relative flex h-full items-center">
           <BrandMark />
 

@@ -26,10 +26,39 @@ type ProductWithOptionalDetails = Product & {
 // ─────────────────────────────────────────────────────────────────────────────
 const DRM_BASE = "https://drm.devsinntechnologies.com";
 
-function productImageUrl(image: string | null): string {
-  if (!image) return "/images/placeholder-food.png";
-  if (image.startsWith("http")) return image;
-  return `${DRM_BASE}/${image.replace(/^\//, "")}`;
+function getDishFallbackImage(name?: string, categoryName?: string): string {
+  const n = (name || "").toLowerCase();
+  const c = (categoryName || "").toLowerCase();
+
+  if (n.includes("samosa") || n.includes("سموسہ")) return "/ssamosa.png";
+  if (n.includes("biryani") || n.includes("بریانی")) return "/biryani.png";
+  if (n.includes("pulao") || n.includes("پلاؤ") || n.includes("plao")) return "/chickenpulao.webp";
+  if (n.includes("nugget") || n.includes("نِگٹس") || n.includes("nugit")) return "/chickennuggets.webp";
+  if (n.includes("dahi bhall") || n.includes("دہی بھلے") || n.includes("bhala")) return "/dahibhallay.webp";
+  if (n.includes("dal") || n.includes("daal") || n.includes("دال")) return "/dalrice.webp";
+  if (n.includes("kabab") || n.includes("kebab") || n.includes("کباب") || n.includes("seekh")) return "/seekhkabab.webp";
+  if (n.includes("roll") || n.includes("رول")) return "/springrolls.webp";
+  if (n.includes("gol gapp") || n.includes("گول گپے")) return "/golgappy.png";
+  if (n.includes("chutni") || n.includes("چٹنی")) return "/chutni.png";
+  if (n.includes("bottal") || n.includes("bottle") || c.includes("mashrobat") || c.includes("مشروبات")) return "/drinks_compressed.webp";
+  if (n.includes("pan masala") || c.includes("azafi") || c.includes("اضافی")) return "/extra_items_compressed.webp";
+  if (c.includes("chat") || c.includes("چاٹ")) return "/chaat_compressed.webp";
+  if (c.includes("achar") || c.includes("اچار")) return "/achar_compressed.webp";
+  if (c.includes("frozen") || c.includes("فروزن")) return "/frozen_compressed.webp";
+  return "/desi_compressed.webp";
+}
+
+function productImageUrl(image?: string | null, productName?: string, categoryName?: string): string {
+  if (!image || image.trim() === "") {
+    return getDishFallbackImage(productName, categoryName);
+  }
+  if (image.startsWith("http://") || image.startsWith("https://")) return image;
+  if (image.startsWith("/uploads/") || image.startsWith("uploads/")) {
+    return `${DRM_BASE}/${image.replace(/^\//, "")}`;
+  }
+  if (image.startsWith("/")) return image;
+  if (image.startsWith("images/")) return `/${image}`;
+  return `${DRM_BASE}/${image}`;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -173,7 +202,6 @@ const CATEGORY_DISPLAY_MAP: Record<string, string> = {
 //   );
 // }
 
-
 // Retained temporarily as the previous card implementation for quick rollback.
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function ProductCard({
@@ -231,8 +259,6 @@ function ProductCard({
           />
         </div>
       </div>
-
-
 
       {/* MAIN CONTENT SECTION */}
       <div
@@ -435,7 +461,7 @@ export function VariantProductCard({
 }) {
   const [expanded, setExpanded] = useState(false);
   const [detailsOpen, setDetailsOpen] = useState(false);
-  const [selectedKey, setSelectedKey] = useState<string | null>(null);
+  const { cart } = useCart();
   const variants = product.variants ?? [];
   const visibleVariants = expanded ? variants : variants.slice(0, 3);
   const hasManyVariants = variants.length > 3;
@@ -453,13 +479,19 @@ export function VariantProductCard({
     variants.length > 0
       ? variants.reduce((lowest, option) => (option.price < lowest.price ? option : lowest), variants[0])
       : undefined;
+
+  // Derive cart quantity using strict productId:variantId matching
+  const getCartQty = (variantId?: string): number => {
+    const key = `${product.id}:${variantId ?? "base"}`;
+    const entry = cart.find(
+      (e) => `${e.item.id}:${e.item.selectedVariantId ?? "base"}` === key
+    );
+    return entry?.quantity ?? 0;
+  };
+
   const handleSelect = (variant?: ProductVariant) => {
     if (!isActive) return;
-
-    const key = variant?.id ?? "base";
-    setSelectedKey(key);
     onAddToCart(product, variant);
-    window.setTimeout(() => setSelectedKey(null), 650);
   };
 
   return (
@@ -496,27 +528,33 @@ export function VariantProductCard({
           {variants.length > 0 ? (
             <div className="flex flex-wrap gap-1.5">
               {visibleVariants.map((variant) => {
-                const isSelected = selectedKey === variant.id;
+                const cartQty = getCartQty(variant.id);
+                const isAdded = cartQty > 0;
 
                 return (
                   <button
                     key={variant.id}
                     type="button"
-                    disabled={!isActive || isSelected}
+                    disabled={!isActive}
                     onClick={() => handleSelect(variant)}
-                    className={`min-h-[30px] min-w-[58px] flex-1 rounded-xl border px-2 py-1 text-left text-[8px] font-black uppercase tracking-wider transition-all duration-300 sm:flex-none ${
-                      isSelected
+                    className={`relative min-h-[30px] min-w-[58px] flex-1 rounded-xl border px-2 py-1 text-left text-[8px] font-black uppercase tracking-wider transition-all duration-300 sm:flex-none ${
+                      isAdded
                         ? "border-brand-primary bg-brand-primary text-white"
                         : "border-gray-200 bg-white text-brand-dark hover:border-brand-primary hover:bg-brand-primary/5 hover:text-brand-primary"
                     } disabled:cursor-not-allowed disabled:opacity-80`}
                   >
                     <span className="flex items-center gap-1 break-words">
-                      {isSelected && <span className="inline-block h-2 w-2 rounded-full bg-white" />}
-                      {isSelected ? "Added" : variant.name}
+                      {isAdded && <span className="inline-block h-2 w-2 rounded-full bg-white" />}
+                      {isAdded ? "ADDED" : variant.name}
                     </span>
                     <span className="block text-[7px] opacity-70">
                       Rs. {variant.price.toLocaleString()}
                     </span>
+                    {isAdded && cartQty > 1 && (
+                      <span className="absolute -right-1.5 -top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-white text-[7px] font-black text-brand-primary shadow-sm ring-1 ring-brand-primary/30">
+                        {cartQty}
+                      </span>
+                    )}
                   </button>
                 );
               })}
@@ -524,10 +562,10 @@ export function VariantProductCard({
           ) : (
             <button
               type="button"
-              disabled={!isActive || selectedKey === "base"}
+              disabled={!isActive}
               onClick={() => handleSelect()}
               className={`flex min-h-[42px] w-full items-center justify-between gap-3 rounded-xl border px-3 py-2 text-left transition-all duration-300 ${
-                selectedKey === "base"
+                getCartQty() > 0
                   ? "border-brand-primary bg-brand-primary text-white"
                   : "border-gray-200 bg-white text-brand-dark hover:border-brand-primary hover:bg-brand-primary/5"
               }`}
@@ -537,11 +575,18 @@ export function VariantProductCard({
                   Standard
                 </span>
                 <span className="mt-1 text-[11px] font-black uppercase tracking-wider">
-                  {selectedKey === "base" ? "Added to cart" : "Single serving"}
+                  {getCartQty() > 0 ? "Added to cart" : "Single serving"}
                 </span>
               </span>
-              <span className="rounded-full bg-brand-primary/10 px-3 py-1 text-[9px] font-black uppercase tracking-wider text-brand-primary">
-                Add
+              <span className="relative">
+                <span className="rounded-full bg-brand-primary/10 px-3 py-1 text-[9px] font-black uppercase tracking-wider text-brand-primary">
+                  Add
+                </span>
+                {getCartQty() > 1 && (
+                  <span className="absolute -right-1.5 -top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-brand-primary text-[7px] font-black text-white shadow-sm">
+                    {getCartQty()}
+                  </span>
+                )}
               </span>
             </button>
           )}
@@ -553,15 +598,11 @@ export function VariantProductCard({
 
         <button
           type="button"
-          disabled={!isActive || selectedKey === (defaultVariant?.id ?? "base")}
+          disabled={!isActive}
           onClick={() => handleSelect(defaultVariant)}
-          className={`inline-flex min-h-9 w-full items-center justify-center rounded-full px-5 py-2 text-[10px] font-black uppercase tracking-widest text-white transition-all duration-300 ${
-            selectedKey === (defaultVariant?.id ?? "base")
-              ? "bg-brand-primary"
-              : "bg-brand-primary hover:-translate-y-0.5 hover:bg-[#e96500] hover:shadow-[0_14px_30px_rgba(248,114,5,0.26)]"
-          } disabled:cursor-not-allowed disabled:opacity-80`}
+          className="inline-flex min-h-9 w-full items-center justify-center rounded-full bg-brand-primary px-5 py-2 text-[10px] font-black uppercase tracking-widest text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#e96500] hover:shadow-[0_14px_30px_rgba(248,114,5,0.26)] disabled:cursor-not-allowed disabled:opacity-80"
         >
-          {selectedKey === (defaultVariant?.id ?? "base") ? "Added" : "Order Now"}
+          Order Now
         </button>
 
         {hasManyVariants && (
@@ -783,27 +824,21 @@ export default function OrderPage() {
               {t("exclusiveChefMeals")}
             </p>
 
-            {/* Search Bar */}
-            <div className="mb-4 flex justify-center">
-              <div className={`relative max-w-2xl transition-all duration-500 ease-out ${searchOpen ? "w-full" : "w-44"}`}>
-                <button
-                  type="button"
-                  onClick={() => setSearchOpen(true)}
-                  aria-label="Open search"
-                  className={`absolute left-0 top-0 z-10 flex h-12 items-center justify-center gap-2 rounded-2xl border border-brand-primary/15 font-black uppercase tracking-widest transition-all duration-300 ${searchOpen ? "pointer-events-none w-12 border-transparent text-brand-primary" : "w-full bg-[#fffdf8] text-brand-primary shadow-[0_12px_28px_rgba(248,114,5,0.12)] hover:-translate-y-0.5 hover:border-brand-primary/30 hover:bg-white hover:shadow-[0_16px_34px_rgba(248,114,5,0.16)]"}`}
-                >
-                  <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            {/* Static Full-Width Search Bar */}
+            <div className="mb-5 flex justify-center w-full">
+              <div className="relative w-full max-w-xl">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none z-10">
+                  <svg className="h-5 w-5 text-brand-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                   </svg>
-                  {!searchOpen && <span className="text-xs">Search</span>}
-                </button>
+                </div>
                 <input
                   type="search"
-                  placeholder="Search dishes..."
+                  placeholder="Search dishes (e.g. Biryani, بریانی)..."
                   defaultValue={searchQuery}
                   onFocus={() => setSearchOpen(true)}
                   onChange={(e) => handleSearchChange(e.target.value)}
-                  className={`h-12 rounded-2xl border border-brand-primary/10 bg-[#fffdf8]/80 py-3 pl-12 pr-4 text-sm font-bold text-brand-dark outline-none transition-all duration-500 placeholder:text-brand-dark/30 focus:border-brand-primary/40 focus:ring-2 focus:ring-brand-primary/10 ${searchOpen ? "w-full opacity-100" : "w-44 cursor-pointer opacity-0"}`}
+                  className="w-full h-12 rounded-2xl border border-brand-primary/20 bg-white/90 py-3 pl-11 pr-4 text-sm font-bold text-brand-dark outline-none shadow-sm transition-all duration-300 placeholder:text-brand-dark/40 focus:border-brand-primary/40 focus:bg-white focus:ring-4 focus:ring-brand-primary/10"
                 />
               </div>
             </div>
@@ -1042,13 +1077,14 @@ function CartContent({
                   className={`rounded-2xl border border-gray-200 bg-white p-3 shadow-[0_12px_32px_rgba(17,24,39,0.045)] transition-all duration-300 hover:border-brand-primary/20 ${language === "UR" ? "text-right" : ""}`}
                 >
                   <div className={`grid grid-cols-[64px_minmax(0,1fr)] gap-3 sm:grid-cols-[72px_minmax(0,1fr)] ${language === "UR" ? "direction-rtl" : ""}`}>
+                    {/* Fixed Object Cover Image Container */}
                     <div className="cart-item-image relative flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-brand-primary/10 bg-[#fbf7f2] sm:h-[72px] sm:w-[72px]">
                       <Image
                         src={c.item.image || "/images/placeholder-food.png"}
                         alt={c.item.name || "Cart item"}
                         fill
-                        className="!h-full !w-full !object-contain !object-center"
-                        style={{ objectFit: "contain", objectPosition: "center" }}
+                        className="!h-full !w-full !object-cover !object-center"
+                        style={{ objectFit: "cover", objectPosition: "center" }}
                         unoptimized
                       />
                     </div>
