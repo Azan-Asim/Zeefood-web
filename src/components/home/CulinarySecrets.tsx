@@ -38,9 +38,15 @@ const FEATURED_KITCHEN_CATEGORIES = ["desi", "frozen", "chat", "chaat", "achar"]
 const EXCLUDED_KITCHEN_PRODUCTS = ["sandal bottal", "pan masala", "dal mung", "bottal", "bottle"];
 
 function normalizeImage(image?: string | null) {
-  if (!image) return "/images/placeholder-food.png";
-  if (image.startsWith("http")) return image;
-  return `${DRM_BASE}/${image.replace(/^\//, "")}`;
+  const imgStr = (image || "").trim();
+  if (imgStr) {
+    if (imgStr.startsWith("http://") || imgStr.startsWith("https://")) return imgStr;
+    if (imgStr.startsWith("/uploads/") || imgStr.startsWith("uploads/")) {
+      return `${DRM_BASE}/${imgStr.replace(/^\//, "")}`;
+    }
+    return imgStr.startsWith("/") ? imgStr : `/${imgStr}`;
+  }
+  return "/fiery-wok.png";
 }
 
 function toProduct(product: RemoteProduct): Product {

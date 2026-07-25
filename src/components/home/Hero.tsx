@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 const heroItems = [
   {
     name: "Chicken Pulao",
-    urduName: "کباب",
+    urduName: "پلاؤ",
     image: "/chickenpulao.webp",
     title: "Premium Pulao,",
     highlight: "Served Fresh",
@@ -76,6 +76,14 @@ const heroItems = [
     title: "Gol Gappy,",
     highlight: "Crisp & Tangy",
     description: "Crunchy shells with punchy pani and chatpata filling for a lively street-style snack.",
+  },
+  {
+    name: "Samosa",
+    urduName: "سموسہ",
+    image: "/ssamosa.png",
+    title: "Crispy Samosa,",
+    highlight: "Golden & Desi",
+    description: "Perfectly crisp pastry filled with spiced potatoes and peas, a beloved desi street snack.",
   },
 ];
 
@@ -155,7 +163,8 @@ function CircularHeroDisplay({
           const isActive = dish.itemIndex === currentIndex;
           const angle = dish.displayIndex * 72 + 90;
           const position = isActive ? { x: 50, y: 50 } : getOrbitPosition(angle, 38);
-          const size = isActive ? 54 : dish.displayIndex === 1 || dish.displayIndex === 5 ? 17 : 14;
+          // Reduced active size from 54 to 46 to stop image overlapping
+          const size = isActive ? 46 : dish.displayIndex === 1 || dish.displayIndex === 5 ? 16 : 13;
           const opacity = isActive ? 1 : dish.displayIndex === 1 || dish.displayIndex === 5 ? 0.82 : 0.58;
           const zIndex = isActive ? 30 : 20 - dish.displayIndex;
 
@@ -184,7 +193,8 @@ function CircularHeroDisplay({
                   fill
                   sizes="(max-width: 640px) 48vw, (max-width: 1024px) 34vw, 360px"
                   className="object-contain p-[10%]"
-                  priority={dish.itemIndex === 0}
+                  priority={isActive}
+                  loading={isActive ? "eager" : "lazy"}
                   unoptimized
                 />
               </div>
@@ -193,11 +203,12 @@ function CircularHeroDisplay({
         })}
       </div>
 
+      {/* Urdu name display - Fixed line-height and position to prevent text clipping & overlap */}
       <div
         key={heroItems[currentIndex].urduName}
         lang="ur"
         dir="rtl"
-        className="font-ama-dhaba pointer-events-none absolute bottom-[10%] left-1/2 z-40 -translate-x-1/2 animate-hero-copy-fade whitespace-nowrap rounded-full border border-brand-primary/10 bg-[#fff8ef]/88 px-5 py-1 text-[clamp(1.45rem,6vw,2.35rem)] font-black leading-none text-brand-primary/85 shadow-[0_12px_28px_rgba(248,114,5,0.12)] backdrop-blur-sm sm:bottom-[11%] lg:text-[clamp(2rem,2.6vw,2.9rem)]"
+        className="font-ama-dhaba pointer-events-none absolute bottom-[9%] left-1/2 z-40 -translate-x-1/2 animate-hero-copy-fade whitespace-nowrap rounded-full border border-brand-primary/15 bg-[#fff8ef]/95 px-5 py-1 text-[clamp(1.2rem,4.5vw,2rem)] font-black leading-normal text-brand-primary shadow-[0_8px_20px_rgba(248,114,5,0.15)] backdrop-blur-sm sm:bottom-[11%] lg:text-[clamp(1.6rem,2.2vw,2.4rem)]"
       >
         {heroItems[currentIndex].urduName}
       </div>

@@ -20,10 +20,16 @@ type RemoteProduct = {
 
 const DRM_BASE = "https://drm.devsinntechnologies.com";
 
-function normalizeImage(image?: string) {
-  if (!image) return "/images/home/menu/placeholder.png";
-  if (image.startsWith("http")) return image;
-  return `${DRM_BASE}/${image.replace(/^\//, "")}`;
+function normalizeImage(image?: string | null) {
+  const imgStr = (image || "").trim();
+  if (imgStr) {
+    if (imgStr.startsWith("http://") || imgStr.startsWith("https://")) return imgStr;
+    if (imgStr.startsWith("/uploads/") || imgStr.startsWith("uploads/")) {
+      return `${DRM_BASE}/${imgStr.replace(/^\//, "")}`;
+    }
+    return imgStr.startsWith("/") ? imgStr : `/${imgStr}`;
+  }
+  return "/fiery-wok.png";
 }
 
 function toProduct(product: RemoteProduct): Product {

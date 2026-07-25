@@ -83,23 +83,26 @@ function migrateCart(cart: CartItem[]): CartItem[] {
 }
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
-  const [cart, setCart] = useState<CartItem[]>(() => {
-    if (typeof window === "undefined") return [];
-
-    const savedCart = window.localStorage.getItem("zeefood_cart");
-    if (!savedCart) return [];
-
-    try {
-      return migrateCart(JSON.parse(savedCart) as CartItem[]);
-    } catch (error) {
-      console.error("Failed to parse cart", error);
-      return [];
-    }
-  });
+  const [cart, setCart] = useState<CartItem[]>([]);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    window.localStorage.setItem("zeefood_cart", JSON.stringify(cart));
-  }, [cart]);
+    try {
+      const savedCart = window.localStorage.getItem("zeefood_cart");
+      if (savedCart) {
+        setCart(migrateCart(JSON.parse(savedCart) as CartItem[]));
+      }
+    } catch (error) {
+      console.error("Failed to parse cart", error);
+    }
+    setIsLoaded(true);
+  }, []);
+
+  useEffect(() => {
+    if (isLoaded) {
+      window.localStorage.setItem("zeefood_cart", JSON.stringify(cart));
+    }
+  }, [cart, isLoaded]);
 
   const addToCart = (rawItem: CartProduct) => {
     const item = normalizeCartItem(rawItem);

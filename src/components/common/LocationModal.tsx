@@ -2,7 +2,7 @@
 
 import { type ReactNode, useEffect, useState } from "react";
 import Image from "next/image";
-import { Check, ChevronDown, LocateFixed, X } from "lucide-react";
+import { Check, ChevronDown, MapPin, X } from "lucide-react";
 
 type OrderType = "delivery" | "pickup";
 
@@ -22,11 +22,6 @@ export default function LocationModal() {
   const handleOrderChoice = (type: OrderType) => {
     setOrderType(type);
     setLocation("");
-    setIsSelectorOpen(false);
-  };
-
-  const handleUseCurrentLocation = () => {
-    setLocation(orderType === "pickup" ? "Zee Food Gallery - Samanabad" : "Samanabad");
     setIsSelectorOpen(false);
   };
 
@@ -95,17 +90,20 @@ export default function LocationModal() {
               </div>
             </div>
 
+            {/* --- Google Maps Link with exact point pin --- */}
             <div className="mt-5 text-center">
-              <p className="text-base font-black text-brand-dark">Please select your {isPickup ? "branch" : "area"}</p>
-              <button
-                type="button"
-                onClick={handleUseCurrentLocation}
+              <p className="text-base font-black text-brand-dark">Restaurant Location</p>
+              <a
+                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent("Zee Food Gallery, " + PICKUP_ADDRESS)}`}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="mt-3 inline-flex min-h-10 items-center justify-center gap-2 rounded-full border border-brand-primary/15 bg-white/90 px-6 text-sm font-bold text-brand-dark shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-brand-primary/35 hover:bg-brand-primary/10"
               >
-                <LocateFixed className="h-4 w-4" />
-                Use Current Location
-              </button>
+                <MapPin className="h-4 w-4" />
+                Open in Google Maps
+              </a>
             </div>
+            {/* ------------------------------------------- */}
 
             <div className="mt-4">
               <SelectorField
