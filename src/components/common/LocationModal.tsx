@@ -2,7 +2,7 @@
 
 import { type ReactNode, useEffect, useState } from "react";
 import Image from "next/image";
-import { Check, ChevronDown, MapPin, X } from "lucide-react";
+import { MapPin, Navigation, X, Check, Loader2, LocateFixed } from "lucide-react";
 
 type OrderType = "delivery" | "pickup";
 
@@ -11,31 +11,59 @@ const PICKUP_ADDRESS = "464-Sirhindi Road, Near Gourmet Bakers, First Round Abou
 export default function LocationModal() {
   const [isOpen, setIsOpen] = useState(false);
   const [orderType, setOrderType] = useState<OrderType>("delivery");
-  const [location, setLocation] = useState("");
-  const [isSelectorOpen, setIsSelectorOpen] = useState(false);
+  
+  // Geolocation states
+  const [locStatus, setLocStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [locationName, setLocationName] = useState<string>("");
+  const [userCoords, setUserCoords] = useState<{ lat: number; lng: number } | null>(null);
 
   useEffect(() => {
     const openTimer = setTimeout(() => setIsOpen(true), 500);
     return () => clearTimeout(openTimer);
   }, []);
 
+  const handleFetchLocation = () => {
+    if (!("geolocation" in navigator)) {
+      setLocStatus("error");
+      setLocationName("Geolocation not supported");
+      return;
+    }
+
+    setLocStatus("loading");
+    setLocationName("Detecting location...");
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        setUserCoords({ lat: latitude, lng: longitude });
+        setLocStatus("success");
+        setLocationName(`GPS Location Detected`);
+      },
+      (error) => {
+        console.warn("Location permission issue:", error.message);
+        setLocStatus("error");
+        setLocationName("Location access denied or failed");
+      },
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+    );
+  };
+
   const handleOrderChoice = (type: OrderType) => {
     setOrderType(type);
-    setLocation("");
-    setIsSelectorOpen(false);
   };
 
   const handleSelect = () => {
-    if (!location) return;
+    if (orderType === "delivery" && locStatus !== "success") return;
 
     sessionStorage.setItem(
       "userLocation",
       JSON.stringify({
         orderType,
         city: "Lahore",
-        area: orderType === "delivery" ? location : "Samanabad",
-        branch: orderType === "pickup" ? location : undefined,
-        address: orderType === "pickup" ? PICKUP_ADDRESS : undefined,
+        deliveryZone: "Samanabad",
+        branch: "Zee Food Gallery - Samanabad",
+        address: orderType === "pickup" ? PICKUP_ADDRESS : locationName,
+        coordinates: userCoords,
         timestamp: new Date().toISOString(),
       }),
     );
@@ -45,7 +73,8 @@ export default function LocationModal() {
   if (!isOpen) return null;
 
   const isPickup = orderType === "pickup";
-  const options = isPickup ? ["Zee Food Gallery - Samanabad"] : ["Samanabad"];
+  const isDeliveryLocationReady = !isPickup && locStatus === "success"; 
+  const isButtonDisabled = !isPickup && locStatus !== "success"; 
 
   return (
     <div className="fixed inset-0 z-[1000] flex items-center justify-center overflow-hidden bg-brand-dark/70 p-4 backdrop-blur-[8px] animate-in fade-in duration-300 ease-in-out">
@@ -90,46 +119,114 @@ export default function LocationModal() {
               </div>
             </div>
 
-            {/* --- Google Maps Link with exact point pin --- */}
             <div className="mt-5 text-center">
-              <p className="text-base font-black text-brand-dark">Restaurant Location</p>
-              <a
-                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent("Zee Food Gallery, " + PICKUP_ADDRESS)}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-3 inline-flex min-h-10 items-center justify-center gap-2 rounded-full border border-brand-primary/15 bg-white/90 px-6 text-sm font-bold text-brand-dark shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-brand-primary/35 hover:bg-brand-primary/10"
-              >
-                <MapPin className="h-4 w-4" />
-                Open in Google Maps
-              </a>
+              <p className="text-base font-black text-brand-dark">Your Location</p>
             </div>
-            {/* ------------------------------------------- */}
 
-            <div className="mt-4">
-              <SelectorField
-                label={isPickup ? "Select Branch" : "Select Area / Sub Region"}
-                value={location}
-                placeholder={isPickup ? "Select Branch" : "Select Area / Sub Region"}
-                open={isSelectorOpen}
-                options={options}
-                onToggle={() => setIsSelectorOpen((open) => !open)}
-                onChange={(value) => {
-                  setLocation(value);
-                  setIsSelectorOpen(false);
-                }}
-              />
-            </div>
+            {!isPickup ? (
+              <div className="mt-3 space-y-3.5">
+                <div className="mx-auto w-full max-w-[330px]">
+                  
+                  {/* IDLE STATE */}
+                  {locStatus === "idle" && (
+                    <button
+                      type="button"
+                      onClick={handleFetchLocation}
+                      className="group flex min-h-11 w-full items-center justify-center gap-2.5 rounded-full border border-gray-200 bg-gray-50 px-4 py-2 text-sm font-bold text-gray-700 shadow-sm transition-all duration-300 hover:border-gray-300 hover:bg-gray-100"
+                    >
+                      <LocateFixed className="h-4 w-4 text-gray-600 transition-transform group-hover:scale-110" />
+                      Use Current Location
+                    </button>
+                  )}
+
+                  {/* LOADING & SUCCESS STATE */}
+                  {(locStatus === "loading" || locStatus === "success") && (
+                    <button
+                      type="button"
+                      disabled={locStatus === "loading"}
+                      className="flex min-h-11 w-full items-center justify-between gap-2.5 rounded-full border border-brand-primary/20 bg-white/95 px-4.5 py-2 text-left shadow-sm transition-all duration-300"
+                    >
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand-primary/10 text-brand-primary">
+                          {locStatus === "loading" ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                          ) : (
+                            <Navigation className="h-3.5 w-3.5 fill-current" />
+                          )}
+                        </div>
+                        <span className="truncate text-xs font-bold text-brand-dark/80">
+                          {locationName}
+                        </span>
+                      </div>
+                      {locStatus === "success" && (
+                        <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-500 text-white">
+                          <Check className="h-3 w-3" strokeWidth={3} />
+                        </span>
+                      )}
+                    </button>
+                  )}
+
+                  {/* PERFECTLY MATCHED ERROR STATE (Based on your image) */}
+                  {locStatus === "error" && (
+                    <button
+                      type="button"
+                      onClick={handleFetchLocation}
+                      className="flex min-h-[52px] w-full items-center justify-between rounded-full border border-red-200/80 bg-[#fff3f3] p-1.5 pr-2 shadow-sm transition-all duration-300 hover:border-red-300 hover:bg-[#ffeaea]"
+                    >
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#ffdfdf] text-[#ea333e]">
+                          <Navigation className="h-4 w-4 fill-current" />
+                        </div>
+                        <span className="truncate text-[13px] font-bold text-[#ea333e]">
+                          {locationName}
+                        </span>
+                      </div>
+                      <span className="shrink-0 rounded-full bg-[#ffdfdf] px-4 py-1.5 text-[11px] font-black uppercase tracking-wider text-[#ea333e]">
+                        Retry
+                      </span>
+                    </button>
+                  )}
+                </div>
+
+                {/* Delivery Zone (Shows ONLY AFTER successful fetch) */}
+                {isDeliveryLocationReady && (
+                  <div className="text-center relative z-10 animate-in slide-in-from-top-2 fade-in duration-300">
+                    <span className="mb-1 block text-xs font-black uppercase tracking-wider text-brand-dark/50">
+                      Delivery Zone
+                    </span>
+                    <div className="relative mx-auto w-full max-w-[330px]">
+                      <div className="mx-auto inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full border border-brand-primary/15 bg-white/95 px-5 text-center text-sm font-black text-brand-dark shadow-sm">
+                        <MapPin className="h-4 w-4 text-brand-primary" />
+                        <span>Samanabad</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="mt-3 text-center">
+                <a
+                  href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent("Zee Food Gallery, " + PICKUP_ADDRESS)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-brand-primary/15 bg-white/90 px-6 text-sm font-bold text-brand-dark shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-brand-primary/35 hover:bg-brand-primary/10"
+                >
+                  <MapPin className="h-4 w-4 text-brand-primary" />
+                  Open in Google Maps
+                </a>
+              </div>
+            )}
 
             <button
-              disabled={!location}
               onClick={handleSelect}
+              disabled={isButtonDisabled}
               className={`mt-5 inline-flex min-h-12 w-full items-center justify-center rounded-full px-7 text-sm font-black transition-all duration-300 ease-in-out ${
-                location
-                  ? "bg-brand-primary text-white shadow-[0_16px_32px_rgba(248,114,5,0.24)] hover:-translate-y-0.5 hover:bg-brand-primary/90 hover:shadow-[0_18px_34px_rgba(248,114,5,0.30)]"
-                  : "bg-[#cfcfcf] text-brand-dark/35"
+                isButtonDisabled
+                  ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                  : "bg-brand-primary text-white shadow-[0_16px_32px_rgba(248,114,5,0.24)] hover:-translate-y-0.5 hover:bg-brand-primary/90 hover:shadow-[0_18px_34px_rgba(248,114,5,0.30)]"
               }`}
             >
-              {isPickup ? "Confirm Pickup" : "Select"}
+              (Only in Samanabad)
             </button>
           </section>
 
@@ -140,61 +237,6 @@ export default function LocationModal() {
             </span>
           </footer>
         </div>
-      </div>
-    </div>
-  );
-}
-
-function SelectorField({
-  label,
-  value,
-  placeholder,
-  open,
-  options,
-  onToggle,
-  onChange,
-}: {
-  label: string;
-  value: string;
-  placeholder: string;
-  open: boolean;
-  options: string[];
-  onToggle: () => void;
-  onChange: (value: string) => void;
-}) {
-  return (
-    <div className={`text-center transition-all duration-200 ${open ? "relative z-20" : "relative z-10"}`}>
-      <span className="mb-1.5 block text-sm font-black text-brand-dark">{label}</span>
-      <div className="relative mx-auto w-full max-w-[330px]">
-        <button
-          type="button"
-          aria-expanded={open}
-          onClick={onToggle}
-          className={`mx-auto inline-flex min-h-11 w-full items-center justify-center gap-3 rounded-full border bg-white/95 px-5 text-center text-sm font-black shadow-sm transition-all duration-300 ${
-            open
-              ? "border-brand-primary text-brand-primary shadow-[0_14px_26px_rgba(248,114,5,0.14)]"
-              : "border-brand-primary/15 text-brand-dark/75 hover:border-brand-primary/35 hover:text-brand-primary"
-          }`}
-        >
-          <span>{value || placeholder}</span>
-          <ChevronDown className={`h-4 w-4 transition-transform duration-300 ${open ? "rotate-180" : ""}`} />
-        </button>
-
-        {open && (
-          <div className="mx-auto mt-2 w-[88%] overflow-hidden rounded-2xl border border-brand-primary/15 bg-white shadow-[0_12px_24px_rgba(17,24,39,0.08)] animate-in fade-in slide-in-from-top-1 duration-150">
-            {options.map((option) => (
-              <button
-                key={option}
-                type="button"
-                onClick={() => onChange(option)}
-                className="relative flex min-h-10 w-full items-center justify-center px-5 text-center text-sm font-bold text-brand-dark transition-colors duration-200 hover:bg-brand-primary/10 hover:text-brand-primary"
-              >
-                <span>{option}</span>
-                {value === option && <Check className="absolute right-5 h-4 w-4 text-brand-primary" strokeWidth={2.4} />}
-              </button>
-            ))}
-          </div>
-        )}
       </div>
     </div>
   );
