@@ -4,13 +4,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { ShoppingCart, X, Trash2, Plus, Minus, ArrowRight } from "lucide-react"; 
+import { ShoppingCart, X, Trash2, Plus, Minus, ArrowRight, MapPin, CheckCircle2 } from "lucide-react"; 
 import { useCart } from "@/context/CartContext";
+import { createPortal } from "react-dom";
 
 const navLinks = [
   { name: "Home", href: "/" },
   { name: "Deals", href: "/deals" },
-  { name: "View Menu", href: "/menu" },
+  { name: "Menu", href: "/menu" },
   { name: "Our Story", href: "/about" },
 ];
 
@@ -19,6 +20,8 @@ export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<"delivery" | "pickup">("delivery");
 
   // Cart Context synchronization with explicit any cast to prevent TS errors
   const cartContext = useCart() as any;
@@ -31,8 +34,6 @@ export default function Navbar() {
   const deliveryCharges = 150;
   const total = cartTotal + (cartTotal > 0 ? deliveryCharges : 0);
 
-  const isOrderPage = pathname === "/menu" || pathname === "/order" || pathname === "/deals";
-
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll);
@@ -40,40 +41,51 @@ export default function Navbar() {
   }, []);
 
   useEffect(() => {
-    if (isCartOpen || isMobileMenuOpen) {
+    if (isCartOpen || isMobileMenuOpen || isLocationModalOpen) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "unset";
     }
-  }, [isCartOpen, isMobileMenuOpen]);
+  }, [isCartOpen, isMobileMenuOpen, isLocationModalOpen]);
 
-  // Clean, professional WhatsApp Message Formatting with bold item names and new lines
+  // Clean, professional WhatsApp Message Formatting & Cart Clearing on Checkout
   const handleWhatsAppCheckout = () => {
     if (cartItems.length === 0) return;
     
     let msg = "🛒 *New Order - Zee Food Gallery*\n";
     msg += "━━━━━━━━━━━━━━━━━━━\n\n";
-    msg += "📋 *Order Items:*\n";
+    msg += "📋 *Order Items:*\n\n";
     
     cartItems.forEach((c: any, index: number) => {
       const itemData = c.item || c;
       const itemName = itemData.name || "Dish";
-      const variantText = itemData.selectedVariantName ? ` (${itemData.selectedVariantName})` : "";
+      const variantText = itemData.selectedVariantName ? `(${itemData.selectedVariantName})` : "";
       const priceVal = typeof itemData.unitPrice === "number" ? itemData.unitPrice : (Number(String(itemData.price || 0).replace(/[^0-9]/g, "")) || 0);
       const itemTotal = priceVal * (c.quantity || 1);
       
-      msg += `*${index + 1}. ${itemName}${variantText}*\n`;
-      msg += `Quantity: ${c.quantity} Plate | Price: Rs. ${itemTotal.toLocaleString()}\n\n`;
+      msg += `🔸 *Item ${index + 1}:*\n`;
+      msg += `Name: ${itemName} ${variantText}\n`;
+      msg += `Qty: ${c.quantity} | Total: Rs. ${itemTotal.toLocaleString()}\n`;
+      msg += "------------------------\n";
     });
 
-    msg += "━━━━━━━━━━━━━━━━━━━\n";
+    msg += "\n━━━━━━━━━━━━━━━━━━━\n";
     msg += `📦 Subtotal: Rs. ${cartTotal.toLocaleString()}\n`;
     msg += `🛵 Delivery Fee: Rs. ${deliveryCharges}\n`;
-    msg += `💰 *Total Amount: Rs. ${total.toLocaleString()}*\n`;
+    msg += `💰 *Grand Total: Rs. ${total.toLocaleString()}*\n`;
     msg += "━━━━━━━━━━━━━━━━━━━\n\n";
     msg += "*Please confirm my order. Thank you! 🙏*";
 
     window.open(`https://wa.me/923354153368?text=${encodeURIComponent(msg)}`, "_blank", "noopener,noreferrer");
+
+    // Automatically zero out / clear cart items once order is placed on WhatsApp
+    cartItems.forEach((c: any) => {
+      const item = c.item || c;
+      const itemId = item.id;
+      const variantId = item.selectedVariantId;
+      updateQuantity(itemId, -999, variantId);
+    });
+
     setIsCartOpen(false);
   };
 
@@ -103,16 +115,24 @@ export default function Navbar() {
             ))}
           </div>
 
-          <div className="flex flex-shrink-0 items-center gap-4">
-            {/* Desktop Cart Button with exact rounded-full shape */}
+          <div className="flex flex-shrink-0 items-center gap-3">
+            {/* Location Button */}
+            <button
+              onClick={() => setIsLocationModalOpen(true)}
+              className="hidden sm:inline-flex items-center gap-1.5 rounded-full border border-brand-primary/20 bg-brand-surface px-4 py-2 text-xs font-bold text-brand-dark transition-all hover:border-brand-primary hover:text-brand-primary"
+            >
+              <MapPin size={14} className="text-brand-primary" />
+              <span>Samanabad</span>
+            </button>
+
             <button
               onClick={() => setIsCartOpen(true)}
-              className="hidden min-h-9 items-center justify-center gap-2 rounded-full bg-brand-primary px-5 text-sm font-bold text-white shadow-[0_10px_22px_rgba(248,114,5,0.22)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-brand-primary/90 hover:shadow-[0_14px_28px_rgba(248,114,5,0.28)] lg:inline-flex"
+              className="inline-flex min-h-11 items-center justify-center gap-2.5 rounded-full bg-brand-primary px-6 py-2.5 text-sm font-black uppercase tracking-[0.2em] text-white shadow-[0_12px_28px_rgba(248,114,5,0.24)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-brand-primary/95 hover:shadow-[0_16px_32px_rgba(248,114,5,0.32)]"
             >
               <ShoppingCart className="h-4 w-4" />
               <span>Cart</span>
               {totalItems > 0 && (
-                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white text-xs font-bold text-brand-primary">
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white text-xs font-black text-brand-primary">
                   {totalItems}
                 </span>
               )}
@@ -132,33 +152,89 @@ export default function Navbar() {
         </div>
       </nav>
 
-      {/* Mobile Sticky Action Bar with Centered Content */}
-      {!isOrderPage && (
-        <div className="fixed bottom-4 left-4 right-4 z-[90] lg:hidden animate-in fade-in slide-in-from-bottom-10">
-          {totalItems > 0 ? (
+      {/* Location Modal Portal */}
+      {isLocationModalOpen && createPortal(
+        <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm" onClick={() => setIsLocationModalOpen(false)}>
+          <div 
+            className="relative w-full max-w-[460px] rounded-[32px] bg-[#fbf7f2] p-6 shadow-2xl border border-brand-primary/10 text-center"
+            onClick={(e) => e.stopPropagation()}
+          >
             <button
-              onClick={() => setIsCartOpen(true)}
-              className="flex w-full items-center justify-center gap-4 rounded-full bg-brand-primary p-4 text-sm font-bold uppercase tracking-widest text-white shadow-2xl transition-transform active:scale-95"
+              onClick={() => setIsLocationModalOpen(false)}
+              className="absolute right-5 top-5 flex h-9 w-9 items-center justify-center rounded-full bg-white text-gray-500 shadow-sm transition-all hover:bg-brand-primary/10 hover:text-brand-primary"
             >
-              <div className="flex items-center gap-2">
-                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/20 text-xs">
-                  {totalItems}
-                </span>
-                <span>View Cart</span>
-              </div>
-              <span>•</span>
-              <span>Rs. {total}</span>
+              <X size={20} strokeWidth={2.5} />
             </button>
-          ) : (
-            <Link
-              href="/menu"
-              className="flex w-full items-center justify-center gap-2 rounded-full bg-brand-primary p-4 text-sm font-bold uppercase tracking-widest text-white shadow-2xl transition-transform active:scale-95"
-            >
-              <ShoppingCart className="h-5 w-5" />
-              <span>Order Now</span>
-            </Link>
-          )}
-        </div>
+
+            <div className="mb-6 flex flex-col items-center">
+              <div className="relative h-16 w-16 mb-2">
+                <Image src="/fiery-wok.png" alt="Zee Food Gallery" fill className="object-contain" unoptimized />
+              </div>
+              <span className="text-[10px] font-black uppercase tracking-[0.25em] text-brand-dark/45">Zee Food Gallery</span>
+              <span lang="ur" dir="rtl" className="font-ama-dhaba text-[24px] font-black leading-tight text-brand-primary">
+                اماں جی کا ڈھابہ
+              </span>
+            </div>
+
+            <div className="mb-6 flex rounded-full bg-gray-200/70 p-1">
+              <button
+                type="button"
+                onClick={() => setActiveTab("delivery")}
+                className={`flex-1 rounded-full py-2.5 text-xs font-black uppercase tracking-wider transition-all ${
+                  activeTab === "delivery" ? "bg-brand-primary text-white shadow-md" : "text-brand-dark/70 hover:text-brand-dark"
+                }`}
+              >
+                Delivery
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab("pickup")}
+                className={`flex-1 rounded-full py-2.5 text-xs font-black uppercase tracking-wider transition-all ${
+                  activeTab === "pickup" ? "bg-brand-primary text-white shadow-md" : "text-brand-dark/70 hover:text-brand-dark"
+                }`}
+              >
+                Pick-Up
+              </button>
+            </div>
+
+            <p className="mb-4 text-xs font-black uppercase tracking-widest text-brand-dark/60">Your Location</p>
+
+            <div className="mb-4 flex items-center justify-between rounded-2xl border border-gray-200 bg-white px-4 py-3 shadow-sm">
+              <div className="flex items-center gap-3">
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-primary/10 text-brand-primary">
+                  <MapPin size={16} />
+                </div>
+                <span className="text-xs font-bold text-brand-dark">GPS Location Detected</span>
+              </div>
+              <CheckCircle2 size={18} className="text-green-500" />
+            </div>
+
+            <p className="mb-2 text-[10px] font-black uppercase tracking-widest text-brand-dark/50">Delivery Zone</p>
+
+            <div className="mb-6 flex items-center justify-center gap-2 rounded-2xl border border-brand-primary/30 bg-white px-4 py-3.5 shadow-sm">
+              <MapPin size={16} className="text-brand-primary" />
+              <span className="text-xs font-black uppercase tracking-wider text-brand-dark">Samanabad</span>
+            </div>
+
+            <div className="flex justify-center w-full px-2 mb-4">
+              <button
+                type="button"
+                onClick={() => setIsLocationModalOpen(false)}
+                className="flex w-full max-w-[340px] h-[48px] items-center justify-center rounded-full bg-brand-primary text-center text-xs font-black uppercase tracking-[0.24em] text-white shadow-[0_12px_28px_rgba(248,114,5,0.25)] transition-all duration-300 hover:bg-[#e96500]"
+              >
+                (Only in Samanabad)
+              </button>
+            </div>
+
+            <div className="mt-6 flex flex-col items-center gap-2 border-t border-gray-200/60 pt-4">
+              <span className="text-[8px] font-black uppercase tracking-[0.4em] text-gray-400">Powered By</span>
+              <a href="https://www.devsinntechnologies.com/" target="_blank" rel="noopener noreferrer" className="relative h-6 w-28 transition-transform hover:scale-105">
+                <Image src="/devsinnlogo0.svg" alt="Dev's Inn Technologies" fill className="object-contain" unoptimized />
+              </a>
+            </div>
+          </div>
+        </div>,
+        document.body
       )}
 
       {/* Cart Drawer Modal */}
@@ -314,6 +390,17 @@ export default function Navbar() {
           </nav>
 
           <div className="mt-auto border-t border-brand-primary/10 pt-10">
+            <button
+              onClick={() => {
+                setIsMobileMenuOpen(false);
+                setIsLocationModalOpen(true);
+              }}
+              className="mb-3 flex min-h-11 w-full items-center justify-center gap-2 rounded-full border border-brand-primary/30 bg-brand-surface px-7 text-center text-sm font-bold text-brand-dark transition-all hover:bg-brand-primary/10 hover:text-brand-primary"
+            >
+              <MapPin size={18} className="text-brand-primary" />
+              <span>Select Location (Samanabad)</span>
+            </button>
+
             <button
               onClick={() => {
                 setIsMobileMenuOpen(false);

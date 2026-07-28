@@ -114,7 +114,7 @@ export default function Footer() {
           </div>
         </div> */}
 
-        <div className="flex flex-col md:flex-row items-center justify-between gap-5 py-6 border-b border-gray-100 sm:py-8 lg:py-9 2xl:py-10">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4 py-5 border-b border-gray-100 sm:py-6 lg:py-7 2xl:py-8">
           {/* Left Text Section (Centered on Mobile) */}
           <div className="text-center md:text-left w-full md:w-auto">
             <h3 className="text-2xl lg:text-3xl font-medium text-brand-dark tracking-tight">
@@ -141,10 +141,10 @@ export default function Footer() {
         </div>
 
         {/* MAIN FOOTER GRID */}
-        <div className="grid grid-cols-1 gap-7 py-6 sm:grid-cols-2 md:gap-8 lg:grid-cols-5 lg:gap-9 2xl:gap-10 2xl:py-8">
+        <div className="grid grid-cols-1 gap-5 py-5 sm:grid-cols-2 md:gap-6 lg:grid-cols-5 lg:gap-7 2xl:gap-8 2xl:py-6">
 
           {/* Brand Column */}
-          <div className="lg:col-span-2 flex flex-col gap-6">
+          <div className="lg:col-span-2 flex flex-col gap-4">
             <Link href="/" className="inline-flex w-fit max-w-full items-center gap-3 no-underline">
               <span className="relative block h-20 w-24 shrink-0">
                 <Image
@@ -185,11 +185,11 @@ export default function Footer() {
           {/* Links Columns */}
           {Object.entries(footerLinks).map(([title, links]) => (
             <div key={title}>
-              <h4 className="text-xs font-medium uppercase tracking-[0.2em] text-brand-dark mb-6 flex items-center gap-2">
+              <h4 className="mb-4 flex items-center gap-2 text-xs font-medium uppercase tracking-[0.2em] text-brand-dark">
                 <span className="w-5 h-[2px] bg-gradient-to-r from-brand-primary to-brand-secondary rounded-full" />
                 {title}
               </h4>
-              <ul className="flex flex-col gap-3.5">
+              <ul className="flex flex-col gap-2.5">
                 {links.map((link, idx) => (
                   <li key={`${title}-${idx}`}>
                     <Link
@@ -205,10 +205,10 @@ export default function Footer() {
           ))}
         </div>
 
-        <div className="flex flex-col xl:flex-row xl:items-end justify-between gap-8 mt-2 w-full lg:gap-10">
+        <div className="mt-1 flex w-full flex-col justify-between gap-6 xl:flex-row xl:items-end lg:gap-8">
           {/* Contact Info */}
 
-          <div className="flex flex-col gap-3 mt-2">
+          <div className="mt-1 flex flex-col gap-3">
             <a href="https://wa.me/923354153368" className="flex items-center gap-3 text-sm text-brand-dark/60 hover:text-brand-primary transition-colors group font-medium">
               <span className="w-8 h-8 rounded-lg bg-brand-primary/10 flex items-center justify-center group-hover:bg-brand-primary/20 transition-colors">
                 <svg className="w-4 h-4 text-brand-primary" fill="currentColor" viewBox="0 0 24 24">
@@ -252,7 +252,7 @@ export default function Footer() {
         </div>
 
         {/* Bottom Bar */}
-          <div className="border-t border-gray-100 py-4 flex flex-col sm:flex-row items-center sm:items-end justify-between gap-6 relative">
+          <div className="relative flex flex-col items-center justify-between gap-4 border-t border-gray-100 py-3 sm:flex-row sm:items-end">
 
 
 
@@ -292,7 +292,7 @@ export default function Footer() {
 
         </div>
 
-        <div className="w-full border-t border-gray-100 py-6 mt-8 flex items-center justify-center">
+        <div className="mt-4 flex w-full items-center justify-center border-t border-gray-100 py-4">
           <p className="text-[10px] text-brand-dark/40 font-medium tracking-widest text-center">
             © {year} ZeeFood. All rights reserved.
           </p>
