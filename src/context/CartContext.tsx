@@ -125,11 +125,12 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const removeFromCart = (itemId: string | number, variantId?: string) => {
     setCart((prev) =>
-      prev.filter(
-        (entry) =>
-          String(entry.item.id) !== String(itemId) ||
-          (variantId !== undefined && entry.item.selectedVariantId !== variantId)
-      )
+      prev.filter((entry) => {
+        const idMatches = String(entry.item.id) === String(itemId);
+        if (!idMatches) return true;
+        if (variantId === undefined) return false;
+        return entry.item.selectedVariantId !== variantId;
+      })
     );
   };
 

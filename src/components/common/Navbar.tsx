@@ -10,7 +10,7 @@ import { useCart } from "@/context/CartContext";
 const navLinks = [
   { name: "Home", href: "/" },
   { name: "Deals", href: "/deals" },
-  { name: "View Menu", href: "/menu" },
+  { name: "Menu", href: "/menu" },
   { name: "Our Story", href: "/about" },
 ];
 
@@ -31,8 +31,6 @@ export default function Navbar() {
   const deliveryCharges = 150;
   const total = cartTotal + (cartTotal > 0 ? deliveryCharges : 0);
 
-  const isOrderPage = pathname === "/menu" || pathname === "/order" || pathname === "/deals";
-
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll);
@@ -47,33 +45,44 @@ export default function Navbar() {
     }
   }, [isCartOpen, isMobileMenuOpen]);
 
-  // Clean, professional WhatsApp Message Formatting with bold item names and new lines
+  // Clean, professional WhatsApp Message Formatting & Cart Clearing on Checkout
   const handleWhatsAppCheckout = () => {
     if (cartItems.length === 0) return;
     
     let msg = "🛒 *New Order - Zee Food Gallery*\n";
     msg += "━━━━━━━━━━━━━━━━━━━\n\n";
-    msg += "📋 *Order Items:*\n";
+    msg += "📋 *Order Items:*\n\n";
     
     cartItems.forEach((c: any, index: number) => {
       const itemData = c.item || c;
       const itemName = itemData.name || "Dish";
-      const variantText = itemData.selectedVariantName ? ` (${itemData.selectedVariantName})` : "";
+      const variantText = itemData.selectedVariantName ? `(${itemData.selectedVariantName})` : "";
       const priceVal = typeof itemData.unitPrice === "number" ? itemData.unitPrice : (Number(String(itemData.price || 0).replace(/[^0-9]/g, "")) || 0);
       const itemTotal = priceVal * (c.quantity || 1);
       
-      msg += `*${index + 1}. ${itemName}${variantText}*\n`;
-      msg += `Quantity: ${c.quantity} Plate | Price: Rs. ${itemTotal.toLocaleString()}\n\n`;
+      msg += `🔸 *Item ${index + 1}:*\n`;
+      msg += `Name: ${itemName} ${variantText}\n`;
+      msg += `Qty: ${c.quantity} | Total: Rs. ${itemTotal.toLocaleString()}\n`;
+      msg += "------------------------\n";
     });
 
-    msg += "━━━━━━━━━━━━━━━━━━━\n";
+    msg += "\n━━━━━━━━━━━━━━━━━━━\n";
     msg += `📦 Subtotal: Rs. ${cartTotal.toLocaleString()}\n`;
     msg += `🛵 Delivery Fee: Rs. ${deliveryCharges}\n`;
-    msg += `💰 *Total Amount: Rs. ${total.toLocaleString()}*\n`;
+    msg += `💰 *Grand Total: Rs. ${total.toLocaleString()}*\n`;
     msg += "━━━━━━━━━━━━━━━━━━━\n\n";
     msg += "*Please confirm my order. Thank you! 🙏*";
 
     window.open(`https://wa.me/923354153368?text=${encodeURIComponent(msg)}`, "_blank", "noopener,noreferrer");
+
+    // Automatically clear cart items once order is placed on WhatsApp
+    cartItems.forEach((c: any) => {
+      const item = c.item || c;
+      const itemId = item.id;
+      const variantId = item.selectedVariantId;
+      updateQuantity(itemId, -999, variantId);
+    });
+
     setIsCartOpen(false);
   };
 
@@ -103,16 +112,15 @@ export default function Navbar() {
             ))}
           </div>
 
-          <div className="flex flex-shrink-0 items-center gap-4">
-            {/* Desktop Cart Button with exact rounded-full shape */}
+          <div className="flex flex-shrink-0 items-center gap-3">
             <button
               onClick={() => setIsCartOpen(true)}
-              className="hidden min-h-9 items-center justify-center gap-2 rounded-full bg-brand-primary px-5 text-sm font-bold text-white shadow-[0_10px_22px_rgba(248,114,5,0.22)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-brand-primary/90 hover:shadow-[0_14px_28px_rgba(248,114,5,0.28)] lg:inline-flex"
+              className="inline-flex min-h-11 items-center justify-center gap-2.5 rounded-full bg-brand-primary px-6 py-2.5 text-sm font-black uppercase tracking-[0.2em] text-white shadow-[0_12px_28px_rgba(248,114,5,0.24)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-brand-primary/95 hover:shadow-[0_16px_32px_rgba(248,114,5,0.32)]"
             >
               <ShoppingCart className="h-4 w-4" />
               <span>Cart</span>
               {totalItems > 0 && (
-                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white text-xs font-bold text-brand-primary">
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white text-xs font-black text-brand-primary">
                   {totalItems}
                 </span>
               )}
@@ -131,35 +139,6 @@ export default function Navbar() {
           </div>
         </div>
       </nav>
-
-      {/* Mobile Sticky Action Bar with Centered Content */}
-      {!isOrderPage && (
-        <div className="fixed bottom-4 left-4 right-4 z-[90] lg:hidden animate-in fade-in slide-in-from-bottom-10">
-          {totalItems > 0 ? (
-            <button
-              onClick={() => setIsCartOpen(true)}
-              className="flex w-full items-center justify-center gap-4 rounded-full bg-brand-primary p-4 text-sm font-bold uppercase tracking-widest text-white shadow-2xl transition-transform active:scale-95"
-            >
-              <div className="flex items-center gap-2">
-                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/20 text-xs">
-                  {totalItems}
-                </span>
-                <span>View Cart</span>
-              </div>
-              <span>•</span>
-              <span>Rs. {total}</span>
-            </button>
-          ) : (
-            <Link
-              href="/menu"
-              className="flex w-full items-center justify-center gap-2 rounded-full bg-brand-primary p-4 text-sm font-bold uppercase tracking-widest text-white shadow-2xl transition-transform active:scale-95"
-            >
-              <ShoppingCart className="h-5 w-5" />
-              <span>Order Now</span>
-            </Link>
-          )}
-        </div>
-      )}
 
       {/* Cart Drawer Modal */}
       <div className={`fixed inset-0 z-[120] transition-all duration-300 ${isCartOpen ? "visible opacity-100" : "invisible opacity-0"}`}>

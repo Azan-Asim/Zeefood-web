@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef, type MouseEvent as ReactMouseEvent } from "react";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { useLanguage } from "@/context/LanguageContext";
 import { useCart } from "@/context/CartContext";
+import { createPortal } from "react-dom"; // Added for robust modal rendering
 
 // ── Redux / Custom hooks ──────────────────────────────────────────────────────
 import { useProducts, useProductFilters } from "@/hooks/useProducts";
@@ -85,7 +86,254 @@ const CATEGORY_DISPLAY_MAP: Record<string, string> = {
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
-// VariantProductCard — Main card used
+// Modals using React Portals to guarantee perfect viewport centering
+// ─────────────────────────────────────────────────────────────────────────────
+function ProductQuickAddModal({
+  isOpen,
+  onClose,
+  product,
+  selectedVariant,
+  onSelectVariant,
+  quantity,
+  onIncrease,
+  onDecrease,
+  onConfirm,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  product: ProductWithOptionalDetails;
+  selectedVariant?: ProductVariant;
+  onSelectVariant: (variant?: ProductVariant) => void;
+  quantity: number;
+  onIncrease: () => void;
+  onDecrease: () => void;
+  onConfirm: () => void;
+}) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
+  if (!isOpen || !mounted) return null;
+
+  const variants = product.variants ?? [];
+  const activeVariant = selectedVariant ?? variants[0];
+  const detailText = product.details?.recipe || product.details?.nutritionalInfo || "Freshly prepared with premium ingredients and bold flavors.";
+
+  const modalContent = (
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 p-3 sm:p-4 backdrop-blur-sm" onClick={onClose}>
+      <div
+        className="relative w-full max-w-[750px] max-h-[90vh] overflow-y-auto rounded-[24px] bg-white shadow-2xl"
+        onClick={(event) => event.stopPropagation()}
+      >
+        <div className="flex items-center justify-between border-b border-gray-100 bg-gradient-to-r from-white via-orange-50/70 to-white px-5 py-4">
+          <div className="text-left">
+            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-brand-primary">Customize your order</p>
+            <h3 className="text-lg font-black text-brand-dark sm:text-xl">{product.name}</h3>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand-surface text-brand-dark transition-colors hover:bg-brand-primary/10 hover:text-brand-primary"
+            aria-label="Close"
+          >
+            <span className="text-xl font-black">×</span>
+          </button>
+        </div>
+
+        {/* CSS Grid for side-by-side layout on desktop/tablet, stacked on mobile */}
+        <div className="grid gap-5 p-5 sm:grid-cols-[240px_1fr] md:grid-cols-[280px_1fr] items-start">
+          
+          {/* Left Side: Image - Fixed to object-contain to show full image */}
+          <div className="relative mx-auto h-[180px] w-full max-w-[280px] overflow-hidden rounded-[20px] bg-[#fbf7f2] sm:h-full sm:min-h-[220px]">
+            <Image
+              src={productImageUrl(product.image, product.name, product.category?.CategoryName)}
+              alt={product.name}
+              fill
+              className="object-contain p-2" 
+              unoptimized
+            />
+          </div>
+
+          {/* Right Side: Description and Controls */}
+          <div className="flex flex-col text-left h-full justify-between">
+            <div>
+              <div className="mb-3 flex flex-wrap items-center gap-2">
+                <span className="rounded-full bg-brand-primary/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.28em] text-brand-primary">
+                  {product.category?.CategoryName ?? "Featured"}
+                </span>
+                <span className="text-xs font-semibold text-brand-dark/60">{product.details?.prepTime ?? "Freshly prepared"}</span>
+              </div>
+              
+              <p className="text-sm font-semibold leading-6 text-brand-dark/70">{detailText}</p>
+              
+              {product.details?.ingredients && product.details.ingredients.length > 0 && (
+                <div className="mt-3 flex flex-wrap gap-1.5">
+                  {product.details.ingredients.slice(0, 6).map((ingredient) => (
+                    <span key={ingredient} className="rounded-full border border-gray-200 bg-white px-3 py-1 text-[10px] font-bold text-brand-dark/70 shadow-sm">
+                      {ingredient}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="mt-5">
+              {variants.length > 0 && (
+                <div className="mb-4">
+                  <p className="mb-2 text-[10px] font-black uppercase tracking-[0.28em] text-brand-dark/50">Choose size</p>
+                  <div className="flex flex-wrap gap-2">
+                    {variants.map((variant) => {
+                      const isActive = activeVariant?.id === variant.id;
+                      return (
+                        <button
+                          key={variant.id}
+                          type="button"
+                          onClick={() => onSelectVariant(variant)}
+                          className={`min-w-[90px] rounded-[16px] border px-3 py-2 text-center transition-all duration-300 ${
+                            isActive
+                              ? "border-brand-primary bg-brand-primary text-white shadow-[0_8px_20px_rgba(248,114,5,0.2)]"
+                              : "border-gray-200 bg-brand-surface text-brand-dark hover:border-brand-primary hover:text-brand-primary"
+                          }`}
+                        >
+                          <span className="block text-[10px] font-black uppercase tracking-[0.2em]">{variant.name}</span>
+                          <span className={`mt-0.5 block text-[11px] font-bold ${isActive ? "text-white/90" : "text-brand-dark/70"}`}>
+                            Rs. {variant.price.toLocaleString()}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              <div className="rounded-[20px] border border-brand-primary/10 bg-brand-surface/80 p-4">
+                {/* Fixed perfectly centered, identically sized buttons */}
+                <div className="flex flex-col items-center justify-center gap-3 w-full">
+                  <div className="flex w-full max-w-[220px] h-[40px] items-center justify-between gap-4 rounded-full border border-brand-primary/20 bg-white px-3 shadow-sm">
+                    <button
+                      type="button"
+                      onClick={onDecrease}
+                      className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-surface text-brand-dark transition-colors hover:bg-brand-primary/10 hover:text-brand-primary text-lg"
+                    >
+                      −
+                    </button>
+                    <span className="min-w-6 text-center text-base font-black text-brand-dark">{quantity}</span>
+                    <button
+                      type="button"
+                      onClick={onIncrease}
+                      className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-surface text-brand-dark transition-colors hover:bg-brand-primary/10 hover:text-brand-primary text-lg"
+                    >
+                      +
+                    </button>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={onConfirm}
+                    className="flex w-full max-w-[220px] h-[40px] items-center justify-center rounded-full bg-brand-primary px-7 text-xs font-black uppercase tracking-[0.24em] text-white shadow-[0_12px_28px_rgba(248,114,5,0.25)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#e96500]"
+                  >
+                    Add to Cart
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  return createPortal(modalContent, document.body);
+}
+
+function ItemManagementModal({
+  isOpen,
+  onClose,
+  onRemove,
+  product,
+  selectedVariant,
+  quantity,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  onRemove: () => void;
+  product: ProductWithOptionalDetails;
+  selectedVariant?: ProductVariant;
+  quantity: number;
+}) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
+  if (!isOpen || !mounted) return null;
+
+  const modalContent = (
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/70 p-3 sm:p-4 backdrop-blur-sm" onClick={onClose}>
+      <div
+        className="relative w-full max-w-[400px] rounded-[24px] border border-brand-primary/10 bg-white/95 p-5 shadow-2xl text-left"
+        onClick={(event) => event.stopPropagation()}
+      >
+        <div className="flex items-start justify-between gap-2 mb-3">
+          <div>
+            <p className="text-[10px] font-black uppercase tracking-[0.32em] text-brand-primary">Manage item</p>
+            <h3 className="mt-1 text-lg font-black text-brand-dark">Remove this item?</h3>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand-surface text-brand-dark transition-colors hover:bg-brand-primary/10 hover:text-brand-primary"
+            aria-label="Close"
+          >
+            <span className="text-xl font-black">×</span>
+          </button>
+        </div>
+
+        <div className="mt-3 flex items-center gap-4 rounded-[18px] border border-brand-primary/10 bg-brand-surface/70 p-3">
+          <div className="relative h-16 w-16 overflow-hidden rounded-[14px] bg-[#fbf7f2] shrink-0 shadow-sm">
+            <Image
+              src={productImageUrl(product.image, product.name, product.category?.CategoryName)}
+              alt={product.name}
+              fill
+              className="object-contain p-1"
+              unoptimized
+            />
+          </div>
+          <div>
+            <p className="text-sm font-black text-brand-dark line-clamp-2 leading-tight">{product.name}</p>
+            <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.24em] text-brand-primary">
+              {selectedVariant?.name ?? "Standard"}
+            </p>
+            <p className="mt-1 text-xs font-semibold text-brand-dark/60">Quantity: {quantity}</p>
+          </div>
+        </div>
+
+        <p className="mt-4 text-sm font-medium leading-6 text-brand-dark/70">
+          This will remove the selected item from your cart. You can always add it back later.
+        </p>
+
+        <div className="mt-5 flex flex-col items-stretch gap-3 sm:flex-row sm:justify-center">
+          <button
+            type="button"
+            onClick={onClose}
+            className="w-full flex-1 rounded-full border border-gray-200 bg-white px-4 py-3 text-[11px] font-black uppercase tracking-[0.24em] text-brand-dark transition-colors hover:border-brand-primary hover:text-brand-primary text-center shadow-sm sm:max-w-[160px]"
+          >
+            Keep item
+          </button>
+          <button
+            type="button"
+            onClick={onRemove}
+            className="w-full flex-1 rounded-full bg-brand-primary px-4 py-3 text-[11px] font-black uppercase tracking-[0.24em] text-white shadow-[0_12px_24px_rgba(248,114,5,0.25)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#e96500] text-center"
+          >
+            Remove item
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
+  return createPortal(modalContent, document.body);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// VariantProductCard — Main card used (Shortened & Compacted)
 // ─────────────────────────────────────────────────────────────────────────────
 export function VariantProductCard({
   product,
@@ -94,27 +342,38 @@ export function VariantProductCard({
   product: ProductWithOptionalDetails;
   onAddToCart: (product: Product, variant?: ProductVariant) => void;
 }) {
-  const [expanded, setExpanded] = useState(false);
   const [detailsOpen, setDetailsOpen] = useState(false);
-  const { cart } = useCart();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isManageOpen, setIsManageOpen] = useState(false);
+  const [selectedVariant, setSelectedVariant] = useState<ProductVariant | undefined>(undefined);
+  const [modalQuantity, setModalQuantity] = useState(1);
+  const { cart, removeFromCart } = useCart();
   const variants = product.variants ?? [];
-  const visibleVariants = expanded ? variants : variants.slice(0, 3);
-  const hasManyVariants = variants.length > 3;
-  
+
   const detailItems = [
     product.details?.prepTime ? `Prep time: ${product.details.prepTime}` : null,
     product.details?.recipe ? product.details.recipe : null,
     product.details?.nutritionalInfo ? product.details.nutritionalInfo : null,
   ].filter(Boolean);
-  
+
   const ingredientItems = product.details?.ingredients?.filter(Boolean) ?? [];
   const hasDetails = detailItems.length > 0 || ingredientItems.length > 0;
-  
+
   const basePrice = product.price > 0 ? product.price : variants[0]?.price ?? 0;
   const displayPrice = basePrice > 0 ? `Rs. ${basePrice.toLocaleString()}` : "Ask";
   const isActive = product.status ? product.status === "ACTIVE" : true;
 
-  // Derive cart quantity using strict productId:variantId matching
+  useEffect(() => {
+    if (!variants.length) {
+      setSelectedVariant(undefined);
+      return;
+    }
+
+    if (!selectedVariant || !variants.some((variant) => variant.id === selectedVariant.id)) {
+      setSelectedVariant(variants[0]);
+    }
+  }, [selectedVariant, variants]);
+
   const getCartQty = (variantId?: string): number => {
     const key = `${product.id}:${variantId ?? "base"}`;
     const entry = cart.find(
@@ -123,195 +382,226 @@ export function VariantProductCard({
     return entry?.quantity ?? 0;
   };
 
-  const handleSelect = (variant?: ProductVariant) => {
+  const activeVariant = selectedVariant ?? variants[0];
+  const currentQty = getCartQty(activeVariant?.id);
+
+  const handleOpenModal = (event: ReactMouseEvent<HTMLElement>, variant?: ProductVariant) => {
     if (!isActive) return;
-    onAddToCart(product, variant);
+    event.preventDefault(); // Added to prevent default link behavior if any
+    setSelectedVariant(variant);
+    setModalQuantity(1);
+    setIsModalOpen(true);
+  };
+
+  const handleConfirmAddToCart = () => {
+    for (let index = 0; index < modalQuantity; index += 1) {
+      onAddToCart(product, activeVariant);
+    }
+    setModalQuantity(1);
+    setIsModalOpen(false);
+  };
+
+  const handleQuickPlus = (event: ReactMouseEvent<HTMLElement>) => {
+    if (!isActive) return;
+    event.preventDefault();
+    onAddToCart(product, activeVariant);
+  };
+
+  const handleQuickMinus = (event: ReactMouseEvent<HTMLElement>) => {
+    if (!isActive || currentQty <= 0) return;
+    event.preventDefault();
+    setIsManageOpen(true);
+  };
+
+  const handleRemove = () => {
+    removeFromCart(product.id, activeVariant?.id);
+    setIsManageOpen(false);
   };
 
   return (
-    <article
-      className="group relative h-[370px] w-full overflow-hidden rounded-[20px] bg-white shadow-[0_12px_30px_rgba(17,24,39,0.08)] ring-1 ring-brand-primary/10 transition-all duration-300 hover:-translate-y-1 hover:ring-brand-primary/25 hover:shadow-[0_18px_42px_rgba(248,114,5,0.14)] sm:h-[400px] xl:h-[425px] 2xl:h-[455px] [@media(min-width:2200px)]:h-[500px]"
-      style={{
-        backgroundImage: `url(${productImageUrl(product.image, product.name, product.category?.CategoryName)})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center -64px",
-        backgroundRepeat: "no-repeat",
-      }}
-      aria-label={product.name}
-    >
-      <div className="absolute inset-0 bg-gradient-to-t from-brand-dark/28 via-brand-dark/3 to-transparent" />
+    <>
+      <article
+        // Significantly reduced height for a shorter, beautiful card
+        className="group relative h-[260px] sm:h-[280px] xl:h-[295px] w-full overflow-hidden rounded-[18px] bg-white shadow-[0_4px_16px_rgba(17,24,39,0.06)] ring-1 ring-brand-primary/10 transition-all duration-300 hover:-translate-y-1 hover:ring-brand-primary/25 hover:shadow-[0_12px_24px_rgba(248,114,5,0.12)]"
+        style={{
+          backgroundImage: `url(${productImageUrl(product.image, product.name, product.category?.CategoryName)})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+        }}
+        aria-label={product.name}
+      >
+        <div className="absolute inset-0 bg-gradient-to-t from-brand-dark/40 via-brand-dark/5 to-transparent transition-opacity duration-300" />
 
-      <div className="absolute inset-x-3 bottom-3 z-10 rounded-2xl border border-brand-primary/12 bg-white/95 p-3 shadow-[0_14px_32px_rgba(17,24,39,0.12)] backdrop-blur-sm sm:inset-x-4 sm:bottom-4 sm:p-3.5">
-        <div className="mb-1.5 flex items-center justify-between gap-3">
-          <span className="min-w-0 break-words text-[9px] font-black uppercase tracking-widest text-brand-primary">
-            {product.category?.CategoryName ?? "Featured"}
-          </span>
-          <span className="shrink-0 text-[9px] font-black uppercase tracking-widest text-brand-dark/35">
-            20-30 min
-          </span>
-        </div>
+        {/* Tighter internal padding for compact look */}
+        <div className="absolute inset-x-2 bottom-2 z-10 rounded-[14px] border border-white/20 bg-white/95 p-2.5 shadow-lg backdrop-blur-md sm:inset-x-2.5 sm:bottom-2.5">
+          <div className="mb-1 flex items-center justify-between gap-1">
+            <span className="min-w-0 break-words text-[8px] font-black uppercase tracking-widest text-brand-primary">
+              {product.category?.CategoryName ?? "Featured"}
+            </span>
+            <span className="shrink-0 text-[8px] font-black uppercase tracking-widest text-brand-dark/40">
+              20-30 min
+            </span>
+          </div>
 
-        <h3
-          className="mb-2 line-clamp-2 break-words text-base font-black uppercase leading-[1.12] text-brand-dark transition-colors group-hover:text-brand-primary sm:text-lg 2xl:text-xl"
-          title={product.name}
-        >
-          {product.name}
-        </h3>
-
-        <div className="mb-2 min-h-[34px]">
-          {variants.length > 0 ? (
-            <div className="flex flex-wrap gap-1.5">
-              {visibleVariants.map((variant) => {
-                const cartQty = getCartQty(variant.id);
-                const isAdded = cartQty > 0;
-
-                return (
-                  <button
-                    key={variant.id}
-                    type="button"
-                    disabled={!isActive}
-                    onClick={() => handleSelect(variant)}
-                    className={`relative min-h-[30px] min-w-[58px] flex-1 rounded-xl border px-2 py-1 text-left text-[8px] font-black uppercase tracking-wider transition-all duration-300 sm:flex-none ${
-                      isAdded
-                        ? "border-brand-primary bg-brand-primary text-white"
-                        : "border-gray-200 bg-white text-brand-dark hover:border-brand-primary hover:bg-brand-primary/5 hover:text-brand-primary"
-                    } disabled:cursor-not-allowed disabled:opacity-80`}
-                  >
-                    <span className="flex items-center gap-1 break-words">
-                      {isAdded && <span className="inline-block h-2 w-2 rounded-full bg-white" />}
-                      {/* Exact variant name maintained, "ADDED" text removed */}
-                      {variant.name} 
-                    </span>
-                    <span className="block text-[7px] opacity-70">
-                      Rs. {variant.price.toLocaleString()}
-                    </span>
-                    {isAdded && cartQty > 1 && (
-                      <span className="absolute -right-1.5 -top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-white text-[7px] font-black text-brand-primary shadow-sm ring-1 ring-brand-primary/30">
-                        {cartQty}
-                      </span>
-                    )}
-                  </button>
-                );
-              })}
-            </div>
-          ) : (
-            <button
-              type="button"
-              disabled={!isActive}
-              onClick={() => handleSelect()}
-              className={`flex min-h-[42px] w-full items-center justify-between gap-3 rounded-xl border px-3 py-2 text-left transition-all duration-300 ${
-                getCartQty() > 0
-                  ? "border-brand-primary bg-brand-primary text-white"
-                  : "border-gray-200 bg-white text-brand-dark hover:border-brand-primary hover:bg-brand-primary/5"
-              }`}
-            >
-              <span>
-                <span className="block text-[9px] font-black uppercase tracking-widest opacity-60">
-                  Standard
-                </span>
-                <span className="mt-1 text-[11px] font-black uppercase tracking-wider">
-                  Single serving
-                </span>
-              </span>
-              <span className="relative">
-                <span className="rounded-full bg-brand-primary/10 px-3 py-1 text-[9px] font-black uppercase tracking-wider text-brand-primary">
-                  Add
-                </span>
-                {getCartQty() > 1 && (
-                  <span className="absolute -right-1.5 -top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-brand-primary text-[7px] font-black text-white shadow-sm">
-                    {getCartQty()}
-                  </span>
-                )}
-              </span>
-            </button>
-          )}
-        </div>
-
-        <p className="mb-2 text-xs font-bold text-brand-dark/60">
-          From <span className="text-base font-black text-brand-primary">{displayPrice}</span>
-        </p>
-
-        <button
-          type="button"
-          disabled={!isActive}
-          onClick={() => {
-            // Auto-select resolved: User is forced to pick themselves if variants exist
-            if (variants.length > 0) {
-              setExpanded(true);
-            } else {
-              handleSelect();
-            }
-          }}
-          className="inline-flex min-h-9 w-full items-center justify-center rounded-full bg-brand-primary px-5 py-2 text-[10px] font-black uppercase tracking-widest text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#e96500] hover:shadow-[0_14px_30px_rgba(248,114,5,0.26)] disabled:cursor-not-allowed disabled:opacity-80"
-        >
-          Add to Cart
-        </button>
-
-        {hasManyVariants && (
-          <button
-            type="button"
-            onClick={() => setExpanded((value) => !value)}
-            className="mt-1.5 inline-flex min-h-8 w-full items-center justify-center rounded-full border border-gray-200 bg-white px-4 py-1.5 text-[9px] font-black uppercase tracking-widest text-brand-dark transition-all hover:border-brand-primary hover:text-brand-primary"
+          <h3
+            className="mb-1.5 line-clamp-1 break-words text-sm font-black uppercase leading-tight text-brand-dark transition-colors group-hover:text-brand-primary"
+            title={product.name}
           >
-            {expanded ? "Less" : "More Info"}
-          </button>
-        )}
+            {product.name}
+          </h3>
 
-        {hasDetails && (
-          <div className="mt-1 rounded-xl border border-gray-100 bg-brand-surface/80">
-            <button
-              type="button"
-              onClick={() => setDetailsOpen((value) => !value)}
-              className="flex w-full items-center justify-between gap-2 rounded-xl px-3 py-1 text-left text-[8px] font-black uppercase tracking-widest text-brand-dark transition-colors hover:text-brand-primary"
-              aria-expanded={detailsOpen}
-            >
-              <span>Details</span>
-              <span className="text-brand-primary">{detailsOpen ? "Less" : "More"}</span>
-            </button>
+          {variants.length > 0 && (
+            <div className="mb-1.5 max-h-[46px] overflow-y-auto no-scrollbar">
+              <div className="flex flex-wrap gap-1">
+                {variants.map((variant) => {
+                  const cartQty = getCartQty(variant.id);
+                  const isAdded = cartQty > 0;
 
-            {detailsOpen && (
-              <div className="border-t border-gray-200 px-3 py-2">
-                <div className="space-y-1.5 text-[9px] font-bold uppercase tracking-wider text-brand-dark/55">
-                  {detailItems.map((detail) => (
-                    <p key={detail}>{detail}</p>
-                  ))}
-                </div>
-                {ingredientItems.length > 0 && (
-                  <div className="mt-2 flex flex-wrap gap-1">
-                    {ingredientItems.map((ingredient) => (
-                      <span
-                        key={ingredient}
-                        className="rounded-lg border border-gray-200 bg-white px-2 py-0.5 text-[8px] font-black uppercase tracking-wider text-brand-dark/55"
-                      >
-                        {ingredient}
+                  return (
+                    <button
+                      key={variant.id}
+                      type="button"
+                      disabled={!isActive}
+                      onClick={(event) => handleOpenModal(event, variant)}
+                      className={`relative min-h-[24px] min-w-[48px] flex-1 rounded-[8px] border px-1.5 py-0.5 text-left text-[7px] font-black uppercase tracking-wider transition-all duration-200 sm:flex-none ${
+                        isAdded
+                          ? "border-brand-primary bg-brand-primary text-white"
+                          : "border-gray-200 bg-white text-brand-dark hover:border-brand-primary hover:bg-brand-primary/5 hover:text-brand-primary"
+                      } disabled:cursor-not-allowed disabled:opacity-80`}
+                    >
+                      <span className="flex items-center gap-1 break-words leading-none">
+                        {isAdded && <span className="inline-block h-1.5 w-1.5 rounded-full bg-white" />}
+                        {variant.name}
                       </span>
-                    ))}
-                  </div>
-                )}
+                      <span className="mt-0.5 block text-[7px] opacity-80 leading-none">
+                        Rs. {variant.price.toLocaleString()}
+                      </span>
+                      {isAdded && cartQty > 1 && (
+                        <span className="absolute -right-1 -top-1 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-white text-[7px] font-black text-brand-primary shadow-sm ring-1 ring-brand-primary/30">
+                          {cartQty}
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
               </div>
+            </div>
+          )}
+
+          <div className="flex items-center justify-between mt-1 mb-1.5">
+            <p className="text-[9px] font-bold text-brand-dark/50">
+              From <span className="text-sm font-black text-brand-primary">{displayPrice}</span>
+            </p>
+          </div>
+
+          {/* EXACT IDENTICAL BUTTON DIMENSIONS FOR PERFECT CENTERING */}
+          <div className="flex w-full items-center justify-center mt-1">
+            {currentQty > 0 ? (
+              <div className="flex w-full h-[32px] items-center justify-between rounded-full border border-brand-primary/20 bg-brand-surface px-1.5">
+                <button
+                  type="button"
+                  onClick={(event) => handleQuickMinus(event)}
+                  className="flex h-7 w-7 items-center justify-center rounded-full text-brand-dark transition-colors hover:bg-white hover:text-brand-primary shadow-sm"
+                  aria-label="Remove item"
+                >
+                  −
+                </button>
+                <span className="text-xs font-black text-brand-dark">{currentQty}</span>
+                <button
+                  type="button"
+                  onClick={(event) => handleQuickPlus(event)}
+                  className="flex h-7 w-7 items-center justify-center rounded-full text-brand-dark transition-colors hover:bg-white hover:text-brand-primary shadow-sm"
+                  aria-label="Increase quantity"
+                >
+                  +
+                </button>
+              </div>
+            ) : (
+              <button
+                type="button"
+                disabled={!isActive}
+                onClick={(event) => handleOpenModal(event, activeVariant)}
+                className="flex w-full h-[32px] items-center justify-center rounded-full bg-brand-primary px-4 text-[9px] font-black uppercase tracking-widest text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#e96500] hover:shadow-[0_8px_16px_rgba(248,114,5,0.25)] disabled:cursor-not-allowed disabled:opacity-80"
+              >
+                Add to Cart
+              </button>
             )}
           </div>
-        )}
-      </div>
-    </article>
+
+          {hasDetails && (
+            <div className="mt-1.5 rounded-[8px] border border-gray-100 bg-brand-surface/80">
+              <button
+                type="button"
+                onClick={() => setDetailsOpen((value) => !value)}
+                className="flex w-full items-center justify-between gap-1 rounded-[8px] px-2 py-1 text-left text-[7px] font-black uppercase tracking-widest text-brand-dark transition-colors hover:text-brand-primary"
+                aria-expanded={detailsOpen}
+              >
+                <span>Details</span>
+                <span className="text-brand-primary">{detailsOpen ? "Less" : "More"}</span>
+              </button>
+
+              {detailsOpen && (
+                <div className="border-t border-gray-200 px-2 py-1.5">
+                  <div className="space-y-1 text-[8px] font-bold uppercase tracking-wider text-brand-dark/55">
+                    {detailItems.map((detail) => (
+                      <p key={detail}>{detail}</p>
+                    ))}
+                  </div>
+                  {ingredientItems.length > 0 && (
+                    <div className="mt-1 flex flex-wrap gap-1">
+                      {ingredientItems.map((ingredient) => (
+                        <span
+                          key={ingredient}
+                          className="rounded-md border border-gray-200 bg-white px-1.5 py-0.5 text-[7px] font-black uppercase tracking-wider text-brand-dark/60 shadow-sm"
+                        >
+                          {ingredient}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </article>
+
+      {/* Render modals directly alongside the card, portaled to the body automatically by the component */}
+      <ProductQuickAddModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        product={product}
+        selectedVariant={activeVariant}
+        onSelectVariant={(variant) => setSelectedVariant(variant)}
+        quantity={modalQuantity}
+        onIncrease={() => setModalQuantity((value) => value + 1)}
+        onDecrease={() => setModalQuantity((value) => Math.max(1, value - 1))}
+        onConfirm={handleConfirmAddToCart}
+      />
+
+      <ItemManagementModal
+        isOpen={isManageOpen}
+        onClose={() => setIsManageOpen(false)}
+        onRemove={handleRemove}
+        product={product}
+        selectedVariant={activeVariant}
+        quantity={currentQty}
+      />
+    </>
   );
 }
 
 function SkeletonCard() {
   return (
-    <div className="relative flex flex-col items-center text-center p-6 rounded-[35px] bg-gray-100 border-2 border-gray-200 animate-pulse">
-      <div className="absolute -top-16 w-[160px] h-[160px] rounded-full bg-gray-200" />
-      <div className="h-24 w-full" />
-      <div className="h-4 w-24 bg-gray-200 rounded-full mb-3" />
-      <div className="h-6 w-36 bg-gray-300 rounded-full mb-4" />
-      <div className="h-4 w-28 bg-gray-200 rounded-full mb-6" />
-      <div className="h-10 w-full bg-gray-300 rounded-full" />
+    <div className="relative flex flex-col items-center text-center p-6 rounded-[18px] bg-gray-100 border border-gray-200 animate-pulse h-[260px]">
+      <div className="h-full w-full bg-gray-200 rounded-xl" />
     </div>
   );
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// CartItem adapter — map DRM Product → legacy CartContext shape
+// CartItem adapter
 // ─────────────────────────────────────────────────────────────────────────────
 function toCartItem(product: Product, variant?: ProductVariant) {
   const price =
@@ -346,30 +636,14 @@ function toCartItem(product: Product, variant?: ProductVariant) {
 // ─────────────────────────────────────────────────────────────────────────────
 // Main OrderPage
 // ─────────────────────────────────────────────────────────────────────────────
-function cleanWhatsAppText(value: unknown) {
-  return String(value ?? "")
-    .replace(/\r\n/g, "\n")
-    .replace(/\r/g, "\n")
-    .replace(/[^\S\n]+/g, " ")
-    .trim();
-}
-
 export default function OrderPage() {
   const { t, language } = useLanguage();
   const { cart, addToCart, updateQuantity, updateVariant, cartTotal } = useCart();
   const searchParams = useSearchParams();
 
-  const [userLocation] = useState<{ area: string; city: string; orderType: string } | null>(() => {
-    if (typeof window === "undefined") return null;
-
-    const loc = window.sessionStorage.getItem("userLocation");
-    return loc ? JSON.parse(loc) : null;
-  });
-  const [isMobileCartOpen, setIsMobileCartOpen] = useState(false);
   const [orderToast, setOrderToast] = useState<string | null>(null);
   const orderToastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // ── Redux hooks ─────────────────────────────────────────────────────────
   const { isLoading, isError, error, refetch } = useProducts();
   const {
     filteredProducts,
@@ -390,7 +664,6 @@ export default function OrderPage() {
     }
   }, [activeCategory, categories, changeCategory, searchParams]);
 
-  // ── Debounced search ────────────────────────────────────────────────────
   const searchTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const handleSearchChange = useCallback(
     (raw: string) => {
@@ -407,60 +680,25 @@ export default function OrderPage() {
     };
   }, []);
 
-  // ── Cart helpers ────────────────────────────────────────────────────────
-  const deliveryFee = cartTotal > 0 ? 150 : 0;
-  const totalAmount = cartTotal + deliveryFee;
-
   const handleAddToCart = useCallback(
     (product: Product, variant?: ProductVariant) => {
       addToCart(toCartItem(product, variant));
       setOrderToast("Item added to cart!");
       if (orderToastTimer.current) clearTimeout(orderToastTimer.current);
       orderToastTimer.current = setTimeout(() => setOrderToast(null), 2400);
-      
-      // Auto-open Cart Drawer when item is added
-      setIsMobileCartOpen(true);
     },
     [addToCart]
   );
 
-  const handleCheckout = useCallback(() => {
-    if (cart.length === 0) return;
-
-    const loc = userLocation ?? { area: "Not specified", city: "Not specified", orderType: "delivery" };
-    let msg = "New Order - Zee Food Gallery\n";
-    msg += "---------------------------\n";
-    msg += `Order Type: ${loc.orderType === "delivery" ? "Delivery" : "Pick-Up"}\n`;
-    msg += `Location: ${cleanWhatsAppText(loc.area)}, ${cleanWhatsAppText(loc.city)}\n\n`;
-    msg += "Items:\n";
-
-    cart.forEach((c) => {
-      const itemName = cleanWhatsAppText(c.item.name);
-      const variantLabel = c.item.selectedVariantName ? ` (${cleanWhatsAppText(c.item.selectedVariantName)})` : "";
-      msg += `- ${itemName}${variantLabel} x${c.quantity} - Rs. ${numericCartPrice(c.item).toLocaleString()}\n`;
-    });
-
-    msg += "\n";
-    msg += `Subtotal: Rs. ${cartTotal.toLocaleString()}\n`;
-    msg += `Delivery: Rs. ${deliveryFee}\n`;
-    msg += `Total: Rs. ${totalAmount.toLocaleString()}\n\n`;
-    msg += "Please confirm my order. Thank you.";
-
-    window.open(`https://wa.me/923354153368?text=${encodeURIComponent(msg)}`, "_blank", "noopener,noreferrer");
-  }, [cart, userLocation, cartTotal, deliveryFee, totalAmount]);
-
-  // ─────────────────────────────────────────────────────────────────────────
-  // Render
-  // ─────────────────────────────────────────────────────────────────────────
   return (
-    <div className="mt-20 flex min-h-[calc(100svh-80px)] flex-col bg-[#fbf7f2] font-sans lg:h-[calc(100svh-80px)] lg:overflow-hidden">
-      <div className="relative mx-auto flex w-full max-w-[2160px] flex-1 flex-col lg:overflow-hidden lg:flex-row">
+    <div className="mt-20 flex min-h-[calc(100svh-80px)] flex-col bg-[#fbf7f2] font-sans pb-28">
+      <div className="relative mx-auto flex w-full max-w-[1720px] flex-1 flex-col px-3 sm:px-4 lg:px-8 pt-4 sm:pt-6 lg:pt-8">
 
-        {/* ── Main Menu Panel ── */}
-        <div className="flex-1 overflow-y-auto border-black/5 bg-[#fbf7f2] px-4 pb-32 pt-5 no-scrollbar sm:px-6 sm:pt-6 lg:border-r lg:pb-8 lg:pr-8 lg:pt-7 2xl:px-12 [@media(min-width:2200px)]:px-16">
+        {/* ── Main Menu Panel (Full Width) ── */}
+        <div className="flex-1 bg-[#fbf7f2]">
 
           {/* Header */}
-          <div className="mb-6 rounded-[26px] border border-brand-primary/10 bg-white/35 p-4 shadow-[0_14px_42px_rgba(17,24,39,0.045)] backdrop-blur-sm sm:mb-7 sm:p-5 2xl:mb-8">
+          <div className="mb-5 rounded-[20px] border border-brand-primary/10 bg-white/35 p-3.5 shadow-[0_8px_24px_rgba(17,24,39,0.03)] backdrop-blur-sm sm:mb-6 sm:p-5">
             <h1 className={`mb-1 text-2xl font-black tracking-tight text-[#111827] lg:text-3xl ${language === "UR" ? "text-right" : ""}`}>
               {t("orderDelivery")}
             </h1>
@@ -469,7 +707,7 @@ export default function OrderPage() {
             </p>
 
             {/* Static Full-Width Search Bar */}
-            <div className="mb-5 flex justify-center w-full">
+            <div className="mb-4 flex justify-center w-full">
               <div className="relative w-full max-w-xl">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none z-10">
                   <svg className="h-5 w-5 text-brand-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -482,7 +720,7 @@ export default function OrderPage() {
                   defaultValue={searchQuery}
                   onFocus={() => setSearchOpen(true)}
                   onChange={(e) => handleSearchChange(e.target.value)}
-                  className="w-full h-12 rounded-2xl border border-brand-primary/20 bg-white/90 py-3 pl-11 pr-4 text-sm font-bold text-brand-dark outline-none shadow-sm transition-all duration-300 placeholder:text-brand-dark/40 focus:border-brand-primary/40 focus:bg-white focus:ring-4 focus:ring-brand-primary/10"
+                  className="w-full h-11 rounded-full border border-brand-primary/20 bg-white/90 py-2.5 pl-11 pr-4 text-sm font-bold text-brand-dark outline-none shadow-sm transition-all duration-300 placeholder:text-brand-dark/40 focus:border-brand-primary/40 focus:bg-white focus:ring-4 focus:ring-brand-primary/10"
                 />
               </div>
             </div>
@@ -490,7 +728,7 @@ export default function OrderPage() {
             {/* Category Bar */}
             <div className="relative flex items-center">
               <div
-                className={`mx-auto flex max-w-full gap-2.5 overflow-x-auto pb-1 no-scrollbar flex-nowrap justify-start scroll-smooth snap-x snap-mandatory lg:justify-center ${language === "UR" ? "flex-row-reverse" : ""}`}
+                className={`mx-auto flex max-w-full gap-2 overflow-x-auto pb-1 no-scrollbar flex-nowrap justify-start scroll-smooth snap-x snap-mandatory lg:justify-center ${language === "UR" ? "flex-row-reverse" : ""}`}
               >
                 {categories.map((cat) => {
                   const normalizedCategory = cat === "ڈیس" ? "Desi" : cat;
@@ -501,9 +739,9 @@ export default function OrderPage() {
                     <button
                       key={cat}
                       onClick={() => changeCategory(cat)}
-                      className={`relative flex-none min-w-[124px] max-w-[150px] flex-shrink-0 flex-col items-center justify-center overflow-hidden rounded-2xl px-4 py-3.5 text-center text-sm font-black uppercase tracking-widest transition-all duration-300 sm:min-w-[134px] sm:px-5 sm:py-4 2xl:min-w-[148px] 2xl:max-w-[164px] ${imageSrc
+                      className={`relative flex-none min-w-[100px] max-w-[120px] flex-shrink-0 flex-col items-center justify-center overflow-hidden rounded-[16px] px-2.5 py-2.5 text-center text-[11px] font-black uppercase tracking-widest transition-all duration-300 sm:min-w-[110px] sm:px-3 sm:py-3 2xl:min-w-[120px] ${imageSrc
                         ? isActive
-                          ? "text-white shadow-[0_10px_30px_rgba(248,114,5,0.18)]"
+                          ? "text-white shadow-[0_8px_20px_rgba(248,114,5,0.18)]"
                           : "border border-white/25 text-white"
                         : isActive
                           ? "border border-brand-primary/25 bg-transparent text-brand-primary"
@@ -526,22 +764,23 @@ export default function OrderPage() {
                   );
                 })}
               </div>
-            </div>          </div>
+            </div>          
+          </div>
 
           {/* Error State */}
           {isError && (
-            <div className="flex flex-col items-center justify-center py-14 text-center gap-5">
-              <div className="w-16 h-16 rounded-full bg-red-50 flex items-center justify-center">
-                <svg className="w-8 h-8 text-brand-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div className="flex flex-col items-center justify-center py-12 text-center gap-4">
+              <div className="w-14 h-14 rounded-full bg-red-50 flex items-center justify-center">
+                <svg className="w-7 h-7 text-brand-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M12 3a9 9 0 100 18A9 9 0 0012 3z" />
                 </svg>
               </div>
               <div>
                 <p className="font-black text-brand-dark text-lg mb-1">Failed to load menu</p>
-                <p className="text-brand-dark/50 text-sm mb-6">{error}</p>
+                <p className="text-brand-dark/50 text-xs mb-5">{error}</p>
                 <button
                   onClick={() => refetch()}
-                  className="px-8 py-3.5 bg-brand-primary text-white font-black text-xs uppercase tracking-widest rounded-2xl shadow-lg hover:shadow-[0_15px_30px_rgba(248,114,5,0.35)] hover:-translate-y-0.5 transition-all"
+                  className="px-6 py-3 bg-brand-primary text-white font-black text-xs uppercase tracking-widest rounded-full shadow-md hover:shadow-[0_12px_24px_rgba(248,114,5,0.3)] hover:-translate-y-0.5 transition-all"
                 >
                   Try Again
                 </button>
@@ -551,17 +790,17 @@ export default function OrderPage() {
 
           {/* Empty State */}
           {!isLoading && !isError && filteredProducts.length === 0 && (
-            <div className="flex flex-col items-center justify-center py-14 text-center gap-4">
-              <span className="text-6xl">🍽️</span>
-              <p className="font-black text-brand-dark text-xl">No dishes found</p>
-              <p className="text-brand-dark/40 text-sm">Try a different search or category.</p>
+            <div className="flex flex-col items-center justify-center py-12 text-center gap-3">
+              <span className="text-5xl">🍽️</span>
+              <p className="font-black text-brand-dark text-lg">No dishes found</p>
+              <p className="text-brand-dark/40 text-xs">Try a different search or category.</p>
             </div>
           )}
 
-          {/* Product Grid */}
-          <div className="fluid-food-grid grid items-stretch gap-2.5 pt-3 sm:gap-3 lg:gap-3 lg:pt-4 2xl:gap-4">
+          {/* Product Grid - Reduced Gap to make it tighter (gap-1.5 sm:gap-2) */}
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-1.5 sm:gap-2 pt-2 items-stretch">
             {isLoading
-              ? Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)
+              ? Array.from({ length: 10 }).map((_, i) => <SkeletonCard key={i} />)
               : filteredProducts.map((product) => (
                 <VariantProductCard
                   key={product.id}
@@ -572,74 +811,15 @@ export default function OrderPage() {
           </div>
         </div>
 
-        {/* ── Desktop Cart Sidebar ── */}
-        <div className="hidden h-full w-[min(28vw,460px)] min-w-[360px] flex-col overflow-hidden border-l border-brand-primary/10 bg-[#fbf7f2] shadow-[-10px_0_40px_rgba(0,0,0,0.03)] lg:flex [@media(min-width:2200px)]:w-[520px]">
-          <CartContent
-            cart={cart}
-            cartTotal={cartTotal}
-            deliveryFee={deliveryFee}
-            totalAmount={totalAmount}
-            language={language}
-            t={t}
-            updateQuantity={updateQuantity}
-            updateVariant={updateVariant}
-            onCheckout={handleCheckout}
-          />
-        </div>
-
-        {/* ── Mobile Floating Cart Bar ── */}
+        {/* ── Add to Cart Toast ── */}
         {orderToast && (
-          <div className="fixed right-4 top-24 z-[260] max-w-[calc(100vw-2rem)] animate-in fade-in slide-in-from-top-3 duration-300 sm:right-6">
-            <div className="rounded-2xl border border-brand-primary/20 bg-white px-5 py-3 text-sm font-black text-brand-dark shadow-[0_18px_42px_rgba(17,24,39,0.14)]">
+          <div className="fixed right-4 top-20 z-[260] max-w-[calc(100vw-2rem)] animate-in fade-in slide-in-from-top-3 duration-300 sm:right-6">
+            <div className="rounded-full border border-brand-primary/20 bg-white px-5 py-2.5 text-xs font-black uppercase tracking-widest text-brand-dark shadow-[0_14px_32px_rgba(17,24,39,0.12)]">
               <span className="mr-2 text-brand-primary">✓</span>
               {orderToast}
             </div>
           </div>
         )}
-
-        {cart.length > 0 && !isMobileCartOpen && (
-          <div className="fixed bottom-4 left-4 right-4 z-[90] animate-in fade-in slide-in-from-bottom-10 sm:bottom-6 lg:hidden">
-            <button
-              onClick={() => setIsMobileCartOpen(true)}
-              className="w-full bg-brand-primary text-white p-4 rounded-[20px] shadow-2xl flex items-center justify-between font-medium uppercase tracking-widest text-sm"
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
-                  <span className="text-xs">{cart.reduce((acc, c) => acc + c.quantity, 0)}</span>
-                </div>
-                <span>View Your Order</span>
-              </div>
-              <span>Rs. {totalAmount.toLocaleString()}</span>
-            </button>
-          </div>
-        )}
-
-        {/* ── Mobile Cart Drawer ── */}
-        <div className={`fixed inset-0 z-[200] transition-transform duration-500 lg:hidden ${isMobileCartOpen ? "translate-y-0" : "translate-y-full"}`}>
-          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setIsMobileCartOpen(false)} />
-          <div className="absolute bottom-0 left-0 right-0 h-[88svh] bg-[#fbf7f2] rounded-t-[28px] sm:rounded-t-[40px] flex flex-col overflow-hidden shadow-2xl">
-            <div className="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mt-4 mb-2" onClick={() => setIsMobileCartOpen(false)} />
-            <div className="px-6 py-4 flex justify-between items-center border-b border-gray-100">
-              <h2 className="text-xl font-black text-brand-dark uppercase tracking-tight">{t("yourOrder")}</h2>
-              <button onClick={() => setIsMobileCartOpen(false)} className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-500">
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" /></svg>
-              </button>
-            </div>
-            <div className="flex-1 overflow-hidden flex flex-col">
-              <CartContent
-                cart={cart}
-                cartTotal={cartTotal}
-                deliveryFee={deliveryFee}
-                totalAmount={totalAmount}
-                language={language}
-                t={t}
-                updateQuantity={updateQuantity}
-                updateVariant={updateVariant}
-                onCheckout={() => { handleCheckout(); setIsMobileCartOpen(false); }}
-              />
-            </div>
-          </div>
-        </div>
 
       </div>
     </div>
@@ -647,7 +827,7 @@ export default function OrderPage() {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// CartContent — shared between sidebar & drawer
+// CartContent Component (Unchanged from your preferred state)
 // ─────────────────────────────────────────────────────────────────────────────
 function numericCartPrice(item: ReturnType<typeof useCart>["cart"][number]["item"]) {
   if (typeof item.unitPrice === "number") return item.unitPrice;
@@ -661,37 +841,22 @@ function money(value: number) {
 
 function CartContent({
   cart,
-  cartTotal,
-  deliveryFee,
-  totalAmount,
   language,
   t,
   updateQuantity,
   updateVariant,
-  onCheckout,
 }: {
   cart: ReturnType<typeof useCart>["cart"];
-  cartTotal: number;
-  deliveryFee: number;
-  totalAmount: number;
   language: string;
   t: (key: string) => string;
   updateQuantity: (id: string | number, delta: number, variantId?: string) => void;
   updateVariant: ReturnType<typeof useCart>["updateVariant"];
-  onCheckout: () => void;
 }) {
   const [openDetailKey, setOpenDetailKey] = useState<string | null>(null);
 
   return (
     <div className="flex h-full flex-col overflow-hidden bg-[#fbf7f2]">
-      <div className="hidden border-b border-brand-primary/10 bg-[#fffdf8]/85 px-6 py-6 md:block 2xl:px-8">
-        <h2 className={`flex items-center gap-3 text-xl font-black tracking-tight text-brand-dark ${language === "UR" ? "flex-row-reverse text-right" : ""}`}>
-          <span className="h-px w-8 bg-brand-primary" />
-          {t("yourOrder")}
-        </h2>
-      </div>
-
-      <div className="flex flex-1 flex-col gap-4 overflow-y-auto px-4 py-5 no-scrollbar sm:px-6 md:px-6 2xl:px-8">
+      <div className="flex flex-1 flex-col gap-4 overflow-y-auto px-4 py-5 no-scrollbar sm:px-6">
         {cart.length === 0 ? (
           <div className="flex h-full flex-col items-center justify-center px-4 text-center text-brand-dark/70">
             <div className="mb-5 flex h-20 w-20 items-center justify-center rounded-2xl border border-gray-100 bg-white shadow-sm">
@@ -721,7 +886,6 @@ function CartContent({
                   className={`rounded-2xl border border-gray-200 bg-white p-3 shadow-[0_12px_32px_rgba(17,24,39,0.045)] transition-all duration-300 hover:border-brand-primary/20 ${language === "UR" ? "text-right" : ""}`}
                 >
                   <div className={`grid grid-cols-[64px_minmax(0,1fr)] gap-3 sm:grid-cols-[72px_minmax(0,1fr)] ${language === "UR" ? "direction-rtl" : ""}`}>
-                    {/* Fixed Object Cover Image Container */}
                     <div className="cart-item-image relative flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-brand-primary/10 bg-[#fbf7f2] sm:h-[72px] sm:w-[72px]">
                       <Image
                         src={c.item.image || "/images/placeholder-food.png"}
@@ -761,21 +925,21 @@ function CartContent({
 
                       {c.item.variants && c.item.variants.length > 0 && (
                         <div className={`mt-2 flex flex-wrap items-center gap-1.5 ${language === "UR" ? "justify-end" : ""}`}>
-                          {c.item.variants.slice(0, 4).map((variant) => (
-                              <button
-                                key={variant.id}
-                                type="button"
-                                onClick={() => updateVariant(c.item.id, variant, c.item.selectedVariantId)}
-                                className={`rounded-xl border px-2 py-1 text-[8px] font-black uppercase tracking-wider transition-all ${
-                                  c.item.selectedVariantId === variant.id
-                                    ? "border-brand-primary bg-brand-primary text-white"
-                                    : "border-gray-200 bg-[#fbf7f2] text-brand-dark/55 hover:border-brand-primary hover:bg-white hover:text-brand-primary"
-                                }`}
-                                title={`Switch to ${variant.name}`}
-                              >
-                                {variant.name}
-                              </button>
-                            ))}
+                          {c.item.variants.map((variant) => (
+                            <button
+                              key={variant.id}
+                              type="button"
+                              onClick={() => updateVariant(c.item.id, variant, c.item.selectedVariantId)}
+                              className={`rounded-xl border px-2 py-1 text-[8px] font-black uppercase tracking-wider transition-all ${
+                                c.item.selectedVariantId === variant.id
+                                  ? "border-brand-primary bg-brand-primary text-white"
+                                  : "border-gray-200 bg-[#fbf7f2] text-brand-dark/55 hover:border-brand-primary hover:bg-white hover:text-brand-primary"
+                              }`}
+                              title={`Switch to ${variant.name}`}
+                            >
+                              {variant.name}
+                            </button>
+                          ))}
                         </div>
                       )}
 
@@ -829,33 +993,6 @@ function CartContent({
             })}
           </div>
         )}
-      </div>
-
-      <div className="border-t border-brand-primary/10 bg-[#fffdf8]/85 px-4 py-5 sm:px-6 md:px-6 2xl:px-8">
-        <div className="rounded-2xl border border-brand-primary/10 bg-[#fbf7f2] p-4">
-          {[
-            { label: t("subtotal"), value: `Rs. ${cartTotal.toLocaleString()}` },
-            { label: t("deliveryFee"), value: `Rs. ${deliveryFee}` },
-          ].map(({ label, value }) => (
-            <div key={label} className={`mb-3 flex items-center justify-between gap-4 ${language === "UR" ? "flex-row-reverse" : ""}`}>
-              <span className="text-xs font-bold uppercase tracking-wide text-brand-dark/55">{label}</span>
-              <span className="text-sm font-black text-brand-dark">{value}</span>
-            </div>
-          ))}
-          <div className="mb-4 h-px w-full border-t border-dashed border-brand-primary/50" />
-          <div className={`flex items-end justify-between gap-4 ${language === "UR" ? "flex-row-reverse" : ""}`}>
-            <span className="text-lg font-black text-brand-dark">{t("total")}</span>
-            <span className="text-2xl font-black text-brand-primary sm:text-3xl">Rs. {totalAmount.toLocaleString()}</span>
-          </div>
-        </div>
-
-        <button
-          disabled={cart.length === 0}
-          onClick={onCheckout}
-          className="mt-4 flex w-full items-center justify-center rounded-2xl bg-brand-primary px-5 py-4 text-sm font-black uppercase tracking-widest text-white shadow-xl shadow-brand-primary/20 transition-all hover:-translate-y-0.5 hover:shadow-[0_20px_40px_rgba(248,114,5,0.32)] active:scale-95 disabled:cursor-not-allowed disabled:opacity-45 disabled:hover:translate-y-0"
-        >
-          {t("checkout")}
-        </button>
       </div>
     </div>
   );

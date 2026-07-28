@@ -73,8 +73,8 @@ export default function LocationModal() {
   if (!isOpen) return null;
 
   const isPickup = orderType === "pickup";
-  const isDeliveryLocationReady = !isPickup && locStatus === "success"; 
   const isButtonDisabled = !isPickup && locStatus !== "success"; 
+  const actionButtonClass = "mx-auto inline-flex min-h-12 w-full max-w-[330px] items-center justify-center gap-2.5 rounded-full border border-brand-primary/15 bg-white/95 px-5 py-3 text-sm font-black text-brand-dark shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-brand-primary/35 hover:bg-brand-primary/10";
 
   return (
     <div className="fixed inset-0 z-[1000] flex items-center justify-center overflow-hidden bg-brand-dark/70 p-4 backdrop-blur-[8px] animate-in fade-in duration-300 ease-in-out">
@@ -132,7 +132,7 @@ export default function LocationModal() {
                     <button
                       type="button"
                       onClick={handleFetchLocation}
-                      className="group flex min-h-11 w-full items-center justify-center gap-2.5 rounded-full border border-gray-200 bg-gray-50 px-4 py-2 text-sm font-bold text-gray-700 shadow-sm transition-all duration-300 hover:border-gray-300 hover:bg-gray-100"
+                      className={`${actionButtonClass} border-gray-200 bg-gray-50 text-gray-700 hover:border-gray-300 hover:bg-gray-100`}
                     >
                       <LocateFixed className="h-4 w-4 text-gray-600 transition-transform group-hover:scale-110" />
                       Use Current Location
@@ -144,7 +144,7 @@ export default function LocationModal() {
                     <button
                       type="button"
                       disabled={locStatus === "loading"}
-                      className="flex min-h-11 w-full items-center justify-between gap-2.5 rounded-full border border-brand-primary/20 bg-white/95 px-4.5 py-2 text-left shadow-sm transition-all duration-300"
+                      className={`${actionButtonClass} px-4.5`}
                     >
                       <div className="flex items-center gap-2.5 min-w-0">
                         <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand-primary/10 text-brand-primary">
@@ -166,12 +166,12 @@ export default function LocationModal() {
                     </button>
                   )}
 
-                  {/* PERFECTLY MATCHED ERROR STATE (Based on your image) */}
+                  {/* ERROR STATE */}
                   {locStatus === "error" && (
                     <button
                       type="button"
                       onClick={handleFetchLocation}
-                      className="flex min-h-[52px] w-full items-center justify-between rounded-full border border-red-200/80 bg-[#fff3f3] p-1.5 pr-2 shadow-sm transition-all duration-300 hover:border-red-300 hover:bg-[#ffeaea]"
+                      className={`${actionButtonClass} min-h-[52px] border-red-200/80 bg-[#fff3f3] px-4.5 py-2 hover:border-red-300 hover:bg-[#ffeaea]`}
                     >
                       <div className="flex items-center gap-3 min-w-0">
                         <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#ffdfdf] text-[#ea333e]">
@@ -187,21 +187,6 @@ export default function LocationModal() {
                     </button>
                   )}
                 </div>
-
-                {/* Delivery Zone (Shows ONLY AFTER successful fetch) */}
-                {isDeliveryLocationReady && (
-                  <div className="text-center relative z-10 animate-in slide-in-from-top-2 fade-in duration-300">
-                    <span className="mb-1 block text-xs font-black uppercase tracking-wider text-brand-dark/50">
-                      Delivery Zone
-                    </span>
-                    <div className="relative mx-auto w-full max-w-[330px]">
-                      <div className="mx-auto inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full border border-brand-primary/15 bg-white/95 px-5 text-center text-sm font-black text-brand-dark shadow-sm">
-                        <MapPin className="h-4 w-4 text-brand-primary" />
-                        <span>Samanabad</span>
-                      </div>
-                    </div>
-                  </div>
-                )}
               </div>
             ) : (
               <div className="mt-3 text-center">
@@ -209,7 +194,7 @@ export default function LocationModal() {
                   href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent("Zee Food Gallery, " + PICKUP_ADDRESS)}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-brand-primary/15 bg-white/90 px-6 text-sm font-bold text-brand-dark shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-brand-primary/35 hover:bg-brand-primary/10"
+                  className={`${actionButtonClass} max-w-[330px] px-6`}
                 >
                   <MapPin className="h-4 w-4 text-brand-primary" />
                   Open in Google Maps
@@ -217,10 +202,11 @@ export default function LocationModal() {
               </div>
             )}
 
+            {/* Perfectly Centered Button */}
             <button
               onClick={handleSelect}
               disabled={isButtonDisabled}
-              className={`mt-5 inline-flex min-h-12 w-full items-center justify-center rounded-full px-7 text-sm font-black transition-all duration-300 ease-in-out ${
+              className={`mt-5 mx-auto flex min-h-12 w-full max-w-[330px] items-center justify-center text-center rounded-full px-7 text-sm font-black transition-all duration-300 ease-in-out ${
                 isButtonDisabled
                   ? "bg-gray-200 text-gray-400 cursor-not-allowed"
                   : "bg-brand-primary text-white shadow-[0_16px_32px_rgba(248,114,5,0.24)] hover:-translate-y-0.5 hover:bg-brand-primary/90 hover:shadow-[0_18px_34px_rgba(248,114,5,0.30)]"
