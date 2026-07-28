@@ -49,7 +49,7 @@ function getDishFallbackImage(name?: string, categoryName?: string): string {
 }
 
 function productImageUrl(image?: string | null, productName?: string, categoryName?: string): string {
-  if (!image || image.trim() === "") {
+  if (!image || typeof image !== 'string' || image.trim() === "") {
     return getDishFallbackImage(productName, categoryName);
   }
   if (image.startsWith("http://") || image.startsWith("https://")) return image;
@@ -85,372 +85,7 @@ const CATEGORY_DISPLAY_MAP: Record<string, string> = {
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Pastel card themes (cycled by index)
-// ─────────────────────────────────────────────────────────────────────────────
-// ─────────────────────────────────────────────────────────────────────────────
-// ProductCard
-// ─────────────────────────────────────────────────────────────────────────────
-// function ProductCard({
-//   product,
-//   index,
-//   onAddToCart,
-// }: {
-//   product: Product;
-//   index: number;
-//   onAddToCart: (p: Product) => void;
-// }) {
-//   const { t } = useLanguage();
-//   // const theme = CARD_THEMES[index % CARD_THEMES.length];
-//   const theme = { bg: "bg-white", border: "border-gray-100" };
-//   const lowestVariantPrice =
-//     product.variants.length > 0
-//       ? Math.min(...product.variants.map((v) => v.price))
-//       : product.price;
-
-//   const displayPrice =
-//     lowestVariantPrice > 0
-//       ? `Rs. ${lowestVariantPrice.toLocaleString()}`
-//       : product.price > 0
-//         ? `Rs. ${product.price.toLocaleString()}`
-//         : "—";
-
-//   const isActive = product.status ? product.status === "ACTIVE" : true;
-
-//   return (
-
-//     <div
-//       // className={`relative flex flex-col items-center text-center p-6 lg:p-7 rounded-[35px] shadow-[0_20px_50px_rgba(0,0,0,0.06)] hover:shadow-[0_30px_60px_rgba(0,0,0,0.15)] border-2 ${theme.border} transition-all duration-500 hover:-translate-y-4 group ${theme.bg} min-h-[420px] lg:min-h-[460px]`}
-//       className="relative flex flex-col overflow-hidden items-center text-center p-4 rounded-2xl border border-gray-100 bg-white shadow-sm hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 group"     >
-//       {/* Floating Image */}
-//       <div className="relative -top-16 lg:-top-20 w-[160px] h-[160px] lg:w-[180px] lg:h-[180px] transition-transform duration-700 group-hover:scale-105 group-hover:rotate-2 drop-shadow-[0_20px_35px_rgba(0,0,0,0.15)]">
-//         {/* <div className="w-full h-full relative z-10 border-4 border-white shadow-inner rounded-full bg-white group-hover:border-brand-primary/20 transition-colors duration-500 overflow-hidden"> */}
-//         <div className="w-full h-48 overflow-hidden rounded-2xl mb-4 relative shadow-sm">
-//           <Image
-//             src={productImageUrl(product.image)}
-//             alt={product.name}
-//             fill
-//             className="object-contain transition-transform duration-500"
-//             unoptimized
-//           />
-//         </div>
-
-//         {/* In-stock badge */}
-//         {product.inStock < 20 && product.inStock > 0 && (
-//           // <div className="absolute top-2 right-0 z-20 bg-amber-500 text-white text-[9px] font-black uppercase tracking-wider px-2 py-1 rounded-full shadow-lg">
-//           <div className="absolute top-3 left-3 z-20 bg-white/90 backdrop-blur-sm text-brand-primary text-[10px] font-bold uppercase px-3 py-1 rounded-full shadow-sm border border-brand-primary/10">
-//             Low Stock
-//           </div>
-//         )}
-//         {/* {product.inStock === 0 && (
-//           <div className="absolute top-2 right-0 z-20 bg-gray-400 text-white text-[9px] font-black uppercase tracking-wider px-2 py-1 rounded-full shadow-lg">
-//             Out of Stock
-//           </div>
-//         )} */}
-//       </div>
-
-//       <div className="h-24 lg:h-28 w-full" />
-
-//       {/* Category chip */}
-//       <span className="mb-2 px-3 py-1 bg-white/60 rounded-full text-[9px] font-black uppercase tracking-widest text-brand-dark/50">
-//         {product.category?.CategoryName ?? "General"}
-//       </span>
-
-//       {/* Title */}
-//       <h3 className="text-xl font-black text-brand-dark uppercase tracking-wide mb-2 group-hover:text-brand-primary transition-colors">
-//         {product.name}
-//       </h3>
-
-//       {/* Variants pill list — always reserves the same vertical space */}
-//       <div className="flex flex-wrap items-center justify-center gap-2 mb-4 min-h-[56px]">
-//         {product.variants.map((v) => (
-//           <span
-//             key={v.id}
-//             className="px-3 py-1 bg-white/70 border border-white/80 rounded-full text-[10px] font-black text-brand-dark/60 uppercase tracking-wider"
-//           >
-//             {v.name} — Rs.&nbsp;{v.price.toLocaleString()}
-//           </span>
-//         ))}
-//       </div>
-
-//       {/* Rating row */}
-//       <div className="flex items-center justify-center gap-2 text-[10px] font-black text-brand-dark/40 uppercase tracking-widest mb-5">
-//         <span className="flex items-center gap-1">
-//           <span className="text-[#F87205]">★</span> 4.9
-//         </span>
-//         <span className="w-1 h-1 bg-brand-dark/20 rounded-full" />
-//         <span>20–30 min</span>
-//       </div>
-
-//       {/* Price + CTA */}
-//       <div className="mt-auto flex flex-col items-center w-full">
-//         <span
-//           className="text-3xl font-black mb-5 drop-shadow-sm"
-//           style={{ color: "#F87205" }}
-//         >
-//           {displayPrice}
-//         </span>
-
-//         <button
-//           disabled={!isActive}
-//           onClick={() => onAddToCart(product)}
-//           className="w-full py-4 px-6 bg-white text-brand-dark font-black text-xs uppercase tracking-widest rounded-full shadow-md group-hover:bg-brand-primary group-hover:text-white transition-all duration-300 border border-gray-100 group-hover:border-transparent disabled:opacity-40 disabled:cursor-not-allowed"
-//         >
-//           {!isActive ? "Unavailable" : t("orderNow")}
-//         </button>
-//       </div>
-//     </div>
-//   );
-// }
-
-// Retained temporarily as the previous card implementation for quick rollback.
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function ProductCard({
-  product,
-  index,
-  onAddToCart,
-}: {
-  product: Product;
-  index: number;
-  onAddToCart: (p: Product) => void;
-}) {
-  const { t } = useLanguage();
-  const [showDetails, setShowDetails] = useState(false);
-
-  const theme = {
-    bg: "bg-white",
-    border: "border-gray-100",
-  };
-
-  const variants = product.variants ?? [];
-
-  const lowestVariantPrice =
-    variants.length > 0
-      ? Math.min(...variants.map((variant) => variant.price))
-      : product.price;
-
-  const displayPrice =
-    lowestVariantPrice > 0
-      ? `Rs. ${lowestVariantPrice.toLocaleString()}`
-      : product.price > 0
-        ? `Rs. ${product.price.toLocaleString()}`
-        : "—";
-
-  const isActive = product.status
-    ? product.status === "ACTIVE"
-    : true;
-
-  const detailsId = `product-details-${index}`;
-
-  return (
-    <article
-      className={` relative flex min-h-[500px] w-full flex-col !overflow-hidden rounded-2xl border ${theme.border} bg-white shadow-sm transition-all duration-300 hover:shadow-2xl group
-      `}
-    >
-      {/* IMAGE SECTION */}
-      <div className="relative w-full">
-        <div className="product-card-image relative flex h-56 w-full shrink-0 items-center justify-center overflow-hidden rounded-t-2xl bg-white sm:h-64 md:h-72">
-          <Image
-            src={productImageUrl(product.image)}
-            alt={product.name}
-            fill
-            className="h-full w-full object-cover object-center"
-            sizes="(max-width: 768px) 100vw, 33vw"
-            unoptimized
-          />
-        </div>
-      </div>
-
-      {/* MAIN CONTENT SECTION */}
-      <div
-        className={` relative z-10 flex h-full min-h-0 flex-col border-t ${theme.border} ${theme.bg} p-3 md:p-5
-        `}
-      >
-        {/* RATING AND DELIVERY TIME */}
-        <div className="mb-2 flex items-center justify-end">
-          <div className="flex items-center gap-1 text-[10px] font-black uppercase tracking-widest text-brand-dark/40">
-            <span className="text-[#F87205]">★</span>
-
-            <span>4.9</span>
-
-            <span className="mx-1 h-1 w-1 rounded-full bg-brand-dark/20" />
-
-            <span>20–30 min</span>
-          </div>
-        </div>
-
-        {/* PRODUCT TITLE */}
-        <h3
-          className=" mb-2 min-h-[44px]  md:min-h-[52px] line-clamp-2 text-lg md:text-xl font-black uppercase leading-[1.3] tracking-wide text-brand-dark transition-colors group-hover:text-brand-primary
-          "
-          title={product.name}
-        >
-          {product.name}  
-        </h3>
-
-        {/* EXPAND DETAILS BUTTON */}
-        <button
-          type="button"
-          aria-expanded={showDetails}
-          aria-controls={detailsId}
-          onClick={() => setShowDetails(true)}
-          className=" flex w-fit items-center gap-2 rounded-full  border border-gray-200 bg-white px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-brand-dark/60 transition-all duration-300 hover:border-brand-primary hover:text-brand-primary
-          "
-        >
-          View details
-
-          {variants.length > 0 && (
-            <span className="text-brand-primary">
-              ({variants.length})
-            </span>
-          )}
-
-          <svg
-            viewBox="0 0 20 20"
-            fill="none"
-            className="h-3.5 w-3.5"
-            aria-hidden="true"
-          >
-            <path
-              d="M5 7.5L10 12.5L15 7.5"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </button>
-
-        {/* PRICE AND CTA */}
-        <div className="mt-auto flex w-full flex-col items-center">
-          <span
-            className="mb-2 md:mb-3 md:text-3xl text-2xl font-black drop-shadow-sm"
-            style={{ color: "#F87205" }}
-          >
-            {displayPrice}
-          </span>
-
-          <button
-            type="button"
-            disabled={!isActive}
-            onClick={() => onAddToCart(product)}
-            className=" w-full rounded-full border border-transparent bg-brand-primary px-4 md:px-6 py-3 md:py-4 text-[10px] md:text-xs font-black uppercase tracking-widest text-white shadow-[0_10px_22px_rgba(248,114,5,0.22)] transition-all duration-300 group-hover:bg-brand-primary/90 disabled:cursor-not-allowed disabled:opacity-40
-            "
-          >
-            {!isActive ? "Unavailable" : t("orderNow")}
-          </button>
-        </div>
-      </div>
-
-      {/* BACKDROP */}
-      {showDetails && (
-        <button
-          type="button"
-          aria-label="Close product details"
-          onClick={() => setShowDetails(false)}
-          className=" absolute inset-0 z-20 cursor-default bg-black/10 backdrop-blur-[1px]
-          "
-        />
-      )}
-
-      {/* EXPANDABLE DETAILS DRAWER */}
-      <section
-        id={detailsId}
-        aria-hidden={!showDetails}
-        className={` absolute inset-x-3 bottom-3 z-30 max-h-[315px] overflow-hidden rounded-[26px] border ${theme.border} bg-white shadow-2xl transition-all duration-300
-          ${
-            showDetails
-              ? "translate-y-0 opacity-100"
-              : "pointer-events-none translate-y-[110%] opacity-0"
-          }
-        `}
-      >
-        {/* DRAWER HEADER */}
-        <div className="flex items-center justify-between border-b border-gray-100 px-5 py-4">
-          <div>
-            <p className="text-[10px] font-black uppercase tracking-widest text-brand-primary">
-              Product information
-            </p>
-
-            <h4 className="mt-1 line-clamp-1 text-base font-black uppercase text-brand-dark">
-              {product.name}
-            </h4>
-          </div>
-
-          <button
-            type="button"
-            aria-label="Close details"
-            onClick={() => setShowDetails(false)}
-            className=" flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-gray-200 bg-gray-50 text-lg font-bold text-brand-dark transition-colors hover:border-brand-primary hover:text-brand-primary
-            "
-          >
-            ×
-          </button>
-        </div>
-
-        {/* SCROLLABLE DETAILS CONTENT */}
-        <div className="max-h-[235px] overflow-y-auto px-5 py-4">
-          {/* CATEGORY */}
-          <div className="mb-5">
-            <p className="mb-2 text-[9px] font-black uppercase tracking-widest text-brand-dark/40">
-              Category
-            </p>
-
-            <span className="inline-flex rounded-full bg-gray-100 px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-brand-dark/60">
-              {product.category?.CategoryName ?? "General"}
-            </span>
-          </div>
-
-          {/* VARIANTS */}
-          <div>
-            <p className="mb-2 text-[9px] font-black uppercase tracking-widest text-brand-dark/40">
-              Available options
-            </p>
-
-            {variants.length > 0 ? (
-              <div className="flex flex-wrap gap-2">
-                {variants.map((variant) => (
-                  <span
-                    key={variant.id}
-                    className=" rounded-full border border-gray-200 bg-white px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-brand-dark/60
-                    "
-                  >
-                    {variant.name} — Rs.&nbsp;
-                    {variant.price.toLocaleString()}
-                  </span>
-                ))}
-              </div>
-            ) : (
-              <p className="text-xs font-bold text-brand-dark/50">
-                No additional options available.
-              </p>
-            )}
-          </div>
-
-          {/* STOCK */}
-          <div className="mt-5 flex items-center justify-between border-t border-gray-100 pt-4">
-            <span className="text-[9px] font-black uppercase tracking-widest text-brand-dark/40">
-              Stock availability
-            </span>
-
-            <span
-              className={`text-[10px] font-black uppercase tracking-wider ${
-                product.inStock > 0
-                  ? "text-brand-primary"
-                  : "text-brand-dark/40"
-              }`}
-            >
-              {product.inStock > 0
-                ? `${product.inStock} available`
-                : "Out of stock"}
-            </span>
-          </div>
-        </div>
-      </section>
-    </article>
-  );
-}
-// ─────────────────────────────────────────────────────────────────────────────
-// Skeleton Card — shown while loading
+// VariantProductCard — Main card used
 // ─────────────────────────────────────────────────────────────────────────────
 export function VariantProductCard({
   product,
@@ -465,20 +100,19 @@ export function VariantProductCard({
   const variants = product.variants ?? [];
   const visibleVariants = expanded ? variants : variants.slice(0, 3);
   const hasManyVariants = variants.length > 3;
+  
   const detailItems = [
     product.details?.prepTime ? `Prep time: ${product.details.prepTime}` : null,
     product.details?.recipe ? product.details.recipe : null,
     product.details?.nutritionalInfo ? product.details.nutritionalInfo : null,
   ].filter(Boolean);
+  
   const ingredientItems = product.details?.ingredients?.filter(Boolean) ?? [];
   const hasDetails = detailItems.length > 0 || ingredientItems.length > 0;
+  
   const basePrice = product.price > 0 ? product.price : variants[0]?.price ?? 0;
   const displayPrice = basePrice > 0 ? `Rs. ${basePrice.toLocaleString()}` : "Ask";
   const isActive = product.status ? product.status === "ACTIVE" : true;
-  const defaultVariant =
-    variants.length > 0
-      ? variants.reduce((lowest, option) => (option.price < lowest.price ? option : lowest), variants[0])
-      : undefined;
 
   // Derive cart quantity using strict productId:variantId matching
   const getCartQty = (variantId?: string): number => {
@@ -498,7 +132,7 @@ export function VariantProductCard({
     <article
       className="group relative h-[370px] w-full overflow-hidden rounded-[20px] bg-white shadow-[0_12px_30px_rgba(17,24,39,0.08)] ring-1 ring-brand-primary/10 transition-all duration-300 hover:-translate-y-1 hover:ring-brand-primary/25 hover:shadow-[0_18px_42px_rgba(248,114,5,0.14)] sm:h-[400px] xl:h-[425px] 2xl:h-[455px] [@media(min-width:2200px)]:h-[500px]"
       style={{
-        backgroundImage: `url(${productImageUrl(product.image)})`,
+        backgroundImage: `url(${productImageUrl(product.image, product.name, product.category?.CategoryName)})`,
         backgroundSize: "cover",
         backgroundPosition: "center -64px",
         backgroundRepeat: "no-repeat",
@@ -545,7 +179,8 @@ export function VariantProductCard({
                   >
                     <span className="flex items-center gap-1 break-words">
                       {isAdded && <span className="inline-block h-2 w-2 rounded-full bg-white" />}
-                      {isAdded ? "ADDED" : variant.name}
+                      {/* Exact variant name maintained, "ADDED" text removed */}
+                      {variant.name} 
                     </span>
                     <span className="block text-[7px] opacity-70">
                       Rs. {variant.price.toLocaleString()}
@@ -575,7 +210,7 @@ export function VariantProductCard({
                   Standard
                 </span>
                 <span className="mt-1 text-[11px] font-black uppercase tracking-wider">
-                  {getCartQty() > 0 ? "Added to cart" : "Single serving"}
+                  Single serving
                 </span>
               </span>
               <span className="relative">
@@ -599,10 +234,17 @@ export function VariantProductCard({
         <button
           type="button"
           disabled={!isActive}
-          onClick={() => handleSelect(defaultVariant)}
+          onClick={() => {
+            // Auto-select resolved: User is forced to pick themselves if variants exist
+            if (variants.length > 0) {
+              setExpanded(true);
+            } else {
+              handleSelect();
+            }
+          }}
           className="inline-flex min-h-9 w-full items-center justify-center rounded-full bg-brand-primary px-5 py-2 text-[10px] font-black uppercase tracking-widest text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#e96500] hover:shadow-[0_14px_30px_rgba(248,114,5,0.26)] disabled:cursor-not-allowed disabled:opacity-80"
         >
-          Order Now
+          Add to Cart
         </button>
 
         {hasManyVariants && (
@@ -683,7 +325,7 @@ function toCartItem(product: Product, variant?: ProductVariant) {
     name: product.name,
     nameUr: "",
     price: `Rs. ${price.toLocaleString()}`,
-    image: productImageUrl(product.image),
+    image: productImageUrl(product.image, product.name, product.category?.CategoryName),
     category: product.category?.CategoryName ?? "",
     description: "",
     descriptionUr: "",
@@ -772,12 +414,14 @@ export default function OrderPage() {
   const handleAddToCart = useCallback(
     (product: Product, variant?: ProductVariant) => {
       addToCart(toCartItem(product, variant));
-      setOrderToast("Order placed successfully!");
+      setOrderToast("Item added to cart!");
       if (orderToastTimer.current) clearTimeout(orderToastTimer.current);
       orderToastTimer.current = setTimeout(() => setOrderToast(null), 2400);
-      if (cart.length === 0) setIsMobileCartOpen(true);
+      
+      // Auto-open Cart Drawer when item is added
+      setIsMobileCartOpen(true);
     },
-    [addToCart, cart.length]
+    [addToCart]
   );
 
   const handleCheckout = useCallback(() => {
