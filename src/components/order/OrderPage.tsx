@@ -161,30 +161,31 @@ function ProductQuickAddModal({
   const isUrdu = isUrduText(cleanName);
 
   const modalContent = (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 p-3 sm:p-4 md:p-6 backdrop-blur-sm" onClick={onClose}>
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 p-3 sm:p-4 backdrop-blur-sm" onClick={onClose}>
       <div
-        className="relative w-full max-w-[92%] sm:max-w-[650px] md:max-w-[750px] lg:max-w-[820px] max-h-[92vh] overflow-y-auto rounded-[20px] bg-white shadow-2xl no-scrollbar"
+        className="relative w-full max-w-[90%] sm:max-w-[550px] md:max-w-[640px] max-h-[92vh] overflow-y-auto rounded-[20px] bg-white shadow-2xl no-scrollbar"
         onClick={(event) => event.stopPropagation()}
       >
-        <div className="flex items-center justify-between border-b border-gray-100 bg-gradient-to-r from-white via-orange-50/70 to-white px-4 sm:px-6 py-3.5 sticky top-0 z-20 backdrop-blur-md">
+        <div className="flex items-center justify-between border-b border-gray-100 bg-gradient-to-r from-white via-orange-50/70 to-white px-4 py-2.5 sticky top-0 z-20 backdrop-blur-md">
           <div className="text-left">
-            <p className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.2em] text-brand-primary">Customize your order</p>
-            <h3 className={`font-black text-brand-dark leading-tight ${isUrdu ? "font-ama-dhaba text-2xl sm:text-3xl mt-0.5" : "text-base sm:text-xl uppercase mt-0.5"}`}>
+            <p className="text-[9px] font-black uppercase tracking-[0.2em] text-brand-primary">Customize your order</p>
+            <h3 className={`font-black text-brand-dark leading-tight ${isUrdu ? "font-ama-dhaba text-xl sm:text-2xl mt-0.5" : "text-sm sm:text-lg uppercase mt-0.5"}`}>
               {cleanName}
             </h3>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand-surface text-brand-dark transition-colors hover:bg-brand-primary/10 hover:text-brand-primary"
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-surface text-brand-dark transition-colors hover:bg-brand-primary/10 hover:text-brand-primary"
             aria-label="Close"
           >
-            <span className="text-2xl font-black">×</span>
+            <span className="text-xl font-black">×</span>
           </button>
         </div>
 
-        <div className="grid gap-4 sm:gap-6 p-4 sm:p-6 sm:grid-cols-[220px_1fr] md:grid-cols-[260px_1fr] items-start">
-          <div className="relative mx-auto w-full h-[180px] sm:h-full sm:min-h-[240px] lg:min-h-[280px] overflow-hidden rounded-[16px] bg-[#fbf7f2] shadow-inner">
+        {/* Tightly packed spacing layout */}
+        <div className="grid gap-3 p-3 sm:p-4 sm:grid-cols-[170px_1fr] md:grid-cols-[200px_1fr] items-center">
+          <div className="relative mx-auto w-full h-[140px] sm:h-[170px] overflow-hidden rounded-[14px] bg-[#fbf7f2] shadow-inner">
             <Image
               src={productImageUrl(product.image, product.name, categoryName)}
               alt={cleanName}
@@ -194,15 +195,15 @@ function ProductQuickAddModal({
             />
           </div>
 
-          <div className="flex flex-col text-left gap-4">
+          <div className="flex flex-col text-left gap-2 sm:gap-2.5">
             <div>
-              <p className="text-xs sm:text-sm font-medium leading-relaxed text-brand-dark/75 line-clamp-3">{detailText}</p>
+              <p className="text-xs font-medium leading-snug text-brand-dark/75 line-clamp-2">{detailText}</p>
             </div>
 
             {variants.length > 0 && (
               <div>
-                <p className="mb-2 text-[10px] font-black uppercase tracking-[0.2em] text-brand-dark/50">Choose Size / Option</p>
-                <div className="max-h-[160px] sm:max-h-[190px] overflow-y-auto p-2 -m-2 no-scrollbar grid grid-cols-2 sm:grid-cols-3 gap-2">
+                <p className="mb-1 text-[9px] font-black uppercase tracking-[0.2em] text-brand-dark/50">Choose Size / Option</p>
+                <div className="max-h-[120px] overflow-y-auto p-0.5 -m-0.5 no-scrollbar grid grid-cols-2 sm:grid-cols-3 gap-1.5">
                   {variants.map((variant) => {
                     const isActive = activeVariant?.id === variant.id;
                     return (
@@ -216,19 +217,19 @@ function ProductQuickAddModal({
                             onSelectVariant(variant);
                           }
                         }}
-                        className={`relative flex flex-col items-center justify-center rounded-[14px] border p-2.5 text-center transition-all duration-300 ${
+                        className={`relative flex flex-col items-center justify-center rounded-[12px] border p-2 text-center transition-all duration-300 ${
                           isActive
                             ? "border-brand-primary bg-brand-primary text-white shadow-md"
                             : "border-gray-200 bg-brand-surface text-brand-dark hover:border-brand-primary hover:text-brand-primary"
                         }`}
                       >
-                        <span className="block text-[10px] sm:text-[11px] font-black uppercase tracking-wider truncate w-full">{variant.name}</span>
-                        <span className={`mt-0.5 block text-[11px] sm:text-xs font-bold ${isActive ? "text-white/90" : "text-brand-dark/70"}`}>
+                        <span className="block text-[10px] font-black uppercase tracking-wider truncate w-full">{variant.name}</span>
+                        <span className={`mt-0.5 block text-[11px] font-bold ${isActive ? "text-white/90" : "text-brand-dark/70"}`}>
                           Rs. {(variant.price || 0).toLocaleString()}
                         </span>
                         
                         {isActive && quantity > 1 && (
-                          <span className="absolute -top-1.5 -right-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-brand-dark text-[10px] font-black text-white shadow-sm ring-2 ring-white">
+                          <span className="absolute -top-1.5 -right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-brand-dark text-[9px] font-black text-white shadow-sm ring-2 ring-white">
                             {quantity}
                           </span>
                         )}
@@ -239,21 +240,21 @@ function ProductQuickAddModal({
               </div>
             )}
 
-            <div className="rounded-[16px] border border-brand-primary/10 bg-brand-surface/80 p-3 mt-auto">
-              <div className="flex items-center justify-between gap-3 w-full">
-                <div className="flex w-[120px] h-[42px] items-center justify-between rounded-full border border-brand-primary/20 bg-white px-2 shadow-sm">
+            <div className="rounded-[14px] border border-brand-primary/10 bg-brand-surface/80 p-2">
+              <div className="flex items-center justify-between gap-2.5 w-full">
+                <div className="flex w-[110px] h-[38px] items-center justify-between rounded-full border border-brand-primary/20 bg-white px-2 shadow-sm">
                   <button
                     type="button"
                     onClick={onDecrease}
-                    className="flex h-8 w-8 items-center justify-center rounded-full text-brand-dark hover:text-brand-primary text-xl font-medium"
+                    className="flex h-7 w-7 items-center justify-center rounded-full text-brand-dark hover:text-brand-primary text-lg font-medium"
                   >
                     −
                   </button>
-                  <span className="text-sm font-black text-brand-dark text-center w-6">{quantity}</span>
+                  <span className="text-xs font-black text-brand-dark text-center w-5">{quantity}</span>
                   <button
                     type="button"
                     onClick={onIncrease}
-                    className="flex h-8 w-8 items-center justify-center rounded-full text-brand-dark hover:text-brand-primary text-xl font-medium"
+                    className="flex h-7 w-7 items-center justify-center rounded-full text-brand-dark hover:text-brand-primary text-lg font-medium"
                   >
                     +
                   </button>
@@ -262,7 +263,7 @@ function ProductQuickAddModal({
                 <button
                   type="button"
                   onClick={onConfirm}
-                  className="flex-1 h-[42px] flex items-center justify-center rounded-full bg-brand-primary px-5 text-[11px] sm:text-xs font-black uppercase tracking-widest text-white shadow-md transition-all hover:bg-[#e96500]"
+                  className="flex-1 h-[38px] flex items-center justify-center rounded-full bg-brand-primary px-4 text-[10px] font-black uppercase tracking-widest text-white shadow-md transition-all hover:bg-[#e96500]"
                 >
                   Add to Cart
                 </button>
