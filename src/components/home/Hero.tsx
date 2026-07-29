@@ -107,22 +107,22 @@ export default function Hero() {
   const item = heroItems[currentIndex];
 
   return (
-    <section className="relative flex min-h-[100svh] items-center overflow-hidden bg-[#fbf7f2] pb-6 pt-[5.9rem] sm:pb-8 sm:pt-[6.6rem] lg:pb-8 lg:pt-[6.3rem] 2xl:pt-[6.9rem]">
+    <section className="relative flex min-h-[85svh] items-center overflow-hidden bg-[#fbf7f2] pb-2 pt-[3.5rem] sm:pb-2 sm:pt-[4rem] lg:pb-2 lg:pt-[4rem] 2xl:pt-[4.5rem]">
       <div className="site-container flex min-h-0 flex-col items-center">
-        <div className="flex w-full flex-1 flex-col items-center gap-4 lg:flex-row lg:gap-8 2xl:gap-12 [@media(min-width:2200px)]:gap-16">
-          <div className="relative z-10 max-w-3xl space-y-2 text-center sm:space-y-3 lg:w-1/2 lg:text-left 2xl:max-w-4xl">
+        <div className="flex w-full flex-1 flex-col items-center gap-1 lg:flex-row lg:gap-3 2xl:gap-5 [@media(min-width:2200px)]:gap-6">
+          <div className="relative z-10 max-w-3xl space-y-1 text-center sm:space-y-2 lg:w-1/2 lg:text-left 2xl:max-w-4xl">
             <div className="inline-flex flex-col items-center lg:items-start">
-              <p lang="ur" dir="rtl" className="font-ama-dhaba text-[clamp(38px,10vw,58px)] font-black leading-none text-brand-primary lg:text-[clamp(60px,4.4vw,78px)] [@media(min-width:2200px)]:text-[88px]">
+              <p lang="ur" dir="rtl" className="font-ama-dhaba text-[clamp(34px,9vw,52px)] font-black leading-none text-brand-primary lg:text-[clamp(54px,4vw,70px)] [@media(min-width:2200px)]:text-[80px]">
                 اماں جی کا ڈھابہ
               </p>
             </div>
 
-            <div key={item.name} className="animate-hero-copy-fade space-y-2 sm:space-y-3">
-              <h1 className="text-[clamp(2.35rem,9.5vw,3.7rem)] font-extrabold leading-[1.02] text-brand-dark lg:text-[clamp(3.7rem,5.1vw,5.35rem)] [@media(min-width:2200px)]:text-[6.1rem]">
+            <div key={item.name} className="animate-hero-copy-fade space-y-1 sm:space-y-2">
+              <h1 className="text-[clamp(2.1rem,8.5vw,3.4rem)] font-extrabold leading-[1.02] text-brand-dark lg:text-[clamp(3.3rem,4.7vw,4.8rem)] [@media(min-width:2200px)]:text-[5.5rem]">
                 {item.title} <span className="text-brand-primary">{item.highlight}</span>
               </h1>
 
-              <p className="mx-auto max-w-2xl text-base font-semibold leading-relaxed text-brand-dark sm:text-xl lg:mx-0 2xl:max-w-3xl 2xl:text-2xl [@media(min-width:2200px)]:text-3xl">
+              <p className="mx-auto max-w-2xl text-sm font-semibold leading-relaxed text-brand-dark sm:text-lg lg:mx-0 2xl:max-w-3xl 2xl:text-xl [@media(min-width:2200px)]:text-2xl">
                 {item.description}
               </p>
             </div>
@@ -150,7 +150,8 @@ function CircularHeroDisplay({
   });
 
   return (
-    <div className="relative grid aspect-square w-[min(82vw,350px)] max-w-full place-items-center overflow-hidden rounded-full sm:w-[min(52vw,420px)] lg:w-[min(36vw,545px)] 2xl:w-[min(30vw,650px)] [@media(min-width:2200px)]:w-[min(27vw,740px)]">
+    // Balanced container size to fit non-overlapping images cleanly
+    <div className="relative grid aspect-square w-[min(85vw,360px)] max-w-full place-items-center overflow-hidden rounded-full sm:w-[min(55vw,420px)] lg:w-[min(38vw,500px)] 2xl:w-[min(32vw,600px)] [@media(min-width:2200px)]:w-[min(28vw,680px)]">
       <div className="absolute inset-[8%] rounded-full bg-[#fff8ef] shadow-[0_24px_52px_rgba(17,24,39,0.10)]" />
       <div className="absolute inset-[15%] rounded-full border border-brand-primary/10 bg-[#fffaf4]" />
       <div className="absolute inset-[27%] rounded-full border border-brand-primary/10 bg-[#fff3e5]" />
@@ -162,9 +163,10 @@ function CircularHeroDisplay({
         {visibleItems.map((dish) => {
           const isActive = dish.itemIndex === currentIndex;
           const angle = dish.displayIndex * 72 + 90;
-          const position = isActive ? { x: 50, y: 50 } : getOrbitPosition(angle, 38);
-          // Reduced active size from 54 to 46 to stop image overlapping
-          const size = isActive ? 46 : dish.displayIndex === 1 || dish.displayIndex === 5 ? 16 : 13;
+          // Pushed orbit slightly wider (41) to ensure side images have safe space from the center
+          const position = isActive ? { x: 50, y: 50 } : getOrbitPosition(angle, 41);
+          // Optimized sizes (52% active, 20%/16% sides) so they are nicely sized without any overlap collision
+          const size = isActive ? 52 : dish.displayIndex === 1 || dish.displayIndex === 5 ? 20 : 16;
           const opacity = isActive ? 1 : dish.displayIndex === 1 || dish.displayIndex === 5 ? 0.82 : 0.58;
           const zIndex = isActive ? 30 : 20 - dish.displayIndex;
 
@@ -203,12 +205,11 @@ function CircularHeroDisplay({
         })}
       </div>
 
-      {/* Urdu name display - Fixed line-height and position to prevent text clipping & overlap */}
       <div
         key={heroItems[currentIndex].urduName}
         lang="ur"
         dir="rtl"
-        className="font-ama-dhaba pointer-events-none absolute bottom-[9%] left-1/2 z-40 -translate-x-1/2 animate-hero-copy-fade whitespace-nowrap rounded-full border border-brand-primary/15 bg-[#fff8ef]/95 px-5 py-1 text-[clamp(1.2rem,4.5vw,2rem)] font-black leading-normal text-brand-primary shadow-[0_8px_20px_rgba(248,114,5,0.15)] backdrop-blur-sm sm:bottom-[11%] lg:text-[clamp(1.6rem,2.2vw,2.4rem)]"
+        className="font-ama-dhaba pointer-events-none absolute bottom-[8%] left-1/2 z-40 -translate-x-1/2 animate-hero-copy-fade whitespace-nowrap rounded-full border border-brand-primary/15 bg-[#fff8ef]/95 px-4 py-0.5 text-[clamp(1.1rem,4vw,1.8rem)] font-black leading-normal text-brand-primary shadow-[0_8px_20px_rgba(248,114,5,0.15)] backdrop-blur-sm sm:bottom-[10%] lg:text-[clamp(1.4rem,2vw,2.2rem)]"
       >
         {heroItems[currentIndex].urduName}
       </div>

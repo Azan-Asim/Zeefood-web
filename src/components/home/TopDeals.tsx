@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useLanguage } from "@/context/LanguageContext";
 
@@ -38,8 +38,6 @@ export default function TopDeals() {
   const { language } = useLanguage();
   const [topIndex, setTopIndex] = useState(0);
   const [bottomIndex, setBottomIndex] = useState(0);
-  const [toast, setToast] = useState<string | null>(null);
-  const toastTimer = useRef<number | null>(null);
 
   useEffect(() => {
     const topTimer = window.setInterval(() => {
@@ -53,15 +51,8 @@ export default function TopDeals() {
     return () => {
       window.clearInterval(topTimer);
       window.clearInterval(bottomTimer);
-      if (toastTimer.current) window.clearTimeout(toastTimer.current);
     };
   }, []);
-
-  const handleQuickOrder = () => {
-    setToast("Order placed successfully!");
-    if (toastTimer.current) window.clearTimeout(toastTimer.current);
-    toastTimer.current = window.setTimeout(() => setToast(null), 2200);
-  };
 
   return (
     <section className="relative z-10 w-full overflow-hidden bg-[#fbf7f2] pb-5 pt-3 sm:pb-6 sm:pt-4 lg:pb-8 lg:pt-4">
@@ -80,25 +71,16 @@ export default function TopDeals() {
         </div>
 
         <div className="space-y-2 lg:space-y-3 2xl:space-y-5">
-          <StorySlider slide={topSlides[topIndex]} onQuickOrder={handleQuickOrder} />
-          <StorySlider slide={bottomSlides[bottomIndex]} onQuickOrder={handleQuickOrder} reverse />
+          <StorySlider slide={topSlides[topIndex]} />
+          <StorySlider slide={bottomSlides[bottomIndex]} reverse />
         </div>
       </div>
-      {toast && (
-        <div className="fixed right-4 top-24 z-[260] max-w-[calc(100vw-2rem)] animate-in fade-in slide-in-from-top-3 duration-300 sm:right-6">
-          <div className="rounded-2xl border border-brand-primary/20 bg-white px-5 py-3 text-sm font-black text-brand-dark shadow-[0_18px_42px_rgba(17,24,39,0.14)]">
-            <span className="mr-2 text-brand-primary">✓</span>
-            {toast}
-          </div>
-        </div>
-      )}
     </section>
   );
 }
 
 function StorySlider({
   slide,
-  onQuickOrder,
   reverse = false,
 }: {
   slide: {
@@ -107,7 +89,6 @@ function StorySlider({
     title: string;
     text: string;
   };
-  onQuickOrder: () => void;
   reverse?: boolean;
 }) {
   return (
@@ -125,13 +106,6 @@ function StorySlider({
               unoptimized
             />
           </div>
-          <button
-            type="button"
-            onClick={onQuickOrder}
-            className="mx-auto mt-2 inline-flex min-h-11 items-center justify-center rounded-2xl bg-brand-primary px-7 text-sm font-bold text-white shadow-[0_10px_22px_rgba(248,114,5,0.22)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-brand-primary/90 hover:shadow-[0_14px_28px_rgba(248,114,5,0.28)]"
-          >
-            Order Now
-          </button>
         </div>
       </div>
 
