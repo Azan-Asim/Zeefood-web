@@ -112,15 +112,19 @@ export default function Navbar() {
             ))}
           </div>
 
-          <div className="flex flex-shrink-0 items-center gap-3">
+          {/* Right Side Buttons (Cart & Hamburger) - Updated for Mobile View */}
+          <div className="flex flex-shrink-0 items-center gap-1.5 sm:gap-3">
             <button
               onClick={() => setIsCartOpen(true)}
-              className="inline-flex min-h-11 items-center justify-center gap-2.5 rounded-full bg-brand-primary px-6 py-2.5 text-sm font-black uppercase tracking-[0.2em] text-white shadow-[0_12px_28px_rgba(248,114,5,0.24)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-brand-primary/95 hover:shadow-[0_16px_32px_rgba(248,114,5,0.32)]"
+              className="inline-flex min-h-8 sm:min-h-11 items-center justify-center gap-1.5 sm:gap-2.5 rounded-full bg-brand-primary px-3 py-1.5 sm:px-6 sm:py-2.5 text-[10px] sm:text-sm font-black uppercase tracking-wider sm:tracking-[0.2em] text-white shadow-[0_8px_16px_rgba(248,114,5,0.24)] sm:shadow-[0_12px_28px_rgba(248,114,5,0.24)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-brand-primary/95"
             >
-              <ShoppingCart className="h-4 w-4" />
-              <span>Cart</span>
+              <ShoppingCart className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+              
+              {/* "Cart" text hidden on very small screens, visible on 380px and above */}
+              <span className="hidden min-[380px]:inline">Cart</span>
+              
               {totalItems > 0 && (
-                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white text-xs font-black text-brand-primary">
+                <span className="flex h-4 w-4 sm:h-6 sm:w-6 items-center justify-center rounded-full bg-white text-[9px] sm:text-xs font-black text-brand-primary">
                   {totalItems}
                 </span>
               )}
@@ -128,12 +132,12 @@ export default function Navbar() {
 
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="flex h-9 w-9 items-center justify-center rounded-full text-brand-dark transition-all duration-300 hover:bg-brand-primary/10 lg:hidden"
+              className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-full text-brand-dark transition-all duration-300 hover:bg-brand-primary/10 lg:hidden"
             >
-              <span className="flex w-6 flex-col gap-1.5">
-                <span className={`h-0.5 w-full rounded-full bg-current transition-transform duration-300 ${isMobileMenuOpen ? "translate-y-2 rotate-45" : ""}`} />
-                <span className={`h-0.5 w-full rounded-full bg-current transition-opacity duration-300 ${isMobileMenuOpen ? "opacity-0" : ""}`} />
-                <span className={`h-0.5 w-full rounded-full bg-current transition-transform duration-300 ${isMobileMenuOpen ? "-translate-y-2 -rotate-45" : ""}`} />
+              <span className="flex w-5 sm:w-6 flex-col gap-1 sm:gap-1.5">
+                <span className={`h-[2px] w-full rounded-full bg-current transition-transform duration-300 ${isMobileMenuOpen ? "translate-y-1.5 rotate-45" : ""}`} />
+                <span className={`h-[2px] w-full rounded-full bg-current transition-opacity duration-300 ${isMobileMenuOpen ? "opacity-0" : ""}`} />
+                <span className={`h-[2px] w-full rounded-full bg-current transition-transform duration-300 ${isMobileMenuOpen ? "-translate-y-1.5 -rotate-45" : ""}`} />
               </span>
             </button>
           </div>
