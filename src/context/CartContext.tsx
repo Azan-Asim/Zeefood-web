@@ -1,6 +1,7 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
+import React, { createContext, useContext, useEffect, useMemo, useState, useRef } from "react";
+import { createPortal } from "react-dom";
 
 export type CartVariant = {
   id: string;
@@ -32,6 +33,7 @@ export type CartProduct = {
 export interface CartItem {
   item: CartProduct;
   quantity: number;
+  variantQuantities?: { [variantId: string]: number };
 }
 
 interface CartContextType {
@@ -43,6 +45,7 @@ interface CartContextType {
   clearCart: () => void;
   cartCount: number;
   cartTotal: number;
+  setVariantQuantities?: (itemId: string | number, quantities: { [variantId: string]: number }, rawItem: CartProduct, baseQty?: number) => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -75,62 +78,132 @@ function normalizeCartItem(item: CartProduct): CartProduct {
   };
 }
 
-function migrateCart(cart: CartItem[]): CartItem[] {
-  return cart.map((entry) => ({
-    ...entry,
-    item: normalizeCartItem(entry.item),
-  }));
-}
-
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [cart, setCart] = useState<CartItem[]>([]);
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    try {
-      const savedCart = window.localStorage.getItem("zeefood_cart");
-      if (savedCart) {
-        setCart(migrateCart(JSON.parse(savedCart) as CartItem[]));
-      }
-    } catch (error) {
-      console.error("Failed to parse cart", error);
-    }
-    setIsLoaded(true);
+    setMounted(true);
+    return () => {
+      if (toastTimer.current) clearTimeout(toastTimer.current);
+    };
   }, []);
 
-  useEffect(() => {
-    if (isLoaded) {
-      window.localStorage.setItem("zeefood_cart", JSON.stringify(cart));
-    }
-  }, [cart, isLoaded]);
+  const triggerToast = () => {
+    if (toastTimer.current) clearTimeout(toastTimer.current);
+    setToastMessage("Item added to cart!");
+    toastTimer.current = setTimeout(() => {
+      setToastMessage(null);
+    }, 2400);
+  };
 
   const addToCart = (rawItem: CartProduct) => {
     const item = normalizeCartItem(rawItem);
+    const productId = item.id;
+    const variantId = item.selectedVariantId;
 
     setCart((prev) => {
-      const key = lineKey(item);
-      const existing = prev.find((entry) => lineKey(entry.item) === key);
+      const existingIndex = prev.findIndex((entry) => String(entry.item.id) === String(productId));
 
-      if (existing) {
-        return prev.map((entry) =>
-          lineKey(entry.item) === key
-            ? { ...entry, quantity: entry.quantity + 1, item }
-            : entry
-        );
+      if (existingIndex > -1) {
+        return prev.map((entry, idx) => {
+          if (idx !== existingIndex) return entry;
+          
+          const newQuantities = { ...(entry.variantQuantities || {}) };
+          if (variantId) {
+            newQuantities[variantId] = (newQuantities[variantId] || 0) + 1;
+          }
+          const totalQty = variantId 
+            ? Object.values(newQuantities).reduce((a, b) => a + b, 0)
+            : entry.quantity + 1;
+
+          return {
+            ...entry,
+            quantity: totalQty,
+            variantQuantities: newQuantities,
+            item,
+          };
+        });
       }
 
-      return [...prev, { item, quantity: 1 }];
+      const initialQuantities = variantId ? { [variantId]: 1 } : {};
+      return [
+        ...prev,
+        {
+          item,
+          quantity: 1,
+          variantQuantities: initialQuantities,
+        },
+      ];
     });
+
+    triggerToast();
+  };
+
+  const setVariantQuantities = (
+    itemId: string | number,
+    quantities: { [variantId: string]: number },
+    rawItem: CartProduct,
+    baseQty?: number
+  ) => {
+    const item = normalizeCartItem(rawItem);
+    setCart((prev) => {
+      const existingIndex = prev.findIndex((entry) => String(entry.item.id) === String(itemId));
+      const hasVariants = rawItem.variants && rawItem.variants.length > 0;
+      const totalQty = hasVariants
+        ? Object.values(quantities).reduce((a, b) => a + b, 0)
+        : (baseQty !== undefined ? baseQty : 1);
+
+      if (totalQty === 0) {
+        return prev.filter((entry) => String(entry.item.id) !== String(itemId));
+      }
+
+      if (existingIndex > -1) {
+        return prev.map((entry, idx) => {
+          if (idx !== existingIndex) return entry;
+          return {
+            ...entry,
+            quantity: totalQty,
+            variantQuantities: hasVariants ? quantities : undefined,
+            item,
+          };
+        });
+      }
+
+      return [
+        ...prev,
+        {
+          item,
+          quantity: totalQty,
+          variantQuantities: hasVariants ? quantities : undefined,
+        },
+      ];
+    });
+
+    triggerToast();
   };
 
   const removeFromCart = (itemId: string | number, variantId?: string) => {
     setCart((prev) =>
-      prev.filter((entry) => {
-        const idMatches = String(entry.item.id) === String(itemId);
-        if (!idMatches) return true;
-        if (variantId === undefined) return false;
-        return entry.item.selectedVariantId !== variantId;
-      })
+      prev
+        .map((entry) => {
+          const idMatches = String(entry.item.id) === String(itemId);
+          if (!idMatches) return entry;
+          if (variantId === undefined) {
+            return { ...entry, quantity: 0 };
+          }
+          const newQuantities = { ...(entry.variantQuantities || {}) };
+          delete newQuantities[variantId];
+          const totalQty = Object.values(newQuantities).reduce((a, b) => a + b, 0);
+          return {
+            ...entry,
+            quantity: totalQty,
+            variantQuantities: newQuantities,
+          };
+        })
+        .filter((entry) => entry.quantity > 0)
     );
   };
 
@@ -139,14 +212,29 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       prev
         .map((entry) => {
           const idMatches = String(entry.item.id) === String(itemId);
-          const variantMatches =
-            variantId === undefined || entry.item.selectedVariantId === variantId;
+          if (!idMatches) return entry;
 
-          if (idMatches && variantMatches) {
-            return { ...entry, quantity: Math.max(0, entry.quantity + delta) };
+          if (variantId !== undefined) {
+            const newQuantities = { ...(entry.variantQuantities || {}) };
+            const currentVal = newQuantities[variantId] || 0;
+            const newVal = Math.max(0, currentVal + delta);
+            if (newVal === 0) {
+              delete newQuantities[variantId];
+            } else {
+              newQuantities[variantId] = newVal;
+            }
+            const totalQty = Object.values(newQuantities).reduce((a, b) => a + b, 0);
+            return {
+              ...entry,
+              quantity: totalQty,
+              variantQuantities: newQuantities,
+            };
+          } else {
+            return {
+              ...entry,
+              quantity: Math.max(0, entry.quantity + delta),
+            };
           }
-
-          return entry;
         })
         .filter((entry) => entry.quantity > 0)
     );
@@ -154,42 +242,30 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const updateVariant = (itemId: string | number, variant: CartVariant, currentVariantId?: string) => {
     setCart((prev) => {
-      const index = prev.findIndex((entry) => {
-        const idMatches = String(entry.item.id) === String(itemId);
-        const variantMatches =
-          currentVariantId === undefined || entry.item.selectedVariantId === currentVariantId;
-
-        return idMatches && variantMatches;
-      });
-      if (index === -1) return prev;
-
-      const current = prev[index];
-      if (current.item.selectedVariantId === variant.id) return prev;
-
-      const updatedItem = normalizeCartItem({
-        ...current.item,
-        selectedVariantId: variant.id,
-        selectedVariantName: variant.name,
-        unitPrice: variant.price,
-        price: variant.price,
-      });
-      const targetKey = lineKey(updatedItem);
-      const targetIndex = prev.findIndex(
-        (entry, entryIndex) => entryIndex !== index && lineKey(entry.item) === targetKey
-      );
-
-      if (targetIndex >= 0) {
-        return prev
-          .map((entry, entryIndex) =>
-            entryIndex === targetIndex
-              ? { ...entry, quantity: entry.quantity + current.quantity, item: updatedItem }
-              : entry
-          )
-          .filter((_, entryIndex) => entryIndex !== index);
+      const idx = prev.findIndex((entry) => String(entry.item.id) === String(itemId));
+      if (idx === -1) return prev;
+      
+      const entry = prev[idx];
+      const newQuantities = { ...(entry.variantQuantities || {}) };
+      if (currentVariantId !== undefined) {
+        const qty = newQuantities[currentVariantId] || 0;
+        delete newQuantities[currentVariantId];
+        newQuantities[variant.id] = (newQuantities[variant.id] || 0) + qty;
+      } else {
+        newQuantities[variant.id] = entry.quantity;
       }
-
-      return prev.map((entry, entryIndex) =>
-        entryIndex === index ? { ...entry, item: updatedItem } : entry
+      return prev.map((e, i) =>
+        i === idx
+          ? {
+              ...e,
+              variantQuantities: newQuantities,
+              item: normalizeCartItem({
+                ...e.item,
+                selectedVariantId: variant.id,
+                selectedVariantName: variant.name,
+              }),
+            }
+          : e
       );
     });
   };
@@ -203,11 +279,17 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const cartTotal = useMemo(
     () =>
-      cart.reduce(
-        (total, entry) =>
-          total + (entry.item.unitPrice ?? parsePrice(entry.item.price)) * entry.quantity,
-        0
-      ),
+      cart.reduce((total, entry) => {
+        if (entry.variantQuantities && Object.keys(entry.variantQuantities).length > 0) {
+          const entryTotal = Object.entries(entry.variantQuantities).reduce((sum, [vId, qty]) => {
+            const variant = entry.item.variants?.find((v) => String(v.id) === String(vId));
+            const price = variant?.price ?? entry.item.unitPrice ?? parsePrice(entry.item.price);
+            return sum + price * qty;
+          }, 0);
+          return total + entryTotal;
+        }
+        return total + (entry.item.unitPrice ?? parsePrice(entry.item.price)) * entry.quantity;
+      }, 0),
     [cart]
   );
 
@@ -222,9 +304,19 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         clearCart,
         cartCount,
         cartTotal,
+        setVariantQuantities,
       }}
     >
       {children}
+      {mounted && toastMessage && createPortal(
+        <div className="fixed right-4 top-20 z-[99999] max-w-[calc(100vw-2rem)] animate-in fade-in slide-in-from-top-3 duration-300 sm:right-6">
+          <div className="rounded-full border border-brand-primary/20 bg-white px-6 py-3 text-sm font-black uppercase tracking-widest text-brand-dark shadow-[0_14px_32px_rgba(17,24,39,0.12)]">
+            <span className="mr-3 text-brand-primary text-lg">✓</span>
+            {toastMessage}
+          </div>
+        </div>,
+        document.body
+      )}
     </CartContext.Provider>
   );
 }
