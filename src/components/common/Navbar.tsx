@@ -56,9 +56,27 @@ export default function Navbar() {
     cartItems.forEach((c: any, index: number) => {
       const itemData = c.item || c;
       const itemName = itemData.name || "Dish";
-      const variantText = itemData.selectedVariantName ? `(${itemData.selectedVariantName})` : "";
-      const priceVal = typeof itemData.unitPrice === "number" ? itemData.unitPrice : (Number(String(itemData.price || 0).replace(/[^0-9]/g, "")) || 0);
-      const itemTotal = priceVal * (c.quantity || 1);
+      
+      let variantText = "";
+      let itemTotal = 0;
+      
+      if (c.variantQuantities && Object.keys(c.variantQuantities).length > 0) {
+        const breakdownParts: string[] = [];
+        Object.entries(c.variantQuantities)
+          .filter(([_, qty]) => (qty as number) > 0)
+          .forEach(([vId, qty]) => {
+            const variantObj = itemData.variants?.find((v: any) => String(v.id) === String(vId));
+            const vName = variantObj?.name || vId;
+            const vPrice = variantObj?.price || (typeof itemData.unitPrice === "number" ? itemData.unitPrice : 0);
+            breakdownParts.push(`${qty} x ${vName}`);
+            itemTotal += vPrice * (qty as number);
+          });
+        variantText = `(${breakdownParts.join(", ")})`;
+      } else {
+        variantText = itemData.selectedVariantName ? `(${itemData.selectedVariantName})` : "";
+        const priceVal = typeof itemData.unitPrice === "number" ? itemData.unitPrice : (Number(String(itemData.price || 0).replace(/[^0-9]/g, "")) || 0);
+        itemTotal = priceVal * (c.quantity || 1);
+      }
       
       msg += `🔸 *Item ${index + 1}:*\n`;
       msg += `Name: ${itemName} ${variantText}\n`;
@@ -79,8 +97,7 @@ export default function Navbar() {
     cartItems.forEach((c: any) => {
       const item = c.item || c;
       const itemId = item.id;
-      const variantId = item.selectedVariantId;
-      updateQuantity(itemId, -999, variantId);
+      updateQuantity(itemId, -999);
     });
 
     setIsCartOpen(false);
@@ -187,14 +204,21 @@ export default function Navbar() {
                 {cartItems.map((c: any, index: number) => {
                   const item = c.item || c;
                   const itemId = item.id;
-                  const variantId = item.selectedVariantId;
                   const itemName = item.name || "Dish";
                   const itemImage = item.image || "/images/placeholder-food.png";
-                  const variantName = item.selectedVariantName || "";
                   const unitPrice = typeof item.unitPrice === "number" ? item.unitPrice : (Number(String(item.price || 0).replace(/[^0-9]/g, "")) || 0);
 
+                  const hasVariants = c.variantQuantities && Object.keys(c.variantQuantities).length > 0;
+                  const itemTotal = hasVariants
+                    ? Object.entries(c.variantQuantities).reduce((sum, [vId, qty]) => {
+                        const variant = item.variants?.find((v: any) => String(v.id) === String(vId));
+                        const price = variant?.price ?? unitPrice;
+                        return sum + price * (qty as number);
+                      }, 0)
+                    : unitPrice * (c.quantity || 1);
+
                   return (
-                    <div key={`${itemId}-${variantId || "base"}-${index}`} className="flex gap-4 rounded-2xl border border-brand-primary/5 bg-white p-3 shadow-sm">
+                    <div key={`${itemId}-${index}`} className="flex gap-4 rounded-2xl border border-brand-primary/5 bg-white p-3 shadow-sm">
                       <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-brand-surface">
                         <Image src={itemImage} alt={itemName} fill className="object-cover" unoptimized />
                       </div>
@@ -203,29 +227,71 @@ export default function Navbar() {
                         <div className="flex items-start justify-between gap-2">
                           <div>
                             <h4 className="line-clamp-1 font-bold text-brand-dark">{itemName}</h4>
-                            {variantName && <p className="text-xs font-bold text-brand-primary">{variantName}</p>}
+                            {hasVariants ? (
+                              <p className="text-xs font-bold text-brand-primary">
+                                {Object.entries(c.variantQuantities)
+                                  .filter(([_, qty]) => (qty as number) > 0)
+                                  .map(([vId, qty]) => {
+                                    const variant = item.variants?.find((v: any) => String(v.id) === String(vId));
+                                    return `${qty} x ${variant?.name || vId}`;
+                                  })
+                                  .join(", ")}
+                              </p>
+                            ) : item.selectedVariantName ? (
+                              <p className="text-xs font-bold text-brand-primary">{item.selectedVariantName}</p>
+                            ) : null}
                           </div>
                           <button 
-                            onClick={() => removeFromCart(itemId, variantId)}
+                            onClick={() => removeFromCart(itemId)}
                             className="text-brand-dark/30 transition-colors hover:text-red-500"
                           >
                             <Trash2 size={16} />
                           </button>
                         </div>
 
-                        <div className="mt-2 flex items-center justify-between">
-                          <span className="font-semibold text-brand-primary">Rs. {unitPrice.toLocaleString()}</span>
-                          
-                          <div className="flex items-center gap-3 rounded-full border border-brand-primary/20 bg-brand-surface px-1.5 py-0.5">
-                            <button onClick={() => updateQuantity(itemId, -1, variantId)} className="text-brand-dark hover:text-brand-primary">
-                              <Minus size={14} strokeWidth={3} />
-                            </button>
-                            <span className="w-4 text-center text-sm font-semibold text-brand-dark">{c.quantity}</span>
-                            <button onClick={() => updateQuantity(itemId, 1, variantId)} className="text-brand-dark hover:text-brand-primary">
-                              <Plus size={14} strokeWidth={3} />
-                            </button>
+                        {hasVariants ? (
+                          <div className="mt-2 space-y-1">
+                            {Object.entries(c.variantQuantities)
+                              .filter(([_, qty]) => (qty as number) > 0)
+                              .map(([vId, qty]) => {
+                                const variantObj = item.variants?.find((v: any) => String(v.id) === String(vId));
+                                const vName = variantObj?.name || vId;
+                                const vPrice = variantObj?.price || unitPrice;
+                                return (
+                                  <div key={vId} className="flex items-center justify-between text-xs text-brand-dark/70">
+                                    <span>{vName} (Rs. {vPrice.toLocaleString()})</span>
+                                    <div className="flex items-center gap-2 rounded-full border border-brand-primary/20 bg-brand-surface px-1.5 py-0.5">
+                                      <button onClick={() => updateQuantity(itemId, -1, vId)} className="text-brand-dark hover:text-brand-primary">
+                                        <Minus size={12} strokeWidth={3} />
+                                      </button>
+                                      <span className="w-4 text-center font-semibold text-brand-dark">{qty as number}</span>
+                                      <button onClick={() => updateQuantity(itemId, 1, vId)} className="text-brand-dark hover:text-brand-primary">
+                                        <Plus size={12} strokeWidth={3} />
+                                      </button>
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            <div className="mt-2 flex items-center justify-between text-xs font-bold border-t border-brand-primary/5 pt-1">
+                              <span className="text-brand-dark">Item Subtotal</span>
+                              <span className="text-brand-primary">Rs. {itemTotal.toLocaleString()}</span>
+                            </div>
                           </div>
-                        </div>
+                        ) : (
+                          <div className="mt-2 flex items-center justify-between">
+                            <span className="font-semibold text-brand-primary">Rs. {itemTotal.toLocaleString()}</span>
+                            
+                            <div className="flex items-center gap-3 rounded-full border border-brand-primary/20 bg-brand-surface px-1.5 py-0.5">
+                              <button onClick={() => updateQuantity(itemId, -1)} className="text-brand-dark hover:text-brand-primary">
+                                <Minus size={14} strokeWidth={3} />
+                              </button>
+                              <span className="w-4 text-center text-sm font-semibold text-brand-dark">{c.quantity}</span>
+                              <button onClick={() => updateQuantity(itemId, 1)} className="text-brand-dark hover:text-brand-primary">
+                                <Plus size={14} strokeWidth={3} />
+                              </button>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
                   );

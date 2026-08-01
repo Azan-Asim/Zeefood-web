@@ -131,12 +131,12 @@ function ProductQuickAddModal({
   isOpen,
   onClose,
   product,
-  selectedVariant,
-  onSelectVariant,
-  quantity,
-  onIncrease,
-  onDecrease,
-  onConfirm,
+  selectedVariant: _unusedSelectedVariant,
+  onSelectVariant: _unusedOnSelectVariant,
+  quantity: _unusedQuantity,
+  onIncrease: _unusedOnIncrease,
+  onDecrease: _unusedOnDecrease,
+  onConfirm: _unusedOnConfirm,
 }: {
   isOpen: boolean;
   onClose: () => void;
@@ -149,16 +149,91 @@ function ProductQuickAddModal({
   onConfirm: () => void;
 }) {
   const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  const { cart, setVariantQuantities } = useCart();
+  const cartItem = cart.find((c) => String(c.item.id) === String(product.id));
 
-  if (!isOpen || !mounted) return null;
+  const [variantSelections, setVariantSelections] = useState<{ [variantId: string]: number }>({});
+  const [localSelectedVariant, setLocalSelectedVariant] = useState<ProductVariant | undefined>(undefined);
+  const [baseQuantity, setBaseQuantity] = useState(1);
 
   const categoryName = getCategoryName(product.category);
   const variants = getUniqueVariants(product.variants);
-  const activeVariant = selectedVariant && variants.some(v => v.id === selectedVariant.id) ? selectedVariant : variants[0];
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (isOpen) {
+      if (variants.length > 0) {
+        setVariantSelections(cartItem?.variantQuantities || {});
+        setLocalSelectedVariant(undefined); // No option auto-selected by default!
+      } else {
+        setBaseQuantity(cartItem?.quantity || 1);
+      }
+    }
+  }, [isOpen, cartItem, variants.length]);
+
+  if (!isOpen || !mounted) return null;
+
   const detailText = product.details?.recipe || product.details?.nutritionalInfo || "Freshly prepared with premium ingredients and bold flavors.";
   const cleanName = cleanProductName(product.name, categoryName);
   const isUrdu = isUrduText(cleanName);
+
+  const currentSelectedVariantQty = localSelectedVariant ? (variantSelections[localSelectedVariant.id] || 0) : 0;
+
+  const handleVariantClick = (variant: ProductVariant) => {
+    setLocalSelectedVariant(variant);
+    setVariantSelections((prev) => {
+      const currentQty = prev[variant.id] || 0;
+      return {
+        ...prev,
+        [variant.id]: currentQty + 1,
+      };
+    });
+  };
+
+  const handleLocalIncrease = () => {
+    if (variants.length > 0) {
+      if (!localSelectedVariant) return;
+      setVariantSelections((prev) => ({
+        ...prev,
+        [localSelectedVariant.id]: (prev[localSelectedVariant.id] || 0) + 1,
+      }));
+    } else {
+      setBaseQuantity((qty) => qty + 1);
+    }
+  };
+
+  const handleLocalDecrease = () => {
+    if (variants.length > 0) {
+      if (!localSelectedVariant) return;
+      setVariantSelections((prev) => {
+        const current = prev[localSelectedVariant.id] || 0;
+        const next = Math.max(0, current - 1);
+        const updated = { ...prev };
+        if (next === 0) {
+          delete updated[localSelectedVariant.id];
+        } else {
+          updated[localSelectedVariant.id] = next;
+        }
+        return updated;
+      });
+    } else {
+      setBaseQuantity((qty) => Math.max(1, qty - 1));
+    }
+  };
+
+  const handleConfirm = () => {
+    if (setVariantQuantities) {
+      if (variants.length > 0) {
+        setVariantQuantities(product.id, variantSelections, toCartItem(product, localSelectedVariant || variants[0]));
+      } else {
+        setVariantQuantities(product.id, {}, toCartItem(product), baseQuantity);
+      }
+    }
+    onClose();
+  };
 
   const modalContent = (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 p-3 sm:p-4 backdrop-blur-sm" onClick={onClose}>
@@ -200,37 +275,58 @@ function ProductQuickAddModal({
               <p className="text-xs font-medium leading-snug text-brand-dark/75 line-clamp-2">{detailText}</p>
             </div>
 
+            {/* Display portion selections summary above options */}
+            {variants.length > 0 && (
+              <div className="rounded-[14px] border border-dashed border-brand-primary/20 bg-brand-surface/40 p-2 text-xs text-brand-dark/85">
+                <span className="block font-black text-brand-primary uppercase tracking-[0.2em] text-[9px] mb-1">
+                  Selected Portions
+                </span>
+                {Object.keys(variantSelections).length > 0 && Object.values(variantSelections).some(qty => qty > 0) ? (
+                  <div className="flex flex-wrap gap-x-3 gap-y-1 font-bold">
+                    {Object.entries(variantSelections)
+                      .filter(([_, qty]) => qty > 0)
+                      .map(([vId, qty]) => {
+                        const vName = variants.find((v) => String(v.id) === String(vId))?.name || vId;
+                        return (
+                          <span key={vId} className="bg-brand-primary/10 text-brand-primary px-2 py-0.5 rounded-md">
+                            {vName}: {qty}
+                          </span>
+                        );
+                      })}
+                  </div>
+                ) : (
+                  <span className="text-brand-dark/50 italic">No option selected. Please click an option below to select.</span>
+                )}
+              </div>
+            )}
+
             {variants.length > 0 && (
               <div>
                 <p className="mb-1 text-[9px] font-black uppercase tracking-[0.2em] text-brand-dark/50">Choose Size / Option</p>
-                <div className="max-h-[120px] overflow-y-auto p-0.5 -m-0.5 no-scrollbar grid grid-cols-2 sm:grid-cols-3 gap-1.5">
+                <div className="max-h-[120px] overflow-y-auto p-2 -m-2 no-scrollbar grid grid-cols-2 sm:grid-cols-3 gap-1.5">
                   {variants.map((variant) => {
-                    const isActive = activeVariant?.id === variant.id;
+                    const isSelected = localSelectedVariant?.id === variant.id;
+                    const qty = variantSelections[variant.id] || 0;
                     return (
                       <button
                         key={variant.id || variant.name}
                         type="button"
-                        onClick={() => {
-                          if (isActive) {
-                            onIncrease();
-                          } else {
-                            onSelectVariant(variant);
-                          }
-                        }}
+                        onClick={() => handleVariantClick(variant)}
                         className={`relative flex flex-col items-center justify-center rounded-[12px] border p-2 text-center transition-all duration-300 ${
-                          isActive
+                          isSelected
                             ? "border-brand-primary bg-brand-primary text-white shadow-md"
                             : "border-gray-200 bg-brand-surface text-brand-dark hover:border-brand-primary hover:text-brand-primary"
                         }`}
                       >
                         <span className="block text-[10px] font-black uppercase tracking-wider truncate w-full">{variant.name}</span>
-                        <span className={`mt-0.5 block text-[11px] font-bold ${isActive ? "text-white/90" : "text-brand-dark/70"}`}>
+                        <span className={`mt-0.5 block text-[11px] font-bold ${isSelected ? "text-white/90" : "text-brand-dark/70"}`}>
                           Rs. {(variant.price || 0).toLocaleString()}
                         </span>
                         
-                        {isActive && quantity > 1 && (
-                          <span className="absolute -top-1.5 -right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-brand-dark text-[9px] font-black text-white shadow-sm ring-2 ring-white">
-                            {quantity}
+                        {/* Visual Badge showing the quantity */}
+                        {qty > 0 && (
+                          <span className="absolute -top-1.5 -right-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-brand-dark text-[10px] font-black text-white shadow-sm ring-2 ring-white z-10">
+                            {qty}
                           </span>
                         )}
                       </button>
@@ -245,16 +341,20 @@ function ProductQuickAddModal({
                 <div className="flex w-[110px] h-[38px] items-center justify-between rounded-full border border-brand-primary/20 bg-white px-2 shadow-sm">
                   <button
                     type="button"
-                    onClick={onDecrease}
-                    className="flex h-7 w-7 items-center justify-center rounded-full text-brand-dark hover:text-brand-primary text-lg font-medium"
+                    onClick={handleLocalDecrease}
+                    disabled={variants.length > 0 && !localSelectedVariant}
+                    className="flex h-7 w-7 items-center justify-center rounded-full text-brand-dark hover:text-brand-primary text-lg font-medium disabled:opacity-30 disabled:cursor-not-allowed"
                   >
                     −
                   </button>
-                  <span className="text-xs font-black text-brand-dark text-center w-5">{quantity}</span>
+                  <span className="text-xs font-black text-brand-dark text-center w-5">
+                    {variants.length > 0 ? currentSelectedVariantQty : baseQuantity}
+                  </span>
                   <button
                     type="button"
-                    onClick={onIncrease}
-                    className="flex h-7 w-7 items-center justify-center rounded-full text-brand-dark hover:text-brand-primary text-lg font-medium"
+                    onClick={handleLocalIncrease}
+                    disabled={variants.length > 0 && !localSelectedVariant}
+                    className="flex h-7 w-7 items-center justify-center rounded-full text-brand-dark hover:text-brand-primary text-lg font-medium disabled:opacity-30 disabled:cursor-not-allowed"
                   >
                     +
                   </button>
@@ -262,7 +362,7 @@ function ProductQuickAddModal({
 
                 <button
                   type="button"
-                  onClick={onConfirm}
+                  onClick={handleConfirm}
                   className="flex-1 h-[38px] flex items-center justify-center rounded-full bg-brand-primary px-4 text-[10px] font-black uppercase tracking-widest text-white shadow-md transition-all hover:bg-[#e96500]"
                 >
                   Add to Cart
@@ -420,10 +520,7 @@ export function VariantProductCard({
   };
 
   const handleRemove = () => {
-    const cartItem = Array.isArray(cart) ? cart.find(c => c?.item?.id === product.id) : null;
-    if (cartItem && cartItem.item) {
-      removeFromCart(product.id, cartItem.item.selectedVariantId);
-    }
+    removeFromCart(product.id);
     setIsManageOpen(false);
   };
 
@@ -569,9 +666,6 @@ export default function OrderPage() {
   const { cart, addToCart } = useCart();
   const searchParams = useSearchParams();
 
-  const [orderToast, setOrderToast] = useState<string | null>(null);
-  const orderToastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-
   const { isLoading, isError, error, refetch } = useProducts();
   const {
     filteredProducts,
@@ -604,16 +698,12 @@ export default function OrderPage() {
   useEffect(() => {
     return () => {
       if (searchTimer.current) clearTimeout(searchTimer.current);
-      if (orderToastTimer.current) clearTimeout(orderToastTimer.current);
     };
   }, []);
 
   const handleAddToCart = useCallback(
     (product: Product, variant?: ProductVariant) => {
       addToCart(toCartItem(product, variant));
-      setOrderToast("Item added to cart!");
-      if (orderToastTimer.current) clearTimeout(orderToastTimer.current);
-      orderToastTimer.current = setTimeout(() => setOrderToast(null), 2400);
     },
     [addToCart]
   );
@@ -741,16 +831,6 @@ export default function OrderPage() {
           </div>
         </div>
 
-        {/* ── Add to Cart Toast ── */}
-        {orderToast && (
-          <div className="fixed right-4 top-20 z-[260] max-w-[calc(100vw-2rem)] animate-in fade-in slide-in-from-top-3 duration-300 sm:right-6">
-            <div className="rounded-full border border-brand-primary/20 bg-white px-6 py-3 text-sm font-black uppercase tracking-widest text-brand-dark shadow-[0_14px_32px_rgba(17,24,39,0.12)]">
-              <span className="mr-3 text-brand-primary text-lg">✓</span>
-              {orderToast}
-            </div>
-          </div>
-        )}
-
       </div>
     </div>
   );
@@ -803,14 +883,30 @@ export function CartContent({
           <div className="flex flex-col gap-2.5">
             {safeCart.map((c: any, i: number) => {
               if (!c || !c.item) return null;
-              const cartKey = `${c.item.id}-${c.item.selectedVariantId ?? "base"}-${i}`;
+              const cartKey = `${c.item.id}-${i}`;
               const unitPrice = numericCartPrice(c.item);
-              const lineTotal = unitPrice * (c.quantity || 1);
               const safeCartVariants = getUniqueVariants(c.item.variants);
-              const selectedVariant =
-                c.item.selectedVariantName ||
-                safeCartVariants.find((variant) => variant.id === c.item.selectedVariantId)?.name ||
-                "Standard";
+              
+              const selectedVariant = c.variantQuantities && Object.keys(c.variantQuantities).length > 0
+                ? Object.entries(c.variantQuantities)
+                    .filter(([_, qty]) => (qty as number) > 0)
+                    .map(([vId, qty]) => {
+                      const variant = c.item.variants?.find((v: any) => String(v.id) === String(vId));
+                      return `${qty} x ${variant?.name || vId}`;
+                    })
+                    .join(", ")
+                : (c.item.selectedVariantName ||
+                    safeCartVariants.find((variant) => variant.id === c.item.selectedVariantId)?.name ||
+                    "Standard");
+
+              const lineTotal = c.variantQuantities && Object.keys(c.variantQuantities).length > 0
+                ? Object.entries(c.variantQuantities).reduce((sum, [vId, qty]) => {
+                    const variant = c.item.variants?.find((v: any) => String(v.id) === String(vId));
+                    const price = variant?.price ?? unitPrice;
+                    return sum + price * (qty as number);
+                  }, 0)
+                : unitPrice * (c.quantity || 1);
+
               const hasCartDetails = Boolean(c.item.details?.prepTime) || Boolean(c.item.category) || Boolean(safeCartVariants.length);
               const cartDetailsOpen = openDetailKey === cartKey;
               
@@ -860,59 +956,80 @@ export function CartContent({
                         </button>
                       )}
 
-                      {safeCartVariants.length > 0 && (
-                        <div className={`mt-3 flex flex-wrap items-center gap-2 ${language === "UR" ? "justify-end" : ""}`}>
-                          {safeCartVariants.map((variant) => (
+                      {c.variantQuantities && Object.keys(c.variantQuantities).length > 0 ? (
+                        <div className="mt-3 space-y-2 border-t border-gray-100 pt-3">
+                          {Object.entries(c.variantQuantities)
+                            .filter(([_, qty]) => (qty as number) > 0)
+                            .map(([vId, qty]) => {
+                              const variantObj = c.item.variants?.find((v: any) => String(v.id) === String(vId));
+                              const vName = variantObj?.name || vId;
+                              const vPrice = variantObj?.price || unitPrice;
+                              return (
+                                <div key={vId} className="flex items-center justify-between text-xs text-brand-dark/70 font-semibold bg-[#fbf7f2] p-2 rounded-xl border border-brand-primary/5">
+                                  <span>{vName} Portion (Rs. {vPrice.toLocaleString()})</span>
+                                  <div className="flex items-center gap-1.5 rounded-xl bg-white p-1 shadow-sm">
+                                    <button
+                                      onClick={() => updateQuantity(c.item.id, -1, vId)}
+                                      className="flex h-6 w-6 items-center justify-center rounded-lg text-brand-dark hover:text-brand-primary"
+                                      aria-label="Decrease portion quantity"
+                                    >
+                                      −
+                                    </button>
+                                    <span className="w-5 text-center font-bold">{qty as number}</span>
+                                    <button
+                                      onClick={() => updateQuantity(c.item.id, 1, vId)}
+                                      className="flex h-6 w-6 items-center justify-center rounded-lg text-brand-dark hover:text-brand-primary"
+                                      aria-label="Increase portion quantity"
+                                    >
+                                      +
+                                    </button>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                        </div>
+                      ) : (
+                        <div className="mt-4 grid grid-cols-1 items-stretch gap-3 rounded-2xl bg-[#fbf7f2] p-2 min-[420px]:grid-cols-[1fr_auto_1fr] min-[420px]:items-center">
+                          <div>
+                            <span className="block text-[9px] font-black uppercase tracking-widest text-brand-dark/40">Price</span>
+                            <span className="block text-sm font-black text-brand-dark">{money(unitPrice)}</span>
+                          </div>
+
+                          <div className={`flex items-center justify-center gap-1.5 rounded-xl bg-white p-1 shadow-sm ${language === "UR" ? "flex-row-reverse" : ""}`}>
                             <button
-                              key={variant.id || variant.name}
-                              type="button"
-                              onClick={() => updateVariant(c.item.id, variant, c.item.selectedVariantId)}
-                              className={`rounded-xl border px-2.5 py-1.5 text-[9px] font-black uppercase tracking-wider transition-all ${
-                                c.item.selectedVariantId === variant.id
-                                  ? "border-brand-primary bg-brand-primary text-white"
-                                  : "border-gray-200 bg-[#fbf7f2] text-brand-dark/55 hover:border-brand-primary hover:bg-white hover:text-brand-primary"
-                              }`}
-                              title={`Switch to ${variant.name}`}
+                              onClick={() => updateQuantity(c.item.id, -1)}
+                              className="flex h-8 w-8 items-center justify-center rounded-xl text-brand-dark transition-colors hover:bg-[#fbf7f2] hover:text-brand-primary"
+                              aria-label="Decrease quantity"
                             >
-                              {variant.name}
+                              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M20 12H4" />
+                              </svg>
                             </button>
-                          ))}
+                            <span className="w-6 text-center text-base font-black text-brand-dark">{c.quantity}</span>
+                            <button
+                              onClick={() => updateQuantity(c.item.id, 1)}
+                              className="flex h-8 w-8 items-center justify-center rounded-xl text-brand-dark transition-colors hover:bg-[#fbf7f2] hover:text-brand-primary"
+                              aria-label="Increase quantity"
+                            >
+                              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+                              </svg>
+                            </button>
+                          </div>
+
+                          <div className="min-[420px]:text-right">
+                            <span className="block text-[9px] font-black uppercase tracking-widest text-brand-dark/40">Total</span>
+                            <span className="block text-sm font-black text-brand-primary">{money(lineTotal)}</span>
+                          </div>
                         </div>
                       )}
 
-                      <div className="mt-4 grid grid-cols-1 items-stretch gap-3 rounded-2xl bg-[#fbf7f2] p-2 min-[420px]:grid-cols-[1fr_auto_1fr] min-[420px]:items-center">
-                        <div>
-                          <span className="block text-[9px] font-black uppercase tracking-widest text-brand-dark/40">Price</span>
-                          <span className="block text-sm font-black text-brand-dark">{money(unitPrice)}</span>
+                      {c.variantQuantities && Object.keys(c.variantQuantities).length > 0 && (
+                        <div className="mt-3 flex items-center justify-between text-xs font-black text-brand-dark border-t border-gray-100 pt-2">
+                          <span>Total Item Price:</span>
+                          <span className="text-sm text-brand-primary">{money(lineTotal)}</span>
                         </div>
-
-                        <div className={`flex items-center justify-center gap-1.5 rounded-xl bg-white p-1 shadow-sm ${language === "UR" ? "flex-row-reverse" : ""}`}>
-                          <button
-                            onClick={() => updateQuantity(c.item.id, -1, c.item.selectedVariantId)}
-                            className="flex h-8 w-8 items-center justify-center rounded-xl text-brand-dark transition-colors hover:bg-[#fbf7f2] hover:text-brand-primary"
-                            aria-label="Decrease quantity"
-                          >
-                            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M20 12H4" />
-                            </svg>
-                          </button>
-                          <span className="w-6 text-center text-base font-black text-brand-dark">{c.quantity}</span>
-                          <button
-                            onClick={() => updateQuantity(c.item.id, 1, c.item.selectedVariantId)}
-                            className="flex h-8 w-8 items-center justify-center rounded-xl text-brand-dark transition-colors hover:bg-[#fbf7f2] hover:text-brand-primary"
-                            aria-label="Increase quantity"
-                          >
-                            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-                            </svg>
-                          </button>
-                        </div>
-
-                        <div className="min-[420px]:text-right">
-                          <span className="block text-[9px] font-black uppercase tracking-widest text-brand-dark/40">Total</span>
-                          <span className="block text-sm font-black text-brand-primary">{money(lineTotal)}</span>
-                        </div>
-                      </div>
+                      )}
 
                       {cartDetailsOpen && (
                         <div className="mt-3 rounded-2xl border border-gray-200 bg-white p-3 text-xs font-bold leading-5 text-brand-dark/60">
