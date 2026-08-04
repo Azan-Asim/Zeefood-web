@@ -106,10 +106,10 @@ export default function Navbar() {
   return (
     <>
       <nav
-        className={`fixed left-0 right-0 top-0 z-[100] w-full overflow-hidden transition-all duration-300 ${
+        className={`fixed left-0 right-0 top-0 z-[100] w-full h-20 transition-all duration-300 ${
           isScrolled
-            ? "h-16 border-b border-brand-primary/10 bg-white/90 shadow-md backdrop-blur-md"
-            : "h-20 border-b border-brand-primary/10 bg-white"
+            ? "border-b border-brand-primary/10 bg-white/90 shadow-md backdrop-blur-md"
+            : "border-b border-brand-primary/10 bg-white"
         }`}
       >
         {isScrolled && (
@@ -130,21 +130,22 @@ export default function Navbar() {
           </div>
 
           <div className="flex flex-shrink-0 items-center gap-1.5 sm:gap-3">
-            <button
-              onClick={() => setIsCartOpen(true)}
-              className="inline-flex min-h-8 sm:min-h-11 items-center justify-center gap-1.5 sm:gap-2.5 rounded-full bg-brand-primary px-3 py-1.5 sm:px-6 sm:py-2.5 text-[10px] sm:text-sm font-black uppercase tracking-wider sm:tracking-[0.2em] text-white shadow-[0_8px_16px_rgba(248,114,5,0.24)] sm:shadow-[0_12px_28px_rgba(248,114,5,0.24)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-brand-primary/95"
-            >
-              <div className="relative flex items-center justify-center">
+            <div className="relative inline-flex">
+              <button
+                onClick={() => setIsCartOpen(true)}
+                className="inline-flex min-h-8 sm:min-h-11 items-center justify-center gap-1.5 sm:gap-2.5 rounded-full bg-brand-primary px-3 py-1.5 sm:px-6 sm:py-2.5 text-[10px] sm:text-sm font-black uppercase tracking-wider sm:tracking-[0.2em] text-white shadow-[0_8px_16px_rgba(248,114,5,0.24)] sm:shadow-[0_12px_28px_rgba(248,114,5,0.24)] transition-all duration-300 hover:bg-brand-primary/95"
+              >
                 <ShoppingCart className="h-4 w-4 sm:h-5 sm:w-5" />
-                {totalItems > 0 && (
-                  <span className="absolute -right-2.5 sm:-right-3 -top-2.5 sm:-top-3 flex h-5 w-5 sm:h-6 sm:w-6 items-center justify-center rounded-full bg-white shadow-md border border-brand-primary/10">
-                    <span className="text-[10px] sm:text-[11px] font-black text-brand-primary tabular-nums leading-none">{totalItems}</span>
+                <span className="hidden min-[380px]:inline ml-1">Cart</span>
+              </button>
+              {totalItems > 0 && (
+                <span className="pointer-events-none absolute -top-1.5 -right-1.5 grid place-items-center h-5 w-5 rounded-full bg-white shadow-md border-2 border-brand-primary z-10">
+                  <span className="text-[10px] font-black text-brand-primary tabular-nums" style={{ lineHeight: 1 }}>
+                    {totalItems}
                   </span>
-                )}
-              </div>
-              
-              <span className="hidden min-[380px]:inline ml-1">Cart</span>
-            </button>
+                </span>
+              )}
+            </div>
 
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -350,7 +351,7 @@ export default function Navbar() {
               
               <button
                 onClick={handleWhatsAppCheckout}
-                className="group flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-brand-primary px-6 text-base font-bold text-white shadow-[0_10px_22px_rgba(248,114,5,0.22)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-brand-primary/90 hover:shadow-[0_14px_28px_rgba(248,114,5,0.28)]"
+                className="group flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-brand-primary px-6 text-base font-bold text-white shadow-[0_10px_22px_rgba(248,114,5,0.22)] transition-all duration-300 hover:bg-brand-primary/90 hover:shadow-[0_14px_28px_rgba(248,114,5,0.28)]"
               >
                 Place Order on WhatsApp
                 <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />

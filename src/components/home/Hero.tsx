@@ -216,6 +216,7 @@ function CircularHeroDisplay({
     </div>
   );
 }
+// fixesissue
 
 function getOrbitPosition(angle: number, radius: number) {
   const radians = (angle * Math.PI) / 180;

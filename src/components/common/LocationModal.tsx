@@ -3,6 +3,7 @@
 import { type ReactNode, useEffect, useState } from "react";
 import Image from "next/image";
 import { MapPin, Navigation, Check, Loader2, LocateFixed } from "lucide-react";
+import BannerModal from "./BannerModal";
 
 type OrderType = "delivery" | "pickup";
 
@@ -10,6 +11,7 @@ const PICKUP_ADDRESS = "464-Sirhindi Road, Near Gourmet Bakers, First Round Abou
 
 export default function LocationModal() {
   const [isOpen, setIsOpen] = useState(false);
+  const [showBanner, setShowBanner] = useState(false);
   const [orderType, setOrderType] = useState<OrderType>("delivery");
   
   // Geolocation states
@@ -68,9 +70,12 @@ export default function LocationModal() {
       }),
     );
     setIsOpen(false);
+    setShowBanner(true);
   };
 
-  if (!isOpen) return null;
+  if (!isOpen) return (
+    <>{showBanner && <BannerModal onClose={() => setShowBanner(false)} />}</>
+  );
 
   const isPickup = orderType === "pickup";
   const isButtonDisabled = !isPickup && locStatus !== "success"; 
