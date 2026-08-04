@@ -276,7 +276,7 @@ function ProductQuickAddModal({
           <button
             type="button"
             onClick={onClose}
-            className="absolute top-4 right-4 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-brand-surface text-brand-dark transition-colors hover:bg-brand-primary/10 hover:text-brand-primary shadow-sm"
+            className="absolute top-4 right-4 z-10 flex h-8 w-8 items-center justify-center rounded-full text-brand-dark transition-colors hover:text-brand-primary shadow-sm"
             aria-label="Close"
           >
             <span className="text-xl font-black leading-none">×</span>
@@ -470,7 +470,7 @@ function ItemManagementModal({
         {/* ── TOP ~63%: full-width product image ── */}
         <div
           className="relative w-full shrink-0 overflow-hidden"
-          style={{ height: "63%" }}
+          style={{ height: "59%" }}
         >
           <Image
             src={productImageUrl(product.image, product.name, categoryName)}
@@ -486,7 +486,7 @@ function ItemManagementModal({
           <button
             type="button"
             onClick={onClose}
-            className="absolute top-4 right-4 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-black/40 backdrop-blur-sm text-white transition-colors hover:bg-black/60"
+            className="absolute top-4 right-4 z-10 flex h-9 w-9 items-center justify-center rounded-full text-white transition-colors hover:text-brand-primary"
             aria-label="Close"
           >
             <span className="text-xl font-black leading-none">×</span>
@@ -536,14 +536,14 @@ function ItemManagementModal({
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 rounded-full border-2 border-gray-200 bg-white py-3 text-[10px] font-black uppercase tracking-widest text-brand-dark transition-all hover:border-brand-primary hover:text-brand-primary"
+              className="flex-1 rounded-full border-2 border-gray-200 bg-white py-2.5 px-4.5 text-[10px] font-black uppercase tracking-widest text-brand-dark transition-all hover:border-brand-primary hover:text-brand-primary"
             >
               Keep item
             </button>
             <button
               type="button"
               onClick={onRemove}
-              className="flex-1 rounded-full bg-brand-primary py-3 text-[10px] font-black uppercase tracking-widest text-white shadow-[0_8px_20px_rgba(248,114,5,0.28)] transition-all hover:bg-[#e96500] hover:shadow-[0_12px_28px_rgba(248,114,5,0.35)] hover:-translate-y-0.5"
+              className="flex-1 rounded-full bg-brand-primary py-2.5 px-4.5 text-[10px] font-black uppercase tracking-widest text-white shadow-[0_8px_20px_rgba(248,114,5,0.28)] transition-all hover:bg-[#e96500] hover:shadow-[0_12px_28px_rgba(248,114,5,0.35)] hover:-translate-y-0.5"
             >
               Remove item
             </button>
@@ -648,11 +648,11 @@ export function VariantProductCard({
 
           <div className="flex w-full items-center justify-center">
             {totalProductQty > 0 ? (
-              <div className="flex w-full h-[36px] items-center justify-between rounded-full border border-brand-primary/20 bg-brand-surface px-1.5 shadow-sm">
+              <div className="flex w-full h-[36px] items-center justify-between rounded-full border border-brand-primary/20 bg-transparent px-1.5 shadow-sm">
                 <button
                   type="button"
                   onClick={(e) => { e.preventDefault(); e.stopPropagation(); setIsManageOpen(true); }}
-                  className="flex h-7 w-7 items-center justify-center rounded-full text-brand-dark transition-colors hover:bg-white hover:text-brand-primary text-xl font-medium"
+                  className="flex h-7 w-7 items-center justify-center rounded-full text-brand-dark transition-colors hover:text-brand-primary text-xl font-medium"
                 >
                   −
                 </button>
@@ -660,7 +660,7 @@ export function VariantProductCard({
                 <button
                   type="button"
                   onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleOpenModal(e); }}
-                  className="flex h-7 w-7 items-center justify-center rounded-full text-brand-dark transition-colors hover:bg-white hover:text-brand-primary text-xl font-medium"
+                  className="flex h-7 w-7 items-center justify-center rounded-full text-brand-dark transition-colors hover:text-brand-primary text-xl font-medium"
                 >
                   +
                 </button>
