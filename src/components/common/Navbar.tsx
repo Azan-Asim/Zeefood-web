@@ -9,7 +9,6 @@ import { useCart } from "@/context/CartContext";
 
 const navLinks = [
   { name: "Home", href: "/" },
-  { name: "Deals", href: "/deals" },
   { name: "Menu", href: "/menu" },
   { name: "Our Story", href: "/about" },
 ];
@@ -25,6 +24,7 @@ export default function Navbar() {
   const cartItems = cartContext?.cart || cartContext?.cartItems || [];
   const updateQuantity = cartContext?.updateQuantity || (() => {});
   const removeFromCart = cartContext?.removeFromCart || ((id: string, variantId?: string) => updateQuantity(id, -999, variantId));
+  const clearCart = cartContext?.clearCart || (() => {});
   const cartTotal = cartContext?.cartTotal || 0;
 
   const totalItems = cartItems.reduce((total: number, entry: any) => total + (entry?.quantity || 0), 0);
@@ -117,7 +117,7 @@ export default function Navbar() {
         )}
         
         <div className="site-container relative flex h-full items-center justify-between">
-          <div className="flex-shrink-0">
+          <div className="flex-shrink-0 h-full flex items-center">
             <BrandMark />
           </div>
 
@@ -129,22 +129,21 @@ export default function Navbar() {
             ))}
           </div>
 
-          {/* Right Side Buttons (Cart & Hamburger) - Updated for Mobile View */}
           <div className="flex flex-shrink-0 items-center gap-1.5 sm:gap-3">
             <button
               onClick={() => setIsCartOpen(true)}
               className="inline-flex min-h-8 sm:min-h-11 items-center justify-center gap-1.5 sm:gap-2.5 rounded-full bg-brand-primary px-3 py-1.5 sm:px-6 sm:py-2.5 text-[10px] sm:text-sm font-black uppercase tracking-wider sm:tracking-[0.2em] text-white shadow-[0_8px_16px_rgba(248,114,5,0.24)] sm:shadow-[0_12px_28px_rgba(248,114,5,0.24)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-brand-primary/95"
             >
-              <ShoppingCart className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+              <div className="relative flex items-center justify-center">
+                <ShoppingCart className="h-4 w-4 sm:h-5 sm:w-5" />
+                {totalItems > 0 && (
+                  <span className="absolute -right-2.5 sm:-right-3 -top-2.5 sm:-top-3 flex h-5 w-5 sm:h-6 sm:w-6 items-center justify-center rounded-full bg-white shadow-md border border-brand-primary/10">
+                    <span className="text-[10px] sm:text-[11px] font-black text-brand-primary tabular-nums leading-none">{totalItems}</span>
+                  </span>
+                )}
+              </div>
               
-              {/* "Cart" text hidden on very small screens, visible on 380px and above */}
-              <span className="hidden min-[380px]:inline">Cart</span>
-              
-              {totalItems > 0 && (
-                <span className="flex h-4 w-4 sm:h-6 sm:w-6 items-center justify-center rounded-full bg-white text-[9px] sm:text-xs font-black text-brand-primary">
-                  {totalItems}
-                </span>
-              )}
+              <span className="hidden min-[380px]:inline ml-1">Cart</span>
             </button>
 
             <button
@@ -176,12 +175,16 @@ export default function Navbar() {
               Your Cart
               {totalItems > 0 && <span className="text-sm font-semibold text-brand-dark/60">({totalItems} items)</span>}
             </h2>
-            <button
-              onClick={() => setIsCartOpen(false)}
-              className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-surface text-brand-dark/60 transition-colors hover:bg-brand-primary/10 hover:text-brand-primary"
-            >
-              <X size={20} />
-            </button>
+            {totalItems > 0 && (
+              <button
+                onClick={() => { clearCart(); }}
+                className="flex items-center gap-1.5 rounded-full border border-red-200 bg-red-50 px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-red-500 transition-all hover:bg-red-500 hover:text-white hover:border-red-500"
+                aria-label="Clear cart"
+              >
+                <Trash2 size={12} />
+                Clear
+              </button>
+            )}
           </div>
 
           <div className="flex-1 overflow-y-auto p-6">
@@ -200,8 +203,8 @@ export default function Navbar() {
                 </button>
               </div>
             ) : (
-              <div className="flex flex-col gap-5">
-                {cartItems.map((c: any, index: number) => {
+              <div className="flex flex-col gap-3">
+                {cartItems.flatMap((c: any, index: number) => {
                   const item = c.item || c;
                   const itemId = item.id;
                   const itemName = item.name || "Dish";
@@ -209,92 +212,120 @@ export default function Navbar() {
                   const unitPrice = typeof item.unitPrice === "number" ? item.unitPrice : (Number(String(item.price || 0).replace(/[^0-9]/g, "")) || 0);
 
                   const hasVariants = c.variantQuantities && Object.keys(c.variantQuantities).length > 0;
-                  const itemTotal = hasVariants
-                    ? Object.entries(c.variantQuantities).reduce((sum, [vId, qty]) => {
-                        const variant = item.variants?.find((v: any) => String(v.id) === String(vId));
-                        const price = variant?.price ?? unitPrice;
-                        return sum + price * (qty as number);
-                      }, 0)
-                    : unitPrice * (c.quantity || 1);
 
-                  return (
-                    <div key={`${itemId}-${index}`} className="flex gap-4 rounded-2xl border border-brand-primary/5 bg-white p-3 shadow-sm">
-                      <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-brand-surface">
+                  // ── Separate card per variant ──────────────────────────────
+                  if (hasVariants) {
+                    return Object.entries(c.variantQuantities)
+                      .filter(([_, qty]) => (qty as number) > 0)
+                      .map(([vId, qty]) => {
+                        const variantObj = item.variants?.find((v: any) => String(v.id) === String(vId));
+                        const vName = variantObj?.name || vId;
+                        const vPrice = variantObj?.price ?? unitPrice;
+                        const vLineTotal = vPrice * (qty as number);
+
+                        return (
+                          <div
+                            key={`${itemId}-${vId}-${index}`}
+                            className="flex gap-3 rounded-2xl border border-brand-primary/5 bg-white p-3 shadow-sm"
+                          >
+                            {/* Image */}
+                            <div className="relative h-[72px] w-[72px] shrink-0 overflow-hidden rounded-xl bg-brand-surface">
+                              <Image src={itemImage} alt={itemName} fill className="object-cover" unoptimized />
+                            </div>
+
+                            {/* Info */}
+                            <div className="flex flex-1 flex-col justify-between min-w-0">
+                              <div className="flex items-start justify-between gap-2">
+                                <div className="min-w-0">
+                                  <h4 className="line-clamp-1 text-sm font-black text-brand-dark">{itemName}</h4>
+                                  <span className="inline-flex items-center gap-1 mt-0.5 rounded-full bg-brand-primary/10 px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-brand-primary">
+                                    {vName}
+                                  </span>
+                                </div>
+                                <button
+                                  onClick={() => updateQuantity(itemId, -999, vId)}
+                                  className="shrink-0 text-brand-dark/30 transition-colors hover:text-red-500"
+                                  aria-label={`Remove ${vName}`}
+                                >
+                                  <Trash2 size={15} />
+                                </button>
+                              </div>
+
+                              <div className="flex items-center justify-between mt-1">
+                                <span className="text-sm font-black text-brand-primary">Rs. {vLineTotal.toLocaleString()}</span>
+                                <div className="flex items-center gap-2 rounded-full border border-brand-primary/20 bg-brand-surface px-2 py-0.5">
+                                  <button
+                                    onClick={() => updateQuantity(itemId, -1, vId)}
+                                    className="text-brand-dark hover:text-brand-primary"
+                                    aria-label="Decrease"
+                                  >
+                                    <Minus size={12} strokeWidth={3} />
+                                  </button>
+                                  <span className="flex h-5 w-5 items-center justify-center text-center text-xs font-black text-brand-dark tabular-nums leading-none">
+                                    {qty as number}
+                                  </span>
+                                  <button
+                                    onClick={() => updateQuantity(itemId, 1, vId)}
+                                    className="text-brand-dark hover:text-brand-primary"
+                                    aria-label="Increase"
+                                  >
+                                    <Plus size={12} strokeWidth={3} />
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      });
+                  }
+
+                  // ── Standard (no variants) card ────────────────────────────
+                  const itemTotal = unitPrice * (c.quantity || 1);
+                  return [
+                    <div
+                      key={`${itemId}-${index}`}
+                      className="flex gap-3 rounded-2xl border border-brand-primary/5 bg-white p-3 shadow-sm"
+                    >
+                      <div className="relative h-[72px] w-[72px] shrink-0 overflow-hidden rounded-xl bg-brand-surface">
                         <Image src={itemImage} alt={itemName} fill className="object-cover" unoptimized />
                       </div>
 
-                      <div className="flex flex-1 flex-col justify-between">
+                      <div className="flex flex-1 flex-col justify-between min-w-0">
                         <div className="flex items-start justify-between gap-2">
-                          <div>
-                            <h4 className="line-clamp-1 font-bold text-brand-dark">{itemName}</h4>
-                            {hasVariants ? (
-                              <p className="text-xs font-bold text-brand-primary">
-                                {Object.entries(c.variantQuantities)
-                                  .filter(([_, qty]) => (qty as number) > 0)
-                                  .map(([vId, qty]) => {
-                                    const variant = item.variants?.find((v: any) => String(v.id) === String(vId));
-                                    return `${qty} x ${variant?.name || vId}`;
-                                  })
-                                  .join(", ")}
-                              </p>
-                            ) : item.selectedVariantName ? (
-                              <p className="text-xs font-bold text-brand-primary">{item.selectedVariantName}</p>
-                            ) : null}
+                          <div className="min-w-0">
+                            <h4 className="line-clamp-1 text-sm font-black text-brand-dark">{itemName}</h4>
+                            {item.selectedVariantName && (
+                              <span className="inline-flex items-center mt-0.5 rounded-full bg-brand-primary/10 px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-brand-primary">
+                                {item.selectedVariantName}
+                              </span>
+                            )}
                           </div>
-                          <button 
+                          <button
                             onClick={() => removeFromCart(itemId)}
-                            className="text-brand-dark/30 transition-colors hover:text-red-500"
+                            className="shrink-0 text-brand-dark/30 transition-colors hover:text-red-500"
+                            aria-label="Remove item"
                           >
-                            <Trash2 size={16} />
+                            <Trash2 size={15} />
                           </button>
                         </div>
 
-                        {hasVariants ? (
-                          <div className="mt-2 space-y-1">
-                            {Object.entries(c.variantQuantities)
-                              .filter(([_, qty]) => (qty as number) > 0)
-                              .map(([vId, qty]) => {
-                                const variantObj = item.variants?.find((v: any) => String(v.id) === String(vId));
-                                const vName = variantObj?.name || vId;
-                                const vPrice = variantObj?.price || unitPrice;
-                                return (
-                                  <div key={vId} className="flex items-center justify-between text-xs text-brand-dark/70">
-                                    <span>{vName} (Rs. {vPrice.toLocaleString()})</span>
-                                    <div className="flex items-center gap-2 rounded-full border border-brand-primary/20 bg-brand-surface px-1.5 py-0.5">
-                                      <button onClick={() => updateQuantity(itemId, -1, vId)} className="text-brand-dark hover:text-brand-primary">
-                                        <Minus size={12} strokeWidth={3} />
-                                      </button>
-                                      <span className="w-4 text-center font-semibold text-brand-dark">{qty as number}</span>
-                                      <button onClick={() => updateQuantity(itemId, 1, vId)} className="text-brand-dark hover:text-brand-primary">
-                                        <Plus size={12} strokeWidth={3} />
-                                      </button>
-                                    </div>
-                                  </div>
-                                );
-                              })}
-                            <div className="mt-2 flex items-center justify-between text-xs font-bold border-t border-brand-primary/5 pt-1">
-                              <span className="text-brand-dark">Item Subtotal</span>
-                              <span className="text-brand-primary">Rs. {itemTotal.toLocaleString()}</span>
-                            </div>
+                        <div className="flex items-center justify-between mt-1">
+                          <span className="text-sm font-black text-brand-primary">Rs. {itemTotal.toLocaleString()}</span>
+                          <div className="flex items-center gap-2 rounded-full border border-brand-primary/20 bg-brand-surface px-2 py-0.5">
+                            <button onClick={() => updateQuantity(itemId, -1)} className="text-brand-dark hover:text-brand-primary">
+                              <Minus size={12} strokeWidth={3} />
+                            </button>
+                            <span className="flex h-5 w-5 items-center justify-center text-center text-xs font-black text-brand-dark tabular-nums leading-none">
+                              {c.quantity}
+                            </span>
+                            <button onClick={() => updateQuantity(itemId, 1)} className="text-brand-dark hover:text-brand-primary">
+                              <Plus size={12} strokeWidth={3} />
+                            </button>
                           </div>
-                        ) : (
-                          <div className="mt-2 flex items-center justify-between">
-                            <span className="font-semibold text-brand-primary">Rs. {itemTotal.toLocaleString()}</span>
-                            
-                            <div className="flex items-center gap-3 rounded-full border border-brand-primary/20 bg-brand-surface px-1.5 py-0.5">
-                              <button onClick={() => updateQuantity(itemId, -1)} className="text-brand-dark hover:text-brand-primary">
-                                <Minus size={14} strokeWidth={3} />
-                              </button>
-                              <span className="w-4 text-center text-sm font-semibold text-brand-dark">{c.quantity}</span>
-                              <button onClick={() => updateQuantity(itemId, 1)} className="text-brand-dark hover:text-brand-primary">
-                                <Plus size={14} strokeWidth={3} />
-                              </button>
-                            </div>
-                          </div>
-                        )}
+                        </div>
                       </div>
-                    </div>
-                  );
+                    </div>,
+                  ];
                 })}
               </div>
             )}
@@ -403,14 +434,16 @@ function NavLink({ href, active, children }: { href: string; active: boolean; ch
 
 function BrandMark({ mobile = false }: { mobile?: boolean }) {
   return (
-    <Link href="/" className="flex min-w-0 items-center gap-3 transition-opacity duration-300 hover:opacity-90">
+    <Link href="/" className="flex items-center gap-3 transition-opacity duration-300 hover:opacity-90 my-auto">
       <div className="relative h-12 w-12 shrink-0 min-[380px]:h-14 min-[380px]:w-14 sm:h-[72px] sm:w-[72px]">
         <Image src="/fiery-wok.png" alt="Ama G Ka Dhaba" fill className="object-contain object-center" priority={!mobile} unoptimized />
       </div>
-      <div className="min-w-0">
-        <span className="block text-[6px] font-black uppercase tracking-[0.18em] text-brand-dark/45 min-[380px]:text-[7px] min-[380px]:tracking-[0.22em] sm:text-[9px] sm:tracking-[0.28em]">Zee Food Gallery</span>
-        <span lang="ur" dir="rtl" className="font-ama-dhaba block whitespace-nowrap text-[18px] font-black leading-none text-brand-primary min-[380px]:text-[20px] sm:text-[28px]">
-          اماں جی کا ڈھابہ
+      <div className="flex flex-col items-center justify-center min-w-0 text-center">
+        <span className="block text-[10px] font-black uppercase tracking-[0.18em] text-brand-primary min-[380px]:text-[12px] min-[380px]:tracking-[0.22em] sm:text-[14px] sm:tracking-[0.28em] leading-tight">
+          Zee Food Gallery
+        </span>
+        <span lang="ur" dir="rtl" className="font-ama-dhaba -mt-1 sm:-mt-1.5 block whitespace-nowrap text-[18px] font-black leading-none text-brand-primary min-[380px]:text-[20px] sm:text-[28px]">
+          آما جی کا ڈھابہ
         </span>
       </div>
     </Link>

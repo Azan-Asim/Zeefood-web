@@ -2,7 +2,7 @@
 
 import { type ReactNode, useEffect, useState } from "react";
 import Image from "next/image";
-import { MapPin, Navigation, X, Check, Loader2, LocateFixed } from "lucide-react";
+import { MapPin, Navigation, Check, Loader2, LocateFixed } from "lucide-react";
 
 type OrderType = "delivery" | "pickup";
 
@@ -80,15 +80,6 @@ export default function LocationModal() {
     <div className="fixed inset-0 z-[1000] flex items-center justify-center overflow-hidden bg-brand-dark/70 p-4 backdrop-blur-[8px] animate-in fade-in duration-300 ease-in-out">
       <div className="relative w-full max-w-[440px] overflow-hidden rounded-2xl border border-white/80 bg-gradient-to-br from-white via-orange-50/80 to-brand-surface px-5 py-5 shadow-[0_30px_100px_rgba(0,0,0,0.20),0_8px_28px_rgba(248,114,5,0.10)] animate-in zoom-in-95 duration-300 ease-in-out sm:px-7">
         <div className="absolute inset-0 bg-[linear-gradient(125deg,rgba(248,114,5,0.12),rgba(255,255,255,0.72)_44%,rgba(248,114,5,0.08)),radial-gradient(circle_at_80%_35%,rgba(248,114,5,0.16),transparent_34%),radial-gradient(circle_at_10%_18%,rgba(17,24,39,0.06),transparent_28%)]" />
-
-        <button
-          type="button"
-          aria-label="Close order modal"
-          onClick={() => setIsOpen(false)}
-          className="absolute right-4 top-4 z-20 flex h-8 w-8 items-center justify-center rounded-full text-brand-dark/65 transition-all duration-300 hover:bg-brand-primary/10 hover:text-brand-primary"
-        >
-          <X className="h-5 w-5" strokeWidth={2.1} />
-        </button>
 
         <div className="relative z-10">
           <header className="flex flex-col items-center text-center">

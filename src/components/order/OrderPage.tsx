@@ -155,6 +155,7 @@ function ProductQuickAddModal({
   const [variantSelections, setVariantSelections] = useState<{ [variantId: string]: number }>({});
   const [localSelectedVariant, setLocalSelectedVariant] = useState<ProductVariant | undefined>(undefined);
   const [baseQuantity, setBaseQuantity] = useState(1);
+  const [specialInstructions, setSpecialInstructions] = useState("");
 
   const categoryName = getCategoryName(product.category);
   const variants = getUniqueVariants(product.variants);
@@ -235,75 +236,94 @@ function ProductQuickAddModal({
     onClose();
   };
 
+
   const modalContent = (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 p-3 sm:p-4 backdrop-blur-sm" onClick={onClose}>
+    <div
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/70 p-3 sm:p-4 backdrop-blur-sm"
+      onClick={onClose}
+    >
+      {/* 1080×630 two-panel card */}
       <div
-        className="relative w-full max-w-[90%] sm:max-w-[550px] md:max-w-[640px] max-h-[92vh] overflow-y-auto rounded-[20px] bg-white shadow-2xl no-scrollbar"
-        onClick={(event) => event.stopPropagation()}
+        className="relative flex w-full overflow-hidden rounded-[24px] shadow-2xl"
+        style={{ maxWidth: "860px", height: "min(520px, 92vh)", aspectRatio: "12/7" }}
+        onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between border-b border-gray-100 bg-gradient-to-r from-white via-orange-50/70 to-white px-4 py-2.5 sticky top-0 z-20 backdrop-blur-md">
-          <div className="text-left">
-            <p className="text-[9px] font-black uppercase tracking-[0.2em] text-brand-primary">Customize your order</p>
-            <h3 className={`font-black text-brand-dark leading-tight ${isUrdu ? "font-ama-dhaba text-xl sm:text-2xl mt-0.5" : "text-sm sm:text-lg uppercase mt-0.5"}`}>
-              {cleanName}
-            </h3>
+        {/* ── LEFT HALF: product image on dark-orange background ── */}
+        <div
+          className="relative shrink-0 overflow-hidden"
+          style={{ width: "50%", background: "#3d1400" }}
+        >
+          {/* Dark orange vignette overlay */}
+          <div className="absolute inset-0 bg-gradient-to-br from-[#6b2800]/60 via-[#3d1400]/30 to-[#1a0800]/80 z-10" />
+          <Image
+            src={productImageUrl(product.image, product.name, categoryName)}
+            alt={cleanName}
+            fill
+            className="object-cover opacity-90"
+            unoptimized
+          />
+          {/* Subtle brand stamp */}
+          <div className="absolute bottom-5 left-5 z-20">
+            <span className="inline-block rounded-full bg-white/10 backdrop-blur-sm border border-white/20 px-3 py-1 text-[9px] font-black uppercase tracking-[0.25em] text-white/70">
+              Zee Food Gallery
+            </span>
           </div>
+        </div>
+
+        {/* ── RIGHT HALF: controls ── */}
+        <div className="relative flex flex-col bg-white overflow-y-auto no-scrollbar" style={{ width: "50%" }}>
+          {/* Close button */}
           <button
             type="button"
             onClick={onClose}
-            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-surface text-brand-dark transition-colors hover:bg-brand-primary/10 hover:text-brand-primary"
+            className="absolute top-4 right-4 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-brand-surface text-brand-dark transition-colors hover:bg-brand-primary/10 hover:text-brand-primary shadow-sm"
             aria-label="Close"
           >
-            <span className="text-xl font-black">×</span>
+            <span className="text-xl font-black leading-none">×</span>
           </button>
-        </div>
 
-        {/* Tightly packed spacing layout */}
-        <div className="grid gap-3 p-3 sm:p-4 sm:grid-cols-[170px_1fr] md:grid-cols-[200px_1fr] items-center">
-          <div className="relative mx-auto w-full h-[140px] sm:h-[170px] overflow-hidden rounded-[14px] bg-[#fbf7f2] shadow-inner">
-            <Image
-              src={productImageUrl(product.image, product.name, categoryName)}
-              alt={cleanName}
-              fill
-              className="object-cover" 
-              unoptimized
-            />
-          </div>
+          <div className="flex flex-col gap-3 p-6 sm:p-8 flex-1">
+            {/* Tag */}
+            <p className="text-[9px] font-black uppercase tracking-[0.25em] text-brand-primary">
+              Customize your order
+            </p>
 
-          <div className="flex flex-col text-left gap-2 sm:gap-2.5">
-            <div>
-              <p className="text-xs font-medium leading-snug text-brand-dark/75 line-clamp-2">{detailText}</p>
-            </div>
+            {/* 1. Product Name */}
+            <h3
+              className={`font-black text-brand-dark leading-tight ${
+                isUrdu ? "font-ama-dhaba text-2xl sm:text-3xl" : "text-xl sm:text-2xl uppercase"
+              }`}
+            >
+              {cleanName}
+            </h3>
 
-            {/* Display portion selections summary above options */}
-            {variants.length > 0 && (
-              <div className="rounded-[14px] border border-dashed border-brand-primary/20 bg-brand-surface/40 p-2 text-xs text-brand-dark/85">
-                <span className="block font-black text-brand-primary uppercase tracking-[0.2em] text-[9px] mb-1">
-                  Selected Portions
-                </span>
-                {Object.keys(variantSelections).length > 0 && Object.values(variantSelections).some(qty => qty > 0) ? (
-                  <div className="flex flex-wrap gap-x-3 gap-y-1 font-bold">
-                    {Object.entries(variantSelections)
-                      .filter(([_, qty]) => qty > 0)
-                      .map(([vId, qty]) => {
-                        const vName = variants.find((v) => String(v.id) === String(vId))?.name || vId;
-                        return (
-                          <span key={vId} className="bg-brand-primary/10 text-brand-primary px-2 py-0.5 rounded-md">
-                            {vName}: {qty}
-                          </span>
-                        );
-                      })}
-                  </div>
-                ) : (
-                  <span className="text-brand-dark/50 italic">No option selected. Please click an option below to select.</span>
-                )}
-              </div>
-            )}
+            {/* 2. Price */}
+            {variants.length > 0 ? (
+              <p className="text-base font-black text-brand-primary -mt-1">
+                From Rs.{" "}
+                {Math.min(...variants.map((v) => v.price || 0)).toLocaleString()}
+              </p>
+            ) : product.price > 0 ? (
+              <p className="text-base font-black text-brand-primary -mt-1">
+                Rs. {product.price.toLocaleString()}
+              </p>
+            ) : null}
 
+            {/* 3. Description – max 3 lines */}
+            <p className="text-xs font-medium leading-relaxed text-brand-dark/65 line-clamp-3">
+              {detailText}
+            </p>
+
+            {/* Divider */}
+            <div className="border-t border-gray-100" />
+
+            {/* 4. Size Selection */}
             {variants.length > 0 && (
               <div>
-                <p className="mb-1 text-[9px] font-black uppercase tracking-[0.2em] text-brand-dark/50">Choose Size / Option</p>
-                <div className="max-h-[120px] overflow-y-auto p-2 -m-2 no-scrollbar grid grid-cols-2 sm:grid-cols-3 gap-1.5">
+                <p className="mb-2 text-[9px] font-black uppercase tracking-[0.22em] text-brand-dark/50">
+                  Size <span className="text-brand-primary">*</span>
+                </p>
+                <div className="flex flex-col gap-1.5">
                   {variants.map((variant) => {
                     const isSelected = localSelectedVariant?.id === variant.id;
                     const qty = variantSelections[variant.id] || 0;
@@ -312,23 +332,43 @@ function ProductQuickAddModal({
                         key={variant.id || variant.name}
                         type="button"
                         onClick={() => handleVariantClick(variant)}
-                        className={`relative flex flex-col items-center justify-center rounded-[12px] border p-2 text-center transition-all duration-300 ${
+                        className={`flex items-center justify-between rounded-[12px] border px-4 py-2.5 text-left transition-all duration-200 ${
                           isSelected
-                            ? "border-brand-primary bg-brand-primary text-white shadow-md"
-                            : "border-gray-200 bg-brand-surface text-brand-dark hover:border-brand-primary hover:text-brand-primary"
+                            ? "border-brand-primary bg-brand-primary/8 ring-2 ring-brand-primary/25"
+                            : "border-gray-200 bg-[#fbf7f2] hover:border-brand-primary/40"
                         }`}
                       >
-                        <span className="block text-[10px] font-black uppercase tracking-wider truncate w-full">{variant.name}</span>
-                        <span className={`mt-0.5 block text-[11px] font-bold ${isSelected ? "text-white/90" : "text-brand-dark/70"}`}>
-                          Rs. {(variant.price || 0).toLocaleString()}
-                        </span>
-                        
-                        {/* Visual Badge showing the quantity */}
-                        {qty > 0 && (
-                          <span className="absolute -top-1.5 -right-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-brand-dark text-[10px] font-black text-white shadow-sm ring-2 ring-white z-10">
-                            {qty}
+                        <div className="flex items-center gap-2">
+                          {/* Radio dot */}
+                          <span
+                            className={`h-3.5 w-3.5 rounded-full border-2 flex-shrink-0 transition-all ${
+                              isSelected
+                                ? "border-brand-primary bg-brand-primary"
+                                : "border-gray-300 bg-white"
+                            }`}
+                          />
+                          <span
+                            className={`text-[11px] font-black uppercase tracking-wider ${
+                              isSelected ? "text-brand-primary" : "text-brand-dark"
+                            }`}
+                          >
+                            {variant.name}
                           </span>
-                        )}
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span
+                            className={`text-xs font-bold ${
+                              isSelected ? "text-brand-primary" : "text-brand-dark/60"
+                            }`}
+                          >
+                            Rs. {(variant.price || 0).toLocaleString()}
+                          </span>
+                          {qty > 0 && (
+                            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-brand-dark text-[10px] font-black text-white">
+                              {qty}
+                            </span>
+                          )}
+                        </div>
                       </button>
                     );
                   })}
@@ -336,38 +376,53 @@ function ProductQuickAddModal({
               </div>
             )}
 
-            <div className="rounded-[14px] border border-brand-primary/10 bg-brand-surface/80 p-2">
-              <div className="flex items-center justify-between gap-2.5 w-full">
-                <div className="flex w-[110px] h-[38px] items-center justify-between rounded-full border border-brand-primary/20 bg-white px-2 shadow-sm">
-                  <button
-                    type="button"
-                    onClick={handleLocalDecrease}
-                    disabled={variants.length > 0 && !localSelectedVariant}
-                    className="flex h-7 w-7 items-center justify-center rounded-full text-brand-dark hover:text-brand-primary text-lg font-medium disabled:opacity-30 disabled:cursor-not-allowed"
-                  >
-                    −
-                  </button>
-                  <span className="text-xs font-black text-brand-dark text-center w-5">
-                    {variants.length > 0 ? currentSelectedVariantQty : baseQuantity}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={handleLocalIncrease}
-                    disabled={variants.length > 0 && !localSelectedVariant}
-                    className="flex h-7 w-7 items-center justify-center rounded-full text-brand-dark hover:text-brand-primary text-lg font-medium disabled:opacity-30 disabled:cursor-not-allowed"
-                  >
-                    +
-                  </button>
-                </div>
+            {/* 5. Special Instructions */}
+            <div>
+              <p className="mb-1.5 text-[9px] font-black uppercase tracking-[0.22em] text-brand-dark/50">
+                Special Instructions
+              </p>
+              <textarea
+                value={specialInstructions}
+                onChange={(e) => setSpecialInstructions(e.target.value)}
+                placeholder="Any special requests? (e.g. less spicy, extra sauce)"
+                rows={2}
+                className="w-full resize-none rounded-[12px] border border-gray-200 bg-[#fbf7f2] px-3 py-2.5 text-xs font-medium text-brand-dark placeholder:text-brand-dark/35 focus:border-brand-primary/40 focus:outline-none focus:ring-2 focus:ring-brand-primary/10 transition-all"
+              />
+            </div>
 
+            {/* 6. Quantity + Add to Cart */}
+            <div className="mt-auto flex items-center gap-3">
+              {/* Quantity – 1 + */}
+              <div className="flex h-[44px] items-center justify-between gap-1 rounded-full border border-brand-primary/25 bg-[#fbf7f2] px-2 shadow-sm">
                 <button
                   type="button"
-                  onClick={handleConfirm}
-                  className="flex-1 h-[38px] flex items-center justify-center rounded-full bg-brand-primary px-4 text-[10px] font-black uppercase tracking-widest text-white shadow-md transition-all hover:bg-[#e96500]"
+                  onClick={handleLocalDecrease}
+                  disabled={variants.length > 0 && !localSelectedVariant}
+                  className="flex h-8 w-8 items-center justify-center rounded-full text-brand-dark hover:text-brand-primary text-xl font-medium disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                 >
-                  Add to Cart
+                  −
+                </button>
+                <span className="min-w-[1.75rem] flex items-center justify-center text-center text-sm font-black text-brand-dark tabular-nums leading-none">
+                  {variants.length > 0 ? (currentSelectedVariantQty > 0 ? currentSelectedVariantQty : 1) : baseQuantity}
+                </span>
+                <button
+                  type="button"
+                  onClick={handleLocalIncrease}
+                  disabled={variants.length > 0 && !localSelectedVariant}
+                  className="flex h-8 w-8 items-center justify-center rounded-full text-brand-dark hover:text-brand-primary text-xl font-medium disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                >
+                  +
                 </button>
               </div>
+
+              {/* Add to Cart */}
+              <button
+                type="button"
+                onClick={handleConfirm}
+                className="flex-1 h-[44px] flex items-center justify-center gap-2 rounded-full bg-brand-primary text-[11px] font-black uppercase tracking-[0.18em] text-white shadow-[0_8px_20px_rgba(248,114,5,0.3)] transition-all hover:bg-[#e96500] hover:shadow-[0_12px_28px_rgba(248,114,5,0.35)] hover:-translate-y-0.5"
+              >
+                Add to Cart
+              </button>
             </div>
           </div>
         </div>
@@ -402,61 +457,97 @@ function ItemManagementModal({
   const isUrdu = isUrduText(cleanName);
 
   const modalContent = (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/70 p-3 sm:p-4 backdrop-blur-sm" onClick={onClose}>
+    <div
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/70 p-3 sm:p-4 backdrop-blur-sm"
+      onClick={onClose}
+    >
+      {/* 780×570 card */}
       <div
-        className="relative w-full max-w-[90%] sm:max-w-[400px] rounded-[24px] border border-brand-primary/10 bg-white/95 p-5 shadow-2xl text-left"
-        onClick={(event) => event.stopPropagation()}
+        className="relative flex flex-col w-full overflow-hidden rounded-[24px] bg-white shadow-2xl"
+        style={{ maxWidth: "560px", height: "min(420px, 92vh)" }}
+        onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-start justify-between gap-2 mb-3">
-          <div>
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-brand-primary">Manage item</p>
-            <h3 className="mt-1 text-lg font-black text-brand-dark">Remove this item?</h3>
-          </div>
+        {/* ── TOP ~63%: full-width product image ── */}
+        <div
+          className="relative w-full shrink-0 overflow-hidden"
+          style={{ height: "63%" }}
+        >
+          <Image
+            src={productImageUrl(product.image, product.name, categoryName)}
+            alt={cleanName}
+            fill
+            className="object-cover"
+            unoptimized
+          />
+          {/* gradient overlay for readability */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/40" />
+
+          {/* Close button overlaid on image */}
           <button
             type="button"
             onClick={onClose}
-            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-surface text-brand-dark transition-colors hover:bg-brand-primary/10 hover:text-brand-primary"
+            className="absolute top-4 right-4 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-black/40 backdrop-blur-sm text-white transition-colors hover:bg-black/60"
+            aria-label="Close"
           >
-            <span className="text-xl font-black">×</span>
+            <span className="text-xl font-black leading-none">×</span>
           </button>
+
+          {/* Variant badge */}
+          {selectedVariant?.name && (
+            <div className="absolute bottom-4 left-4 z-10">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-primary/90 backdrop-blur-sm px-3 py-1 text-[10px] font-black uppercase tracking-wider text-white shadow-md">
+                {selectedVariant.name}
+              </span>
+            </div>
+          )}
         </div>
 
-        <div className="mt-3 flex items-center gap-3 rounded-[16px] border border-brand-primary/10 bg-brand-surface/70 p-3">
-          <div className="relative h-16 w-16 overflow-hidden rounded-[12px] bg-[#fbf7f2] shrink-0 shadow-sm">
-            <Image
-              src={productImageUrl(product.image, product.name, categoryName)}
-              alt={cleanName}
-              fill
-              className="object-cover"
-              unoptimized
-            />
-          </div>
+        {/* ── BOTTOM ~37%: confirmation controls ── */}
+        <div className="flex flex-1 flex-col justify-between bg-white px-6 py-5">
           <div>
-            <p className={`font-black text-brand-dark leading-tight line-clamp-1 ${isUrdu ? "font-ama-dhaba text-xl" : "text-sm uppercase"}`}>
+            {/* Label */}
+            <p className="text-[9px] font-black uppercase tracking-[0.25em] text-brand-primary mb-1">
+              Manage item
+            </p>
+            <h3
+              className={`font-black text-brand-dark leading-tight ${
+                isUrdu ? "font-ama-dhaba text-2xl" : "text-lg sm:text-xl uppercase"
+              }`}
+            >
               {cleanName}
-            </p>
-            <p className="mt-1 text-[10px] font-bold uppercase tracking-wider text-brand-primary">
-              {selectedVariant?.name ?? "Standard"}
-            </p>
-            <p className="mt-0.5 text-xs font-semibold text-brand-dark/60">Quantity: {quantity}</p>
+            </h3>
+            <div className="flex items-center gap-3 mt-1.5">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-brand-dark/50">
+                Qty: {quantity}
+              </span>
+              {selectedVariant?.name && (
+                <>
+                  <span className="text-brand-dark/20">•</span>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-brand-primary">
+                    {selectedVariant.name}
+                  </span>
+                </>
+              )}
+            </div>
           </div>
-        </div>
 
-        <div className="mt-5 flex flex-col items-stretch gap-2.5 sm:flex-row sm:justify-center">
-          <button
-            type="button"
-            onClick={onClose}
-            className="w-full flex-1 rounded-full border border-gray-200 bg-white px-4 py-2.5 text-[10px] font-black uppercase tracking-widest text-brand-dark hover:border-brand-primary hover:text-brand-primary text-center shadow-sm"
-          >
-            Keep item
-          </button>
-          <button
-            type="button"
-            onClick={onRemove}
-            className="w-full flex-1 rounded-full bg-brand-primary px-4 py-2.5 text-[10px] font-black uppercase tracking-widest text-white shadow-md hover:bg-[#e96500] text-center"
-          >
-            Remove item
-          </button>
+          {/* Buttons */}
+          <div className="flex gap-3">
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex-1 rounded-full border-2 border-gray-200 bg-white py-3 text-[10px] font-black uppercase tracking-widest text-brand-dark transition-all hover:border-brand-primary hover:text-brand-primary"
+            >
+              Keep item
+            </button>
+            <button
+              type="button"
+              onClick={onRemove}
+              className="flex-1 rounded-full bg-brand-primary py-3 text-[10px] font-black uppercase tracking-widest text-white shadow-[0_8px_20px_rgba(248,114,5,0.28)] transition-all hover:bg-[#e96500] hover:shadow-[0_12px_28px_rgba(248,114,5,0.35)] hover:-translate-y-0.5"
+            >
+              Remove item
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -565,7 +656,7 @@ export function VariantProductCard({
                 >
                   −
                 </button>
-                <span className="text-sm font-black text-brand-dark">{totalProductQty}</span>
+                <span className="min-w-[2rem] flex items-center justify-center text-sm font-black text-brand-dark tabular-nums leading-none">{totalProductQty}</span>
                 <button
                   type="button"
                   onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleOpenModal(e); }}
@@ -1005,7 +1096,7 @@ export function CartContent({
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M20 12H4" />
                               </svg>
                             </button>
-                            <span className="w-6 text-center text-base font-black text-brand-dark">{c.quantity}</span>
+                            <span className="flex h-8 w-8 items-center justify-center text-center text-base font-black text-brand-dark">{c.quantity}</span>
                             <button
                               onClick={() => updateQuantity(c.item.id, 1)}
                               className="flex h-8 w-8 items-center justify-center rounded-xl text-brand-dark transition-colors hover:bg-[#fbf7f2] hover:text-brand-primary"
