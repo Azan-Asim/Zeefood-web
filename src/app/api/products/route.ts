@@ -1,16 +1,16 @@
-const DRM_PRODUCTS_URL =
-  "https://drm.devsinntechnologies.com/public/products";
-const BUSINESS_ID = "5707b450-9723-4794-9ba4-ee03890cf504";
+const BASE_URL = "https://drm.devsinntechnologies.com";
+const CATALOG_ID = "5707b450-9723-4794-9ba4-ee03890cf504";
 
 export async function GET(request: Request) {
   const incomingUrl = new URL(request.url);
   const page = incomingUrl.searchParams.get("page") ?? "1";
-  const limit = incomingUrl.searchParams.get("limit") ?? "50";
+  const limit = incomingUrl.searchParams.get("limit") ?? "100";
   const category = incomingUrl.searchParams.get("category");
   const search = incomingUrl.searchParams.get("search");
 
-  const upstreamUrl = new URL(DRM_PRODUCTS_URL);
-  upstreamUrl.searchParams.set("businessId", BUSINESS_ID);
+  const upstreamUrl = new URL(
+    `${BASE_URL}/api/public-catalog/${CATALOG_ID}/products`
+  );
   upstreamUrl.searchParams.set("page", page);
   upstreamUrl.searchParams.set("limit", limit);
 
