@@ -55,7 +55,7 @@ export const fetchProducts = createAsyncThunk<
         categories: existing.categories,
         total: existing.pagination?.total ?? 0,
         page: existing.pagination?.page ?? 1,
-        limit: existing.pagination?.limit ?? 50,
+        limit: existing.pagination?.limit ?? 100,
         totalPages: existing.pagination?.totalPages ?? 1,
       };
     }
