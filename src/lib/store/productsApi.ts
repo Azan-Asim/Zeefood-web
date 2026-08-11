@@ -4,11 +4,12 @@
 import type { ProductsApiResponse, ProductsQueryParams } from "./types";
 
 const BASE_URL = "https://drm.devsinntechnologies.com";
+const PRODUCTS_PATH = "/public/products";
 export const BUSINESS_ID = "5707b450-9723-4794-9ba4-ee03890cf504";
 
 function productsUrl(params: Record<string, string | number | undefined>): string {
-  const qs = buildQueryString(params);
-  return `${BASE_URL}/api/public-catalog/${BUSINESS_ID}/products${qs ? `?${qs}` : ""}`;
+  const qs = buildQueryString({ businessId: BUSINESS_ID, ...params });
+  return `${BASE_URL}${PRODUCTS_PATH}?${qs}`;
 }
 
 /**
