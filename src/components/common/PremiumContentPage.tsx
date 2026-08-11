@@ -10,47 +10,33 @@ interface PremiumContentPageProps {
 
 export default function PremiumContentPage({ label, title1, title2, description, children }: PremiumContentPageProps) {
   return (
-    <div className="min-h-screen bg-[#FFFFFF] flex flex-col relative overflow-hidden font-sans">
-      {/* Dynamic Background Elements */}
-      <div className="absolute top-0 left-0 w-full h-[700px] bg-gradient-to-b from-[#fef2eb] via-[#fff5f0] to-transparent pointer-events-none" />
-      
-      {/* Modern Glassmorphic Orbs */}
-      <div className="absolute -top-48 -right-48 w-[600px] h-[600px] bg-[radial-gradient(circle,rgba(248,114,5,0.12)_0%,transparent_70%)] rounded-full blur-[120px] pointer-events-none animate-pulse-slow" />
-      <div className="absolute top-1/3 -left-48 w-[500px] h-[500px] bg-[radial-gradient(circle,rgba(248,114,5,0.1)_0%,transparent_70%)] rounded-full blur-[100px] pointer-events-none" />
-      <div className="absolute bottom-0 right-0 w-[800px] h-[800px] bg-[radial-gradient(circle,rgba(248,114,5,0.05)_0%,transparent_70%)] rounded-full blur-[150px] pointer-events-none" />
+    <div className="min-h-screen bg-[#fbf7f2] flex flex-col relative overflow-hidden font-sans text-brand-dark">
+      <div className="absolute inset-x-0 top-0 h-[420px] bg-gradient-to-b from-orange-50/80 via-[#fbf7f2] to-[#fbf7f2] pointer-events-none" />
 
-      {/* Floating Particles Decoration */}
-      <div className="absolute top-20 right-[15%] w-2 h-2 bg-brand-primary/20 rounded-full blur-sm animate-float" />
-      <div className="absolute top-40 left-[10%] w-3 h-3 bg-brand-secondary/20 rounded-full blur-sm animate-float-particle" />
-
-
-      {/* Main Content Area */}
-      <main className="relative z-20 flex-1 w-full max-w-5xl mx-auto px-4 sm:px-6 py-16 sm:py-20 lg:py-32">
-        {/* Cinematic Title Section */}
-        <div className="mb-12 sm:mb-16 lg:mb-24 text-center">
-          <div className="inline-flex items-center gap-3 bg-white border border-brand-primary/10 text-[#F87205] px-4 sm:px-6 py-2 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-widest mb-6 sm:mb-10 shadow-sm">
+      <main className="site-container relative z-20 flex-1 pb-10 pt-24 sm:pb-12 sm:pt-28 lg:pb-16 lg:pt-[7.5rem]">
+        <div className="mb-7 text-center sm:mb-9 lg:mb-10">
+          <div className="inline-flex items-center gap-3 bg-[#fffdf8]/90 border border-brand-primary/15 text-brand-primary px-4 sm:px-5 py-2 rounded-2xl text-[10px] sm:text-xs font-black uppercase tracking-widest mb-4 sm:mb-5 shadow-sm">
             <span className="relative flex h-2.5 w-2.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#F87205] opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#F87205]"></span>
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-primary opacity-60"></span>
+              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-brand-primary"></span>
             </span>
             {label}
           </div>
           
-          <h1 className="text-4xl sm:text-5xl lg:text-8xl font-black text-[#111827] tracking-tight mb-6 sm:mb-8 leading-[0.98] lg:leading-[0.95]">
+          <h1 className="text-[clamp(2.15rem,8vw,4.2rem)] font-black text-brand-dark tracking-tight mb-4 leading-[0.98]">
             {title1} <br className="hidden lg:block" />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-primary to-brand-secondary">{title2}</span>
+            {title2 && <span className="text-brand-primary">{title2}</span>}
           </h1>
           
-          <div className="w-20 sm:w-24 h-1.5 bg-gradient-to-r from-brand-primary to-brand-secondary mx-auto mb-6 sm:mb-10 rounded-full" />
+          <div className="w-20 sm:w-24 h-1.5 bg-brand-primary mx-auto mb-4 sm:mb-5 rounded-full" />
           
-          <p className="text-brand-dark/70 text-base sm:text-xl lg:text-2xl font-medium max-w-3xl mx-auto leading-relaxed">
+          <p className="text-brand-dark/70 text-base sm:text-lg lg:text-xl font-semibold max-w-3xl mx-auto leading-relaxed">
             {description}
           </p>
         </div>
 
-        {/* Content Container with Advanced Glassmorphism */}
-        <div className="bg-white/90 backdrop-blur-md rounded-2xl sm:rounded-[40px] p-4 sm:p-8 lg:p-20 shadow-[0_30px_100px_rgba(0,0,0,0.04)] border border-white relative overflow-hidden group">
-          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-brand-primary to-brand-secondary" />
+        <div className="bg-[#fffdf8]/92 backdrop-blur-md rounded-2xl sm:rounded-[28px] p-4 sm:p-6 lg:p-8 shadow-[0_24px_70px_rgba(17,24,39,0.06)] border border-brand-primary/10 relative overflow-hidden group">
+          <div className="absolute top-0 left-0 w-full h-1 bg-brand-primary" />
           <div className="relative z-10 text-brand-dark space-y-6">
             {children}
           </div>

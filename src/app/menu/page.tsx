@@ -8,7 +8,7 @@ export const metadata = {
 export default function MenuPage() {
   // We reuse the highly premium OrderPage for the /menu route.
   return (
-    <Suspense fallback={<div className="min-h-screen bg-white" />}>
+    <Suspense fallback={<div className="min-h-screen bg-[#fbf7f2]" />}>
       <OrderPage />
     </Suspense>
   );

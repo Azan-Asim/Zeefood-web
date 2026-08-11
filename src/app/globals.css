@@ -1,5 +1,13 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: "KhanBaba";
+  src: url("/fonts/474a7d37-1c01-48a7-abdb-0be3a4f4096e.ttf") format("truetype");
+  font-display: swap;
+  font-weight: 400 900;
+  font-style: normal;
+}
+
 @theme {
   --color-brand-primary: #F87205;
   --color-brand-secondary: #111827;
@@ -8,11 +16,14 @@
   --color-brand-surface: #F8FAFC;
   --color-brand-light: #FFFFFF;
   --color-brand-white: #FFFFFF;
+  --font-sans: var(--font-poppins), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-urdu: "KhanBaba", "Alvi Nastaleeq", "Jameel Noori Nastaleeq", var(--font-noto-urdu), serif;
 }
 
 body {
   background-color: var(--color-brand-white);
   color: var(--color-brand-dark);
+  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
 }
 
@@ -20,6 +31,18 @@ html,
 body {
   max-width: 100%;
   overflow-x: hidden;
+}
+
+html {
+  min-width: 320px;
+  text-size-adjust: 100%;
+}
+
+:lang(ur),
+[lang="ur"],
+[dir="rtl"] {
+  font-family: "KhanBaba", "Alvi Nastaleeq", "Jameel Noori Nastaleeq", var(--font-noto-urdu), serif !important;
+  line-height: 1.8 !important;
 }
 
 * {
@@ -31,6 +54,7 @@ svg,
 video,
 canvas {
   max-width: 100%;
+  height: auto;
 }
 
 a,
@@ -47,6 +71,7 @@ select {
   --color-text: #111827;     /* 30% secondary/text */
   --color-accent: #F87205;   /* 10% accent/CTA */
   --button-radius: 1rem;     /* 16px = rounded-2xl */
+  --font-noto-urdu: "Noto Nastaliq Urdu";
 }
 
 /* ── Global button radius standardization (rounded-2xl = 16px) ── */
@@ -98,13 +123,35 @@ input[type="reset"] {
 }
 
 @layer utilities {
+  .site-container {
+    width: min(100% - clamp(2rem, 5vw, 6rem), 1920px);
+    margin-inline: auto;
+  }
+
+  .fluid-section-y {
+    padding-block: clamp(1.25rem, 2.6vw, 3rem);
+  }
+
+  .fluid-card-grid {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+  }
+
+  .fluid-food-grid {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 15.5rem), 1fr));
+  }
+
   .text-stroke-secondary {
     -webkit-text-stroke: 1px var(--color-brand-secondary);
     color: transparent;
   }
 
   .font-urdu {
-    font-family: "Jameel Noori Nastaleeq", var(--font-noto-urdu), serif;
+    font-family: var(--font-urdu);
+    line-height: 1.8;
+  }
+
+  .font-ama-dhaba {
+    font-family: var(--font-urdu);
     line-height: 1.8;
   }
 
@@ -216,7 +263,7 @@ input[type="reset"] {
 
 [dir="rtl"],
 [lang="ur"] {
-  font-family: "Jameel Noori Nastaleeq", var(--font-noto-urdu), serif !important;
+  font-family: "KhanBaba", "Alvi Nastaleeq", "Jameel Noori Nastaleeq", var(--font-noto-urdu), serif !important;
   line-height: 1.8 !important;
 }
 
@@ -428,6 +475,239 @@ input[type="reset"] {
   animation: spin-slow 18s linear infinite;
 }
 
+@keyframes heroBiryaniSpin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-hero-biryani-spin {
+  animation: heroBiryaniSpin 32s linear infinite;
+  transform-origin: center center;
+  will-change: transform;
+}
+
+@keyframes heroSlideOutRight {
+  from {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: translate3d(42%, 0, 0) scale(0.98);
+  }
+}
+
+@keyframes heroSlideInRight {
+  from {
+    opacity: 0;
+    transform: translate3d(-16%, 0, 0) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes heroCopyFade {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-hero-slide-out-right {
+  animation: heroSlideOutRight 700ms cubic-bezier(0.4, 0, 0.2, 1) both;
+  backface-visibility: hidden;
+  will-change: opacity, transform;
+}
+
+.animate-hero-slide-in-right {
+  animation: heroSlideInRight 700ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  backface-visibility: hidden;
+  will-change: opacity, transform;
+}
+
+.animate-hero-copy-fade {
+  animation: heroCopyFade 520ms ease-out both;
+}
+
+@keyframes heroOrbitInRight {
+  0% {
+    opacity: 0;
+    transform: translate3d(72%, 18%, 0) rotate(18deg) scale(0.86);
+  }
+
+  28% {
+    opacity: 0.56;
+    transform: translate3d(46%, -16%, 0) rotate(11deg) scale(0.91);
+  }
+
+  62% {
+    opacity: 0.96;
+    transform: translate3d(14%, -20%, 0) rotate(4deg) scale(0.975);
+  }
+
+  84% {
+    opacity: 1;
+    transform: translate3d(3%, -7%, 0) rotate(1deg) scale(0.995);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+  }
+}
+
+@keyframes heroOrbitOutRight {
+  0% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+  }
+
+  24% {
+    opacity: 0.95;
+    transform: translate3d(-10%, -8%, 0) rotate(-2deg) scale(0.985);
+  }
+
+  58% {
+    opacity: 0.56;
+    transform: translate3d(-42%, -16%, 0) rotate(-10deg) scale(0.92);
+  }
+
+  82% {
+    opacity: 0.18;
+    transform: translate3d(-62%, 4%, 0) rotate(-15deg) scale(0.88);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate3d(-74%, 18%, 0) rotate(-18deg) scale(0.84);
+  }
+}
+
+@keyframes heroOrbitInLeft {
+  0% {
+    opacity: 0;
+    transform: translate3d(-72%, 18%, 0) rotate(-18deg) scale(0.86);
+  }
+
+  28% {
+    opacity: 0.56;
+    transform: translate3d(-46%, -16%, 0) rotate(-11deg) scale(0.91);
+  }
+
+  62% {
+    opacity: 0.96;
+    transform: translate3d(-14%, -20%, 0) rotate(-4deg) scale(0.975);
+  }
+
+  84% {
+    opacity: 1;
+    transform: translate3d(-3%, -7%, 0) rotate(-1deg) scale(0.995);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+  }
+}
+
+@keyframes heroOrbitOutLeft {
+  0% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+  }
+
+  24% {
+    opacity: 0.95;
+    transform: translate3d(10%, -8%, 0) rotate(2deg) scale(0.985);
+  }
+
+  58% {
+    opacity: 0.56;
+    transform: translate3d(42%, -16%, 0) rotate(10deg) scale(0.92);
+  }
+
+  82% {
+    opacity: 0.18;
+    transform: translate3d(62%, 4%, 0) rotate(15deg) scale(0.88);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate3d(74%, 18%, 0) rotate(18deg) scale(0.84);
+  }
+}
+
+.animate-hero-orbit-in-right,
+.animate-hero-orbit-out-right,
+.animate-hero-orbit-in-left,
+.animate-hero-orbit-out-left {
+  backface-visibility: hidden;
+  transform-origin: center center;
+  will-change: opacity, transform;
+}
+
+.animate-hero-orbit-in-right {
+  animation: heroOrbitInRight 1180ms cubic-bezier(0.2, 0.8, 0.22, 1) both;
+}
+
+.animate-hero-orbit-out-right {
+  animation: heroOrbitOutRight 1180ms cubic-bezier(0.2, 0.8, 0.22, 1) both;
+}
+
+.animate-hero-orbit-in-left {
+  animation: heroOrbitInLeft 1180ms cubic-bezier(0.2, 0.8, 0.22, 1) both;
+}
+
+.animate-hero-orbit-out-left {
+  animation: heroOrbitOutLeft 1180ms cubic-bezier(0.2, 0.8, 0.22, 1) both;
+}
+
+@keyframes heroPreviewWheelRight {
+  from {
+    transform: translateX(-50%) rotate(-5deg);
+  }
+
+  to {
+    transform: translateX(-50%) rotate(0deg);
+  }
+}
+
+@keyframes heroPreviewWheelLeft {
+  from {
+    transform: translateX(-50%) rotate(5deg);
+  }
+
+  to {
+    transform: translateX(-50%) rotate(0deg);
+  }
+}
+
+.animate-hero-preview-wheel-right {
+  animation: heroPreviewWheelRight 1180ms cubic-bezier(0.2, 0.8, 0.22, 1) both;
+  transform-origin: 50% 78%;
+  will-change: transform;
+}
+
+.animate-hero-preview-wheel-left {
+  animation: heroPreviewWheelLeft 1180ms cubic-bezier(0.2, 0.8, 0.22, 1) both;
+  transform-origin: 50% 78%;
+  will-change: transform;
+}
+
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -551,6 +831,18 @@ input[type="reset"] {
 
 }
 
+@media (min-width: 2200px) {
+  .site-container {
+    width: min(100% - 8rem, 2160px);
+  }
+}
+
+@media (min-width: 3000px) {
+  html {
+    font-size: 18px;
+  }
+}
+
 /* Final product-card image override: keep Home/Menu product images fully visible. */
 .product-card-image {
   position: relative !important;
@@ -571,8 +863,12 @@ input[type="reset"] {
   height: 100% !important;
   max-width: 100% !important;
   max-height: 100% !important;
-  object-fit: contain !important;
-  object-position: center center !important;
+  object-fit: cover !important;
+  object-position: center 28% !important;
   background-color: #ffffff !important;
   transform: none !important;
 }
+
+/* herosection */
+
+
