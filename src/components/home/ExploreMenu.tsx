@@ -25,7 +25,7 @@ export default function ExploreMenu() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await fetch("/api/products?page=1&limit=50");
+        const res = await fetch("/api/products?page=1&limit=100");
         if (!res.ok) {
           throw new Error(`Products API error: ${res.status}`);
         }

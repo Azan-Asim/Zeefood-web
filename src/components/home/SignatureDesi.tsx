@@ -64,7 +64,7 @@ export default function SignatureDesi() {
       setError(null);
 
       try {
-        const res = await fetch("/api/products?page=1&limit=50");
+        const res = await fetch("/api/products?page=1&limit=100");
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
         const json = await res.json();
