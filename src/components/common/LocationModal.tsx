@@ -2,6 +2,7 @@
 
 import { type ReactNode, useEffect, useState } from "react";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { MapPin, Navigation, Check, Loader2, LocateFixed } from "lucide-react";
 import BannerModal from "./BannerModal";
 
@@ -10,6 +11,7 @@ type OrderType = "delivery" | "pickup";
 const PICKUP_ADDRESS = "464-Sirhindi Road, Near Gourmet Bakers, First Round About, Samanabad, Lahore";
 
 export default function LocationModal() {
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [showBanner, setShowBanner] = useState(false);
   const [orderType, setOrderType] = useState<OrderType>("delivery");
@@ -20,9 +22,10 @@ export default function LocationModal() {
   const [userCoords, setUserCoords] = useState<{ lat: number; lng: number } | null>(null);
 
   useEffect(() => {
+    if (pathname?.startsWith("/self/")) return;
     const openTimer = setTimeout(() => setIsOpen(true), 500);
     return () => clearTimeout(openTimer);
-  }, []);
+  }, [pathname]);
 
   const handleFetchLocation = () => {
     if (!("geolocation" in navigator)) {

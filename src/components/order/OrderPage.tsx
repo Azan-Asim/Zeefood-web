@@ -5,10 +5,12 @@ import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { useLanguage } from "@/context/LanguageContext";
 import { useCart } from "@/context/CartContext";
+import { useSelfOrder } from "@/context/SelfOrderContext";
 import { createPortal } from "react-dom";
 
 // ── Redux / Custom hooks ──────────────────────────────────────────────────────
 import { useProducts, useProductFilters } from "@/hooks/useProducts";
+import { API_BASE_URL } from "@/lib/api";
 import type { Product, ProductVariant } from "@/lib/store";
 
 type ProductCardDetails = {
@@ -64,8 +66,6 @@ const getUniqueVariants = (variants?: ProductVariant[] | null): ProductVariant[]
 // ─────────────────────────────────────────────────────────────────────────────
 // Image helper
 // ─────────────────────────────────────────────────────────────────────────────
-const DRM_BASE = "https://drm.devsinntechnologies.com";
-
 function getDishFallbackImage(name?: string | null, categoryName?: string | null): string {
   const n = String(name || "").toLowerCase();
   const c = String(categoryName || "").toLowerCase();
@@ -94,11 +94,11 @@ function productImageUrl(image?: string | null, productName?: string | null, cat
   }
   if (image.startsWith("http://") || image.startsWith("https://")) return image;
   if (image.startsWith("/uploads/") || image.startsWith("uploads/")) {
-    return `${DRM_BASE}/${image.replace(/^\//, "")}`;
+    return `${API_BASE_URL}/${image.replace(/^\//, "")}`;
   }
   if (image.startsWith("/")) return image;
   if (image.startsWith("images/")) return `/${image}`;
-  return `${DRM_BASE}/${image}`;
+  return `${API_BASE_URL}/${image}`;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -756,8 +756,11 @@ export default function OrderPage() {
   const { t, language } = useLanguage();
   const { cart, addToCart } = useCart();
   const searchParams = useSearchParams();
+  const { isSelfOrder, table, successMessage, errorMessage } = useSelfOrder();
 
-  const { isLoading, isError, error, refetch } = useProducts();
+  const { isLoading, isError, error, refetch } = useProducts(
+    isSelfOrder && table?.businessId ? { businessId: table.businessId } : undefined,
+  );
   const {
     filteredProducts,
     categories,
@@ -810,11 +813,23 @@ export default function OrderPage() {
         <div className="flex-1 bg-[#fbf7f2]">
           <div className="mb-5 rounded-[20px] border border-brand-primary/10 bg-white/35 p-4 sm:p-6 shadow-[0_8px_24px_rgba(17,24,39,0.03)] backdrop-blur-sm sm:mb-6">
             <h1 className={`mb-1 text-2xl sm:text-3xl font-black tracking-tight text-[#111827] lg:text-4xl ${language === "UR" ? "text-right font-ama-dhaba" : ""}`}>
-              {t("orderDelivery")}
+              {isSelfOrder ? `Table ${table?.tableNumber}` : t("orderDelivery")}
             </h1>
             <p className={`mb-5 text-xs sm:text-sm font-semibold text-[#111827]/70 lg:text-base ${language === "UR" ? "text-right" : ""}`}>
-              {t("exclusiveChefMeals")}
+              {isSelfOrder
+                ? "Browse the menu and send your order to the waiter. It is confirmed after approval."
+                : t("exclusiveChefMeals")}
             </p>
+            {isSelfOrder && successMessage ? (
+              <p className="mb-4 rounded-2xl bg-emerald-50 px-4 py-3 text-sm font-bold text-emerald-800">
+                {successMessage}
+              </p>
+            ) : null}
+            {isSelfOrder && errorMessage ? (
+              <p className="mb-4 rounded-2xl bg-red-50 px-4 py-3 text-sm font-bold text-red-700">
+                {errorMessage}
+              </p>
+            ) : null}
 
             <div className="mb-6 flex justify-center w-full">
               <div className="relative w-full max-w-xl">
