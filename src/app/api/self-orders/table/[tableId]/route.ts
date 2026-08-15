@@ -12,11 +12,13 @@ export async function GET(
     const upstream = new URL(`${API_BASE_URL}/public/self-orders/table/${tableId}`);
     upstream.searchParams.set("businessId", businessId);
 
-    const origin = request.headers.get("origin");
+    const storefrontOrigin = request.headers.get("origin");
     const response = await fetch(upstream, {
       headers: {
         Accept: "application/json",
-        ...(origin ? { Origin: origin } : {}),
+        ...(storefrontOrigin
+          ? { "X-Storefront-Origin": storefrontOrigin }
+          : {}),
       },
       cache: "no-store",
     });

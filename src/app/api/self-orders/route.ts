@@ -7,13 +7,15 @@ export async function POST(request: Request) {
   }
 
   try {
-    const origin = request.headers.get("origin");
+    const storefrontOrigin = request.headers.get("origin");
     const response = await fetch(`${API_BASE_URL}/public/self-orders`, {
       method: "POST",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
-        ...(origin ? { Origin: origin } : {}),
+        ...(storefrontOrigin
+          ? { "X-Storefront-Origin": storefrontOrigin }
+          : {}),
       },
       body: JSON.stringify({
         ...body,
