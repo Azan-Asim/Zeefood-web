@@ -455,8 +455,8 @@ export default function Navbar() {
             
             <div className="mt-8 flex flex-col items-center gap-3">
               <span className="text-[9px] font-black uppercase tracking-[0.4em] text-gray-400">Powered By</span>
-              <a href="https://www.devsinntechnologies.com/" target="_blank" rel="noopener noreferrer" className="relative h-8 w-32 transition-transform hover:scale-105">
-                <Image src="/devsinnlogo0.svg" alt="Dev's Inn Technologies" fill className="object-contain" unoptimized />
+              <a href="https://diginizam.com" target="_blank" rel="noopener noreferrer" className="relative h-8 w-40 transition-transform hover:scale-105">
+                <Image src="/diginizam-logo.svg" alt="DigiNizam" fill className="object-contain" unoptimized />
               </a>
             </div>
           </div>
